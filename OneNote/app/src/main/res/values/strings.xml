@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NotePad</string>
+    <string-array name="theme_name">
+    	<item>天蓝</item>
+    	<item>椰壳绿</item>
+    	<item>芒果</item>
+    	<item>胭脂红</item>
+    	<item>驼绒</item>
+    	<item>鲜橙</item>
+    	<item>紫丁香</item>
+    </string-array>
+	<string name="action_settings">settings</string>
+</resources>

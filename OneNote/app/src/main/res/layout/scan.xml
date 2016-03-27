@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/scanlayout"
+    android:orientation="vertical" 
+    android:layout_height="fill_parent" 
+    android:layout_width="fill_parent"
+    >
+
+	<EditText
+    	android:id="@+id/titlescan"
+    	android:layout_width="fill_parent"
+   		android:layout_height="wrap_content"
+   		android:layout_marginTop="10px"
+   		android:layout_marginLeft="10px"
+   		android:layout_marginRight="10px"
+   		
+   		android:singleLine="true"
+   		android:textSize="20sp"
+   		android:textColor="#ffffff"
+    />
+    
+    <TextView
+    	android:id="@+id/datescan"
+    	android:layout_width="fill_parent"
+   		android:layout_height="wrap_content"
+   		android:layout_marginRight="10px"
+   		android:gravity="right"
+   		
+   		android:singleLine="true"
+   		android:textSize="15sp"
+   		android:textColor="#ffffff"
+    />
+    
+     <com.lht.notepad.view.NoteEditText
+    	android:id="@+id/contentscan"
+    	android:layout_width="fill_parent"
+  		android:layout_height="fill_parent"
+  		
+  		android:paddingTop="10px"
+  		android:paddingLeft="10px"
+  		android:paddingRight="10px"
+  		
+  		android:textSize="20sp"
+  		android:textColor="#484848"
+  		android:background="#ffffff"
+  		
+  		android:scrollbars="vertical"
+  		android:fadingEdge="vertical"
+  		android:fadingEdgeLength="10px"
+  		
+  		android:autoLink="all"
+    />
+</LinearLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+    	android:title="设置主题颜色"
+    >
+    	<ListPreference 
+    		android:key="themelist"
+    		android:title="主题颜色"
+    		
+    		android:dialogTitle="主题颜色选择"
+    		android:dialogIcon="@drawable/theme_light"
+    		android:entries="@array/theme_name"
+    		android:entryValues="@array/theme_name"
+    		
+    		android:defaultValue="天蓝"
+    	/>
+    </PreferenceCategory>
+    
+    <PreferenceCategory 
+    	android:title="用户安全"
+    >
+    	<Preference 
+    		android:key="usersafety"
+    		android:title="设置新密码"
+    	/>
+    </PreferenceCategory>
+    
+    <PreferenceCategory 
+    	android:title="关于"
+    >
+    	<Preference 
+    		android:key="aboutapp"
+    		android:title="关于NotePad"
+    	/>
+    </PreferenceCategory>
+</PreferenceScreen>
