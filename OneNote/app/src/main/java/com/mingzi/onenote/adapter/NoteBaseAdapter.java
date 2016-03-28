@@ -42,26 +42,22 @@ public class NoteBaseAdapter extends BaseAdapter {
 
 	@Override
 	public long getItemId(int position) {
-		return ((Note)list.get(position)).getNoteId();
+		return (list.get(position)).getNoteId();
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		
-		Note note = (Note)list.get(position);
+		Note note = list.get(position);
 		String noteTitle = note.getNoteTitle();
 		Date noteDate = note.getNoteDate();
 				
 		LayoutInflater layoutInflater = LayoutInflater.from(context);
 				
 		View view = layoutInflater.inflate(resource, null);
-		
-		TextView imNoteIcon = (TextView)view.findViewById(R.id.itemimage);
+		view.setBackgroundColor(PreferenceInfo.themeColorValue);
 		TextView tvNoteTitle = (TextView)view.findViewById(R.id.itemtitle);
 		TextView tvNoteDate = (TextView)view.findViewById(R.id.itemdate);
-		
-		imNoteIcon.setText((position+1)+"");
-		imNoteIcon.setBackgroundColor(PreferenceInfo.themeColorValue);
 		tvNoteTitle.setText(noteTitle);
 		tvNoteDate.setText(ConvertStringAndDate.datetoString(noteDate));
 

@@ -4,10 +4,12 @@
 package com.mingzi.onenote.activity;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -38,6 +40,7 @@ public class NewNoteActivity extends Activity {
         editLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
         
         noteTitleText = (EditText)findViewById(R.id.titleedit);
+		noteTitleText.setBackgroundColor(Color.parseColor("#ffffff"));
         noteContentText = (EditText)findViewById(R.id.contentedit);
 		noteContentText.setBackgroundColor(PreferenceInfo.themeColorValue);
         noteContentText.requestFocus();
@@ -96,35 +99,35 @@ public class NewNoteActivity extends Activity {
 	    	this.finish();
 		}
 	}
-	
-	private MenuItem menuItem_0;
-	
+
+
 	/**
-	 * 响应手机菜单按钮
-	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 * 添加菜单到ActionBar中
+	 * @param menu
+	 * @return
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menuItem_0 = menu.add(0, 0, 0, "删除");
-		menuItem_0.setIcon(R.drawable.delete_dark);
-		menuItem_0.setOnMenuItemClickListener(new ItemClickListenerClass());
+		MenuInflater menuInflater = getMenuInflater();
+		menuInflater.inflate(R.menu.new_menu,menu);
 				
-		return true;
+		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	/**
-	 * 菜单按钮事件
+	 * 响应ActionBar中的选项
+	 * @param item
+	 * @return
 	 */
-	private class ItemClickListenerClass implements MenuItem.OnMenuItemClickListener {
-		@Override
-		public boolean onMenuItemClick(MenuItem item) {
-			switch (item.getItemId()) {
-				case 0: {
-					NewNoteActivity.this.finish();
-					break;
-				}
-			}
-			return false;
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.delete :
+				NewNoteActivity.this.finish();
+				break;
 		}
+		return super.onOptionsItemSelected(item);
 	}
+
+
 }

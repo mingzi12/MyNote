@@ -6,9 +6,11 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -40,6 +42,7 @@ public class EditActivity extends Activity {
         editLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
 
         noteTitleText = (EditText)findViewById(R.id.titleedit);
+		noteTitleText.setBackgroundColor(Color.parseColor("#ffffff"));
         noteContentText = (EditText)findViewById(R.id.contentedit);
 		noteContentText.setBackgroundColor(PreferenceInfo.themeColorValue);
 
@@ -82,33 +85,23 @@ public class EditActivity extends Activity {
 		
 	}
 	
-	private MenuItem menuItem_0;
-	private MenuItem menuItem_1;
-	
+
 	/**
 	 * 响应手机菜单按钮
 	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menuItem_0 = menu.add(0, 0, 0, "删除");
-		menuItem_0.setIcon(R.drawable.delete_dark);
-		menuItem_0.setOnMenuItemClickListener(new ItemClickListenerClass());
-		menuItem_1 = menu.add(0, 1, 1, "短信发送");
-		menuItem_1.setIcon(R.drawable.message_dark);
-		menuItem_1.setOnMenuItemClickListener(new ItemClickListenerClass());
+		MenuInflater menuInflater = getMenuInflater();
+		menuInflater.inflate(R.menu.menu_edit,menu);
 
-		return true;
+		return super.onCreateOptionsMenu(menu);
 	}
 
-	/**
-	 * 菜单按钮事件
-	 */
-	private class ItemClickListenerClass implements MenuItem.OnMenuItemClickListener {
-		@Override
-		public boolean onMenuItemClick(MenuItem item) {
-			switch (item.getItemId()) {
-			case 0: {
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case R.id.delete_edit :
 				AlertDialog.Builder builder = new Builder(EditActivity.this);
 				builder.setTitle("删除");
 				builder.setIcon(R.drawable.delete_light);
@@ -117,7 +110,7 @@ public class EditActivity extends Activity {
 					public void onClick(DialogInterface dialog, int which) {
 						DBAccess access = new DBAccess(EditActivity.this);
 						access.deleteNote(note);
-							
+
 						dialog.dismiss();
 						Toast.makeText(EditActivity.this, "已删除", Toast.LENGTH_LONG).show();
 						EditActivity.this.finish();
@@ -125,25 +118,23 @@ public class EditActivity extends Activity {
 				});
 				builder.setNegativeButton("取消", null);
 				builder.create().show();
-					
 				break;
-			}
-				case 1 :
-					Intent iIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"));
+			case R.id.send_edit :
+				Intent iIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"));
 
-					if (!note.getNoteContent().equals(note.getNoteTitle())) {
-						iIntent.putExtra("sms_body", note.getNoteTitle() + "\n" + note.getNoteContent());
-					}
-					else {
-						iIntent.putExtra("sms_body", note.getNoteContent());
-					}
-					EditActivity.this.startActivity(iIntent);
-					break;
-				default :
-					break;
-			}
-		return false;
+				if (!note.getNoteContent().equals(note.getNoteTitle())) {
+					iIntent.putExtra("sms_body", note.getNoteTitle() + "\n" + note.getNoteContent());
+				}
+				else {
+					iIntent.putExtra("sms_body", note.getNoteContent());
+				}
+				EditActivity.this.startActivity(iIntent);
+				break;
+			default :
+				break;
 		}
+		return super.onOptionsItemSelected(item);
 	}
+
 	
 }

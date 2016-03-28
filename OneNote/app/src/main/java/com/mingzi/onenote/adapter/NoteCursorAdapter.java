@@ -49,12 +49,8 @@ public class NoteCursorAdapter extends CursorAdapter {
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-		TextView imNoteIcon = (TextView)view.findViewById(R.id.itemimage);
 		TextView tvNoteTitle = (TextView)view.findViewById(R.id.itemtitle);
 		TextView tvNoteDate = (TextView)view.findViewById(R.id.itemdate);
-
-		imNoteIcon.setText((cursor.getPosition() + 1) + "");
-		imNoteIcon.setBackgroundColor(PreferenceInfo.themeColorValue);
 		tvNoteTitle.setText(cursor.getString(cursor.getColumnIndex("notetitle")));
 		tvNoteDate.setText(cursor.getString(cursor.getColumnIndex("notedate")));
 		

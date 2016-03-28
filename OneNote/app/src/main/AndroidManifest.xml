@@ -22,11 +22,11 @@
         </activity>
         <activity android:name=".activity.NewNoteActivity"
                   android:label="@string/app_name"
-                  android:theme="@android:style/Theme.Light.NoTitleBar">
+                  android:theme="@android:style/Theme.Holo.Light">
         </activity>
         <activity android:name=".activity.EditActivity"
                   android:label="@string/app_name"
-                  android:theme="@android:style/Theme.Light.NoTitleBar">
+                  android:theme="@android:style/Theme.Holo.Light">
         </activity>
         <activity android:name=".activity.SearchActivity"
                   android:label="日志搜索"

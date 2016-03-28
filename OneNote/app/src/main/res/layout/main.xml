@@ -52,9 +52,6 @@
             android:layout_marginLeft="10dp"
             android:src="@drawable/search_light"/>
 
-        <GridLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"></GridLayout>
 
     </LinearLayout>
 
