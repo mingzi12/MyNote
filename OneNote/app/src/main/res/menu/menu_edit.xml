@@ -4,10 +4,20 @@
       tools:context="com.mingzi.onenote.activity.NewNoteActivity">
     <item
         android:id="@+id/delete_edit"
+        android:icon="@drawable/delete_light"
         android:title="删除"
         app:showAsAction="never"/>
     <item
         android:id="@+id/send_edit"
-        android:title="发送短信"
+        android:title="发送"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/descrition_edit"
+        android:title="详情"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/alarm_edit"
+        android:icon="@drawable/alarm_light"
+        android:title="提醒"
         app:showAsAction="never"/>
 </menu>

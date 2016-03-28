@@ -1,5 +1,6 @@
 package com.mingzi.onenote.activity;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -21,6 +23,7 @@ import com.mingzi.onenote.util.DBAccess;
 import com.mingzi.onenote.vo.Note;
 import com.mingzi.onenote.vo.PreferenceInfo;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 
 public class EditActivity extends Activity {
@@ -36,8 +39,10 @@ public class EditActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		setTitle("返回");
 		setContentView(R.layout.edit);
-		
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		editLayout = (LinearLayout)findViewById(R.id.editlayout);
         editLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
 
@@ -130,11 +135,46 @@ public class EditActivity extends Activity {
 				}
 				EditActivity.this.startActivity(iIntent);
 				break;
+			case  android.R.id.home :
+				if (noteContentText.getText().toString().length()!=contentLength ||
+						noteTitleText.getText().length()!=titleLength) {
+					if (noteTitleText.getText().length() == 0) {
+						note.setNoteTitle("无标题");
+					} else {
+						note.setNoteTitle(noteTitleText.getText().toString());
+					}
+					String noteContent = noteContentText.getText().toString();
+					note.setNoteContent(noteContent);
+					note.setNoteDate(new Date());
+
+					DBAccess access = new DBAccess(this);
+					access.updateNote(note);
+
+					Toast.makeText(this, "已更新", Toast.LENGTH_SHORT).show();
+				}
+				finish();
+				break;
 			default :
 				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
-	
+	/*
+	* 显示ActionBar中每个子项的图标
+	* */
+	@Override
+	public boolean onMenuOpened(int featureId, Menu menu) {
+		if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {
+			if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
+				try {
+					Method m = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+					m.setAccessible(true);
+					m.invoke(menu, true);
+				} catch (Exception e) {
+				}
+			}
+		}
+		return super.onMenuOpened(featureId, menu);
+	}
 }

@@ -3,6 +3,7 @@
  */
 package com.mingzi.onenote.activity;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -34,8 +35,10 @@ public class NewNoteActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		setTitle("返回");
 		setContentView(R.layout.edit);
-		
+		ActionBar mActionBar = getActionBar();
+		mActionBar.setDisplayHomeAsUpEnabled(true);
 		editLayout = (LinearLayout)findViewById(R.id.editlayout);
         editLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
         
@@ -122,8 +125,32 @@ public class NewNoteActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.delete :
+			case R.id.delete_new :
 				NewNoteActivity.this.finish();
+				break;
+			case android.R.id.home :
+				String noteTitle = noteTitleText.getText().toString();
+				String noteContent = noteContentText.getText().toString();
+
+				if(noteTitle.toString().trim().equals("") && noteContent.toString().trim().equals("")) {
+					NewNoteActivity.this.finish();
+				}
+				else {
+					Note note = new Note();
+					if (noteTitle.equals("")){
+						note.setNoteTitle("无标题");
+					}
+					else {
+						note.setNoteTitle(noteTitle);
+					}
+					note.setNoteContent(noteContent);
+					note.setNoteDate(new Date());
+
+					DBAccess access = new DBAccess(this);
+					access.insertNote(note);
+					Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
+					this.finish();
+				}
 				break;
 		}
 		return super.onOptionsItemSelected(item);

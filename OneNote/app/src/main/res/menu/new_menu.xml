@@ -3,18 +3,28 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.mingzi.onenote.activity.NewNoteActivity">
     <item
-        android:id="@+id/delete"
+        android:id="@+id/add_new"
+        android:orderInCategory="100"
+        android:icon="@drawable/black_shutcuts_attach"
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/camera_new"
+        android:orderInCategory="100"
+        android:icon="@drawable/black_shutcuts_camera"
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/delete_new"
         android:orderInCategory="100"
         android:title="删除"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/delete1"
+        android:id="@+id/send_new"
         android:orderInCategory="100"
-        android:title="删除"
+        android:title="发送"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/delete2"
+        android:id="@+id/descrition_new"
         android:orderInCategory="100"
-        android:title="删除"
+        android:title="详情"
         app:showAsAction="never"/>
 </menu>
