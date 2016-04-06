@@ -31,7 +31,7 @@ import android.widget.Toast;
 
 import com.mingzi.onenote.R;
 import com.mingzi.onenote.adapter.NoteBaseAdapter;
-import com.mingzi.onenote.util.DBAccess;
+import com.mingzi.onenote.util.NoteDBAccess;
 import com.mingzi.onenote.vo.Note;
 import com.mingzi.onenote.vo.PreferenceInfo;
 
@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
 
 	private NoteBaseAdapter noteBaseAdapter;
 
-	private DBAccess access;
+	private NoteDBAccess access;
 	private List<Note> mNoteList;
 	private Note note = new Note();
 	private PreferenceInfo mPreferenceInfo;
@@ -93,7 +93,7 @@ public class MainActivity extends Activity {
 		noteListView = (ListView)findViewById(R.id.notelist);
 		noteListView.setOnItemClickListener(new OnItemSelectedListener());
 		mNoteList = new ArrayList<Note>();
-		access = new DBAccess(this);
+		access = new NoteDBAccess(this);
 		mPreferenceInfo = new PreferenceInfo(this);
 
 		this.registerForContextMenu(noteListView);
@@ -264,7 +264,7 @@ public class MainActivity extends Activity {
 			builder.setMessage("您确定要把日志删除吗？");
 			builder.setPositiveButton("确定",new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					DBAccess access = new DBAccess(MainActivity.this);
+					NoteDBAccess access = new NoteDBAccess(MainActivity.this);
 					access.deleteNote(note);
 						
 					dialog.dismiss();

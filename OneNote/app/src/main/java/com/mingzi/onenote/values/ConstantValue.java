@@ -5,15 +5,15 @@ package com.mingzi.onenote.values;
 
 public class ConstantValue {
 	
-	public static final String DB_NAME = "notesqlite.db";
-	public static final String TABLE_NAME = "note_sqlite";
-	public static final int DB_VERSION = 1;
+	public static final String DB_NAME = "note.db";
+	public static final String TABLE_NAME = "notes";
+	public static final int VERSION = 1;
 	
-	public static class DB_MetaData{
-		public static final String NOTEID_COL = "_id";
-		public static final String NOTETITLE_COL = "notetitle";
-		public static final String NOTECONTENT_COL = "notecontent";
-		public static final String NOTEDATE_COL = "notedate";
+	public static class NoteMetaData {
+		public static final String NOTE_ID = "_id";
+		public static final String NOTE_TITLE = "noteTitle";
+		public static final String NOTE_CONTENT = "noteContent";
+		public static final String NOTE_DATE = "noteDate";
 		
 		public static final String DEFAULT_ORDER = "_id desc";
 	}

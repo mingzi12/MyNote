@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.mingzi.onenote.R;
-import com.mingzi.onenote.util.DBAccess;
+import com.mingzi.onenote.util.NoteDBAccess;
 import com.mingzi.onenote.vo.Note;
 import com.mingzi.onenote.vo.PreferenceInfo;
 
@@ -79,7 +79,7 @@ public class EditActivity extends Activity {
 			note.setNoteContent(noteContent);
 			note.setNoteDate(new Date());
 
-			DBAccess access = new DBAccess(this);
+			NoteDBAccess access = new NoteDBAccess(this);
 			access.updateNote(note);
 
 			Toast.makeText(this, "已更新", Toast.LENGTH_SHORT).show();
@@ -113,7 +113,7 @@ public class EditActivity extends Activity {
 				builder.setMessage("您确定要把日志删除吗？");
 				builder.setPositiveButton("确定",new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						DBAccess access = new DBAccess(EditActivity.this);
+						NoteDBAccess access = new NoteDBAccess(EditActivity.this);
 						access.deleteNote(note);
 
 						dialog.dismiss();
@@ -147,7 +147,7 @@ public class EditActivity extends Activity {
 					note.setNoteContent(noteContent);
 					note.setNoteDate(new Date());
 
-					DBAccess access = new DBAccess(this);
+					NoteDBAccess access = new NoteDBAccess(this);
 					access.updateNote(note);
 
 					Toast.makeText(this, "已更新", Toast.LENGTH_SHORT).show();

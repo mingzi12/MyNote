@@ -10,23 +10,23 @@ import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.mingzi.onenote.values.ConstantValue;
-public class DBOpenHelpe extends SQLiteOpenHelper {
+public class DBOpenHelper extends SQLiteOpenHelper {
 	
 
-	public DBOpenHelpe(Context context) {
-		this(context, ConstantValue.DB_NAME, null, ConstantValue.DB_VERSION);
+	public DBOpenHelper(Context context) {
+		this(context, ConstantValue.DB_NAME, null, ConstantValue.VERSION);
 	}
 	
-	public DBOpenHelpe(Context context, int version) {
+	public DBOpenHelper(Context context, int version) {
 		this(context, ConstantValue.DB_NAME, null, version);
 	}
 	
-	public DBOpenHelpe(Context context, String name, int version) {
+	public DBOpenHelper(Context context, String name, int version) {
 		this(context, name, null, version);
 	}
 	
-	public DBOpenHelpe(Context context, String name, CursorFactory factory,
-					   int version) {
+	public DBOpenHelper(Context context, String name, CursorFactory factory,
+                        int version) {
 		super(context, name, factory, version);
 	}
 	
@@ -35,12 +35,11 @@ public class DBOpenHelpe extends SQLiteOpenHelper {
 	 */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("create table " + ConstantValue.TABLE_NAME + "(" +
-				ConstantValue.DB_MetaData.NOTEID_COL + 
-				" integer primary key autoincrement, " +
-				ConstantValue.DB_MetaData.NOTETITLE_COL + 
-				" varchar, " + ConstantValue.DB_MetaData.NOTECONTENT_COL + 
-				" text, " + ConstantValue.DB_MetaData.NOTEDATE_COL + " date)");
+		db.execSQL("CREATE TABLE " + ConstantValue.TABLE_NAME + "("
+                + ConstantValue.NoteMetaData.NOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ConstantValue.NoteMetaData.NOTE_TITLE + " TEXT NOT NULL, "
+                + ConstantValue.NoteMetaData.NOTE_CONTENT + " TEXT NOT NULL, "
+                + ConstantValue.NoteMetaData.NOTE_DATE + " DATE)");
 	}
 	
 	/**
@@ -48,7 +47,7 @@ public class DBOpenHelpe extends SQLiteOpenHelper {
 	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("drop table if exists " + ConstantValue.TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + ConstantValue.TABLE_NAME);
 		onCreate(db);
 	}
 		

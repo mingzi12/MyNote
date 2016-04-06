@@ -13,11 +13,10 @@ import android.widget.TextView;
 
 import com.mingzi.onenote.R;
 import com.mingzi.onenote.util.ConvertStringAndDate;
-import com.mingzi.onenote.util.DBAccess;
-import com.mingzi.onenote.util.DBOpenHelpe;
+import com.mingzi.onenote.util.NoteDBAccess;
+import com.mingzi.onenote.util.DBOpenHelper;
 import com.mingzi.onenote.values.ConstantValue;
 import com.mingzi.onenote.vo.Note;
-import com.mingzi.onenote.vo.PreferenceInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +24,10 @@ import java.util.List;
 public class NoteCursorAdapter extends CursorAdapter {
 	
 	private Context context;
-	private Cursor c;
+	private Cursor cursor;
 	private LayoutInflater layoutInflater;
 	private View view;
-	private DBOpenHelpe mDbutil;
+	private DBOpenHelper mDBOpenHelper;
 	
 	private List<Note> list = new ArrayList<Note>();
 	
@@ -39,10 +38,10 @@ public class NoteCursorAdapter extends CursorAdapter {
 		return this.list;
 	}
 
-	public NoteCursorAdapter(Context context, Cursor c, boolean autoRequery) {
-		super(context, c, autoRequery);
+	public NoteCursorAdapter(Context context, Cursor cursor, boolean autoRequery) {
+		super(context, cursor, autoRequery);
 		this.context = context;
-		this.c = c;
+		this.cursor = cursor;
 		
 		layoutInflater = LayoutInflater.from(context);
 	}
@@ -51,14 +50,14 @@ public class NoteCursorAdapter extends CursorAdapter {
 	public void bindView(View view, Context context, Cursor cursor) {
 		TextView tvNoteTitle = (TextView)view.findViewById(R.id.itemtitle);
 		TextView tvNoteDate = (TextView)view.findViewById(R.id.itemdate);
-		tvNoteTitle.setText(cursor.getString(cursor.getColumnIndex("notetitle")));
-		tvNoteDate.setText(cursor.getString(cursor.getColumnIndex("notedate")));
+		tvNoteTitle.setText(cursor.getString(cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_TITLE)));
+		tvNoteDate.setText(cursor.getString(cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_DATE)));
 		
 		Note note = new Note();
-		note.setNoteId(c.getInt(c.getColumnIndex(ConstantValue.DB_MetaData.NOTEID_COL)));
-		note.setNoteTitle(c.getString(c.getColumnIndex(ConstantValue.DB_MetaData.NOTETITLE_COL)));
-		note.setNoteContent(c.getString(c.getColumnIndex(ConstantValue.DB_MetaData.NOTECONTENT_COL)));
-		note.setNoteDate(ConvertStringAndDate.stringtodate(c.getString(c.getColumnIndex(ConstantValue.DB_MetaData.NOTEDATE_COL))));
+		note.setNoteId(this.cursor.getInt(this.cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_ID)));
+		note.setNoteTitle(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_TITLE)));
+		note.setNoteContent(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_CONTENT)));
+		note.setNoteDate(ConvertStringAndDate.stringtodate(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_DATE))));
 		
 		list.add(note);
 	}
@@ -71,30 +70,31 @@ public class NoteCursorAdapter extends CursorAdapter {
 
 	@Override
 	public CharSequence convertToString(Cursor cursor) {
-		String name = cursor.getString(cursor.getColumnIndex("notetitle"));
+		String name = cursor.getString(cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_TITLE));
 		return name;
 	}
 
 	@Override
 	public Cursor runQueryOnBackgroundThread(CharSequence constraint) {
-		c.moveToFirst();
+		cursor.moveToFirst();
 		
-		if(null == mDbutil){
-			mDbutil = new DBOpenHelpe(context);
+		if(null == mDBOpenHelper){
+			mDBOpenHelper = new DBOpenHelper(context);
 		}
 		
 		list.clear();
 		if(null != constraint){
 			String[] selectionArgs = new String[]{"%"+constraint.toString()+"%", "%"+constraint.toString()+"%"};
-			String selection = "notetitle like ? or notecontent like ?";
+			String selection = ConstantValue.NoteMetaData.NOTE_TITLE+" like ? or "
+                    +ConstantValue.NoteMetaData.NOTE_CONTENT+ " like ?";
 			
-			c = new DBAccess(context).selectAllNoteCursor(selection, selectionArgs);
+			cursor = new NoteDBAccess(context).selectAllNoteCursor(selection, selectionArgs);
 		}
 		else
 		{
-			c = new DBAccess(context).selectAllNoteCursor(null, null);
+			cursor = new NoteDBAccess(context).selectAllNoteCursor(null, null);
 		}
 		
-		return c;
+		return cursor;
 	}
 }

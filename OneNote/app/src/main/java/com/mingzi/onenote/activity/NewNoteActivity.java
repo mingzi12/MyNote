@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.mingzi.onenote.R;
-import com.mingzi.onenote.util.DBAccess;
+import com.mingzi.onenote.util.NoteDBAccess;
 import com.mingzi.onenote.vo.Note;
 import com.mingzi.onenote.vo.PreferenceInfo;
 
@@ -96,7 +96,7 @@ public class NewNoteActivity extends Activity {
 			note.setNoteContent(noteContent);
 			note.setNoteDate(new Date());
 			
-			DBAccess access = new DBAccess(this);
+			NoteDBAccess access = new NoteDBAccess(this);
 			access.insertNote(note);
 			Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
 	    	this.finish();
@@ -146,7 +146,7 @@ public class NewNoteActivity extends Activity {
 					note.setNoteContent(noteContent);
 					note.setNoteDate(new Date());
 
-					DBAccess access = new DBAccess(this);
+					NoteDBAccess access = new NoteDBAccess(this);
 					access.insertNote(note);
 					Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
 					this.finish();

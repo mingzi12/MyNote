@@ -12,7 +12,7 @@ import android.widget.ListView;
 
 import com.mingzi.onenote.R;
 import com.mingzi.onenote.adapter.NoteCursorAdapter;
-import com.mingzi.onenote.util.DBAccess;
+import com.mingzi.onenote.util.NoteDBAccess;
 import com.mingzi.onenote.vo.Note;
 
 public class SearchActivity extends Activity {
@@ -22,7 +22,7 @@ public class SearchActivity extends Activity {
 
     private NoteCursorAdapter noteCursorAdapter;
     private Cursor c;
-    private DBAccess access;
+    private NoteDBAccess access;
 
     private Note note = new Note();
 
@@ -32,7 +32,7 @@ public class SearchActivity extends Activity {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.search);
 
-        access = new DBAccess(this);
+        access = new NoteDBAccess(this);
 
         c = access.selectAllNoteCursor(null, null);
         noteCursorAdapter = new NoteCursorAdapter(this, c, true);
