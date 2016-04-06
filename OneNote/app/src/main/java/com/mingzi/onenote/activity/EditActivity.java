@@ -13,20 +13,27 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.mingzi.onenote.R;
+import com.mingzi.onenote.adapter.MediaBaseAdapter;
+import com.mingzi.onenote.util.MeidaDBAccess;
 import com.mingzi.onenote.util.NoteDBAccess;
+import com.mingzi.onenote.vo.Media;
 import com.mingzi.onenote.vo.Note;
 import com.mingzi.onenote.vo.PreferenceInfo;
 
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.List;
 
-public class EditActivity extends Activity {
+public class EditActivity extends Activity implements AdapterView.OnItemClickListener {
 	
 	private LinearLayout editLayout;
 	private EditText noteTitleText;
@@ -34,7 +41,12 @@ public class EditActivity extends Activity {
 	private int titleLength; //保存初始Title的长度，用于判断Title是否被修改
 	private int contentLength; // 保存内容的初始长度，用于判断内容是否变化
 	private Note note;
-	
+
+    private MediaBaseAdapter mMediaBaseAdapter;
+    private MeidaDBAccess mMeidaDBAccess;
+    private List<Media> mMediaList;
+    private ListView mListView;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -60,11 +72,26 @@ public class EditActivity extends Activity {
 	    noteTitleText.setText(note.getNoteTitle());
 	    noteContentText.setText(note.getNoteContent());
 		noteContentText.setSelection(noteContentText.getText().length());
-		noteContentText.requestFocus();
-		
-	}
-	
-	@Override
+
+        mListView = (ListView) findViewById(R.id.image_list);
+        mListView.setOnItemClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        flush();
+        super.onResume();
+    }
+
+    public void flush(){
+        mMeidaDBAccess = new MeidaDBAccess(EditActivity.this);
+        //mMeidaDBAccess.insert();
+        mMediaList = mMeidaDBAccess.selectAll();
+        mMediaBaseAdapter = new MediaBaseAdapter(EditActivity.this,mMediaList);
+        mListView.setAdapter(mMediaBaseAdapter);
+        mMediaBaseAdapter.notifyDataSetChanged();
+    }
+    @Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
 		super.onBackPressed();
@@ -177,4 +204,19 @@ public class EditActivity extends Activity {
 		}
 		return super.onMenuOpened(featureId, menu);
 	}
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Media media = mMediaList.get(position);
+        String path = media.getPath();
+        Intent intent = new Intent(this,PhoneViewActivity.class);
+        intent.putExtra(PhoneViewActivity.EXTRA_PATH,path);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mMediaBaseAdapter.recycleBitmap();
+        super.onDestroy();
+    }
 }

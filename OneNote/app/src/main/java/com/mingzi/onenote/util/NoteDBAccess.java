@@ -41,7 +41,7 @@ public class NoteDBAccess {
 		cv.put(ConstantValue.NoteMetaData.NOTE_CONTENT, note.getNoteContent());
 		cv.put(ConstantValue.NoteMetaData.NOTE_DATE,
 				ConvertStringAndDate.datetoString(note.getNoteDate()));
-		db.insert(ConstantValue.TABLE_NAME, null, cv);
+		db.insert(ConstantValue.NOTE_TABLE_NAME, null, cv);
 	}
 	
 	
@@ -52,7 +52,7 @@ public class NoteDBAccess {
 	public void deleteNote(Note note) {
 		db = mDbOpenHelper.getWritableDatabase();
 		
-		db.delete(ConstantValue.TABLE_NAME, 
+		db.delete(ConstantValue.NOTE_TABLE_NAME,
 				ConstantValue.NoteMetaData.NOTE_ID + "=" + note.getNoteId(), null);
 	}
 	
@@ -68,7 +68,7 @@ public class NoteDBAccess {
 		cv.put(ConstantValue.NoteMetaData.NOTE_CONTENT, note.getNoteContent());
 		cv.put(ConstantValue.NoteMetaData.NOTE_DATE,
 				ConvertStringAndDate.datetoString(note.getNoteDate()));
-		db.update(ConstantValue.TABLE_NAME, cv, 
+		db.update(ConstantValue.NOTE_TABLE_NAME, cv,
 				ConstantValue.NoteMetaData.NOTE_ID + "=" + note.getNoteId(), null);
 	}
 	
@@ -80,7 +80,7 @@ public class NoteDBAccess {
 	 */
 	public Cursor selectAllNoteCursor(String selection, String[] selectionArgs) {
 		db = mDbOpenHelper.getReadableDatabase();
-		Cursor c = db.query(ConstantValue.TABLE_NAME, colNames,
+		Cursor c = db.query(ConstantValue.NOTE_TABLE_NAME, colNames,
 				selection, selectionArgs, null, null, 
 				ConstantValue.NoteMetaData.DEFAULT_ORDER);
 		

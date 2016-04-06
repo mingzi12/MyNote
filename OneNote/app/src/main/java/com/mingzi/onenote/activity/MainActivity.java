@@ -304,7 +304,7 @@ public class MainActivity extends Activity {
     	
     	mNoteList = access.findAllNote();
     	
-    	noteBaseAdapter = new NoteBaseAdapter(this, R.layout.item, mNoteList);
+    	noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_list_item, mNoteList);
     	noteListView.setAdapter(noteBaseAdapter);
     	noteNumTextView.setText(mNoteList.size() + "");
     }

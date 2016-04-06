@@ -6,7 +6,8 @@ package com.mingzi.onenote.values;
 public class ConstantValue {
 	
 	public static final String DB_NAME = "note.db";
-	public static final String TABLE_NAME = "notes";
+	public static final String NOTE_TABLE_NAME = "notes";
+    public static final String MEDIA_TABLE_NAME = "medias";
 	public static final int VERSION = 1;
 	
 	public static class NoteMetaData {
@@ -17,7 +18,12 @@ public class ConstantValue {
 		
 		public static final String DEFAULT_ORDER = "_id desc";
 	}
-	
+
+    public static class MediaMetaData {
+        public static String MEDIA_PATH = "mediaPath";
+        public static String MEDIA_OWNER = "noteId";
+    }
+
 	public static final int THEME_BLUE = 0xff188ffc;
 	public static final int THEME_GREEN = 0xff8fd400;
 	public static final int THEME_YELLOW = 0xffffdd1e;

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NotePad</string>
+    <string name="app_name">OneNote</string>
     <string-array name="theme_name">
     	<item>天蓝</item>
     	<item>椰壳绿</item>
