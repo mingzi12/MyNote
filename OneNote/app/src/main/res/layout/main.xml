@@ -10,7 +10,7 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="45dp"
+        android:layout_height="50dp"
         android:background="#00CC00"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -41,7 +41,7 @@
             android:id="@+id/addbutton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="70dp"
+            android:layout_marginLeft="60dp"
             android:src="@drawable/add_light"
             />
 
