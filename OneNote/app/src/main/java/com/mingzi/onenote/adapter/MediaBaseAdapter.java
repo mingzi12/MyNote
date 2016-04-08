@@ -2,6 +2,7 @@ package com.mingzi.onenote.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.mingzi.onenote.R;
+import com.mingzi.onenote.util.MeidaDBAccess;
 import com.mingzi.onenote.util.MyBitmap;
 import com.mingzi.onenote.vo.Media;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -22,9 +25,13 @@ public class MediaBaseAdapter extends BaseAdapter {
     private List<Media> mMediaList;
     private Media mMedia;
     private Bitmap mBitmap;
+    private String path;
+    private File mFile;
+    private MeidaDBAccess mMeidaDBAccess;
     public MediaBaseAdapter(Context context, List<Media> mediaList) {
         mContext = context.getApplicationContext();
         mMediaList = mediaList;
+        mMeidaDBAccess = new MeidaDBAccess(mContext);
     }
 
     @Override
@@ -57,13 +64,23 @@ public class MediaBaseAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         mMedia = mMediaList.get(position);
-        mBitmap = MyBitmap.readBitMap(mMedia.getPath(), 6);
-        viewHolder.mImageView.setImageBitmap(mBitmap);
+        path = mMedia.getPath();
+        if (path.endsWith(".jpg")){
+            mBitmap = MyBitmap.readBitMap(path,8);
+        }
+        else if (path.endsWith(".mp4")){
+            mBitmap = MyBitmap.getVideoThumbnail(path,600,800, MediaStore.Images.Thumbnails.MICRO_KIND);
+        }
+            viewHolder.mImageView.setImageBitmap(mBitmap);
         return convertView;
     }
 
     static class ViewHolder{
         ImageView mImageView;
+    }
+
+    public void addItem(Media media){
+        mMediaList.add(media);
     }
 
     public void recycleBitmap(){

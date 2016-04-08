@@ -10,71 +10,86 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.mingzi.onenote.R;
 import com.mingzi.onenote.adapter.MediaBaseAdapter;
 import com.mingzi.onenote.util.MeidaDBAccess;
+import com.mingzi.onenote.util.MyBitmap;
 import com.mingzi.onenote.util.NoteDBAccess;
+import com.mingzi.onenote.values.ConstantValue;
 import com.mingzi.onenote.vo.Media;
 import com.mingzi.onenote.vo.Note;
 import com.mingzi.onenote.vo.PreferenceInfo;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
 
 public class EditActivity extends Activity implements AdapterView.OnItemClickListener {
-	
-	private LinearLayout editLayout;
-	private EditText noteTitleText;
-	private EditText noteContentText;
-	private int titleLength; //保存初始Title的长度，用于判断Title是否被修改
-	private int contentLength; // 保存内容的初始长度，用于判断内容是否变化
+
+    public static final String TAG = "EditATY-> ";
+
+    private ScrollView mScrollView;
+	private LinearLayout mLinearLayout;
+	private EditText noteTitle;
+	private EditText noteContent;
+	private int titleLength;    //保存初始Title的长度，用于判断Title是否被修改
+	private int contentLength;   // 保存内容的初始长度，用于判断内容是否变化
 	private Note note;
 
     private MediaBaseAdapter mMediaBaseAdapter;
     private MeidaDBAccess mMeidaDBAccess;
     private List<Media> mMediaList;
-    private ListView mListView;
 
+    private int currentNoteId = -1;
+    private String currentPath = null;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setTitle("返回");
-		setContentView(R.layout.edit);
+		setContentView(R.layout.activity_edit);
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
-		editLayout = (LinearLayout)findViewById(R.id.editlayout);
-        editLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
+        mScrollView = (ScrollView) findViewById(R.id.scrollView_edit);
+        mScrollView.setBackgroundColor(PreferenceInfo.themeColorValue);
+		mLinearLayout = (LinearLayout)findViewById(R.id.editlayout);
+        mLinearLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
 
-        noteTitleText = (EditText)findViewById(R.id.titleedit);
-		noteTitleText.setBackgroundColor(Color.parseColor("#ffffff"));
-        noteContentText = (EditText)findViewById(R.id.contentedit);
-		noteContentText.setBackgroundColor(PreferenceInfo.themeColorValue);
+        noteTitle = (EditText)findViewById(R.id.titleedit);
+		noteTitle.setBackgroundColor(Color.parseColor("#ffffff"));
+        noteContent = (EditText)findViewById(R.id.contentedit);
+		noteContent.setBackgroundColor(PreferenceInfo.themeColorValue);
 
 
 		Intent intent = this.getIntent();
 	    Bundle bundle = intent.getBundleExtra("noteBundle");
 	    note = (Note)bundle.getParcelable("note");
+        currentNoteId = note.getNoteId();
+        Log.d(TAG+ "onCreate", currentNoteId +"");
 	    contentLength = note.getNoteContent().length();
 		titleLength = note.getNoteTitle().length();
-	    noteTitleText.setText(note.getNoteTitle());
-	    noteContentText.setText(note.getNoteContent());
-		noteContentText.setSelection(noteContentText.getText().length());
+	    noteTitle.setText(note.getNoteTitle());
+	    noteContent.setText(note.getNoteContent());
+		noteContent.setSelection(noteContent.getText().length());
 
-        mListView = (ListView) findViewById(R.id.image_list);
-        mListView.setOnItemClickListener(this);
     }
 
     @Override
@@ -85,24 +100,28 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
 
     public void flush(){
         mMeidaDBAccess = new MeidaDBAccess(EditActivity.this);
-        //mMeidaDBAccess.insert();
-        mMediaList = mMeidaDBAccess.selectAll();
-        mMediaBaseAdapter = new MediaBaseAdapter(EditActivity.this,mMediaList);
-        mListView.setAdapter(mMediaBaseAdapter);
-        mMediaBaseAdapter.notifyDataSetChanged();
+        mMediaList = mMeidaDBAccess.selectAll(currentNoteId);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        for (Media media : mMediaList){
+            Log.d(TAG+"flush ",media.getPath());  // 调试
+            ImageView iv = new ImageView(EditActivity.this);
+            iv.setLayoutParams(layoutParams);
+            iv.setImageBitmap(MyBitmap.readBitMap(media.getPath(),4));
+            mLinearLayout.addView(iv);
+        }
     }
     @Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
 		super.onBackPressed();
-		if (noteContentText.getText().toString().length()!=contentLength || noteTitleText.getText().length()!=titleLength){
-			if (noteTitleText.getText().length()==0){
+		if (noteContent.getText().toString().length()!=contentLength || noteTitle.getText().length()!=titleLength){
+			if (noteTitle.getText().length()==0){
 				note.setNoteTitle("无标题");
 			}
 			else {
-				note.setNoteTitle(noteTitleText.getText().toString());
+				note.setNoteTitle(noteTitle.getText().toString());
 			}
-			String noteContent = noteContentText.getText().toString();
+			String noteContent = this.noteContent.getText().toString();
 			note.setNoteContent(noteContent);
 			note.setNoteDate(new Date());
 
@@ -125,13 +144,15 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater menuInflater = getMenuInflater();
-		menuInflater.inflate(R.menu.menu_edit,menu);
+		menuInflater.inflate(R.menu.menu_edit, menu);
 
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        File mediaFile;
 		switch (item.getItemId()) {
 			case R.id.delete_edit :
 				AlertDialog.Builder builder = new Builder(EditActivity.this);
@@ -163,14 +184,14 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
 				EditActivity.this.startActivity(iIntent);
 				break;
 			case  android.R.id.home :
-				if (noteContentText.getText().toString().length()!=contentLength ||
-						noteTitleText.getText().length()!=titleLength) {
-					if (noteTitleText.getText().length() == 0) {
+				if (noteContent.getText().toString().length()!=contentLength ||
+						noteTitle.getText().length()!=titleLength) {
+					if (noteTitle.getText().length() == 0) {
 						note.setNoteTitle("无标题");
 					} else {
-						note.setNoteTitle(noteTitleText.getText().toString());
+						note.setNoteTitle(noteTitle.getText().toString());
 					}
-					String noteContent = noteContentText.getText().toString();
+					String noteContent = this.noteContent.getText().toString();
 					note.setNoteContent(noteContent);
 					note.setNoteDate(new Date());
 
@@ -181,6 +202,34 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
 				}
 				finish();
 				break;
+            case R.id.capture_img_edit :
+                intent  = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                mediaFile = new File(getMediaDir(),System.currentTimeMillis()+".jpg");
+                if (!mediaFile.exists()){
+                    try {
+                        mediaFile.createNewFile();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+                currentPath = mediaFile.getAbsolutePath();
+                intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(mediaFile));
+                startActivityForResult(intent, ConstantValue.REQUEST_CODE_GET_PHOTO);
+                break;
+            case R.id.add_video_edit :
+                intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                mediaFile = new File(getMediaDir(),System.currentTimeMillis()+".mp4");
+                if (!mediaFile.exists()){
+                    try {
+                        mediaFile.createNewFile();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+                currentPath = mediaFile.getAbsolutePath();
+                intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(mediaFile));
+                startActivityForResult(intent,ConstantValue.REQUEST_CODE_GET_VIDEO);
+                break;
 			default :
 				break;
 		}
@@ -210,13 +259,47 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
         Media media = mMediaList.get(position);
         String path = media.getPath();
         Intent intent = new Intent(this,PhoneViewActivity.class);
-        intent.putExtra(PhoneViewActivity.EXTRA_PATH,path);
+        intent.putExtra(PhoneViewActivity.EXTRA_PATH, path);
         startActivity(intent);
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode) {
+            case ConstantValue.REQUEST_CODE_GET_PHOTO :
+            case ConstantValue.REQUEST_CODE_GET_VIDEO :
+                if (resultCode == RESULT_OK) {
+                    mMeidaDBAccess.insert(currentPath, this.currentNoteId);
+                    Log.d(TAG+"onResult ", currentNoteId +""); //调试
+                }
+                else if (resultCode == RESULT_CANCELED) {
+                    File file = new File(currentPath);
+                    if (file.exists()&&file.length()==0) {
+                        file.delete();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public File getMediaDir() {
+        File dir = new File(Environment.getExternalStorageDirectory(),
+                "OneNote");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return dir;
+    }
+
+
+    @Override
     protected void onDestroy() {
-        mMediaBaseAdapter.recycleBitmap();
+     //   mMediaBaseAdapter.recycleBitmap();
         super.onDestroy();
     }
 }

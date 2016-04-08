@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.mingzi.onenote.R;
@@ -24,53 +25,56 @@ import com.mingzi.onenote.vo.PreferenceInfo;
 import java.util.Date;
 
 public class NewNoteActivity extends Activity {
+
+    private ScrollView mScrollView;
+	private LinearLayout mLinearLayout;
+	private EditText noteTitle;
+	private EditText noteContent;
 	
-	private LinearLayout editLayout;
-	private EditText noteTitleText;
-	private EditText noteContentText;
-	
-	private boolean flagTextChanged = true;
+	private boolean isTextChanged = true;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setTitle("返回");
-		setContentView(R.layout.edit);
+		setContentView(R.layout.activity_edit);
 		ActionBar mActionBar = getActionBar();
 		mActionBar.setDisplayHomeAsUpEnabled(true);
-		editLayout = (LinearLayout)findViewById(R.id.editlayout);
-        editLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
+        mScrollView = (ScrollView) findViewById(R.id.scrollView_edit);
+        mScrollView.setBackgroundColor(PreferenceInfo.themeColorValue);
+		mLinearLayout = (LinearLayout)findViewById(R.id.editlayout);
+        mLinearLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
         
-        noteTitleText = (EditText)findViewById(R.id.titleedit);
-		noteTitleText.setBackgroundColor(Color.parseColor("#ffffff"));
-        noteContentText = (EditText)findViewById(R.id.contentedit);
-		noteContentText.setBackgroundColor(PreferenceInfo.themeColorValue);
-        noteContentText.requestFocus();
-        noteContentText.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				
-				if (flagTextChanged) {
-					if (noteContentText.getText().toString().length()<3)
-						noteTitleText.setText("");
-					else
-					noteTitleText.setText(noteContentText.getText().subSequence(0,5));
-				}
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-					if (!noteTitleText.getText().toString().equals(noteContentText.getText().toString())) {
-					flagTextChanged = false;
-				}
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-				
-			}
-		});
+        noteTitle = (EditText)findViewById(R.id.titleedit);
+		noteTitle.setBackgroundColor(Color.parseColor("#ffffff"));
+        noteContent = (EditText)findViewById(R.id.contentedit);
+		noteContent.setBackgroundColor(PreferenceInfo.themeColorValue);
+        noteContent.requestFocus();
+        noteContent.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if (isTextChanged) {
+                    if (noteContent.getText().toString().length() < 3)
+                        noteTitle.setText("");
+                    else
+                        noteTitle.setText(noteContent.getText().subSequence(0, 5));
+                }
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                if (!noteTitle.getText().toString().equals(noteContent.getText().toString())) {
+                    isTextChanged = false;
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         
 	}
 	
@@ -79,8 +83,8 @@ public class NewNoteActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onBackPressed();
 		
-		String noteTitle = noteTitleText.getText().toString();
-		String noteContent = noteContentText.getText().toString();
+		String noteTitle = this.noteTitle.getText().toString();
+		String noteContent = this.noteContent.getText().toString();
 		
 		if(noteTitle.toString().trim().equals("") && noteContent.toString().trim().equals("")) {
 			NewNoteActivity.this.finish();
@@ -112,7 +116,7 @@ public class NewNoteActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater menuInflater = getMenuInflater();
-		menuInflater.inflate(R.menu.new_menu,menu);
+		menuInflater.inflate(R.menu.menu_new,menu);
 				
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -129,8 +133,8 @@ public class NewNoteActivity extends Activity {
 				NewNoteActivity.this.finish();
 				break;
 			case android.R.id.home :
-				String noteTitle = noteTitleText.getText().toString();
-				String noteContent = noteContentText.getText().toString();
+				String noteTitle = this.noteTitle.getText().toString();
+				String noteContent = this.noteContent.getText().toString();
 
 				if(noteTitle.toString().trim().equals("") && noteContent.toString().trim().equals("")) {
 					NewNoteActivity.this.finish();

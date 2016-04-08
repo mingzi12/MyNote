@@ -3,21 +3,35 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.mingzi.onenote.activity.NewNoteActivity">
     <item
+        android:id="@+id/add_extra_edit"
+        android:orderInCategory="100"
+        android:icon="@drawable/black_shutcuts_attach"
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/capture_img_edit"
+        android:orderInCategory="100"
+        android:icon="@drawable/black_shutcuts_camera"
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/add_video_edit"
+        android:title="录视频"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/delete_edit"
         android:icon="@drawable/delete_light"
-        android:title="删除"
+        android:title="   删除"
         app:showAsAction="never"/>
     <item
         android:id="@+id/send_edit"
-        android:title="发送"
+        android:title="   发送"
         app:showAsAction="never"/>
     <item
         android:id="@+id/descrition_edit"
-        android:title="详情"
+        android:title="   详情"
         app:showAsAction="never"/>
     <item
         android:id="@+id/alarm_edit"
         android:icon="@drawable/alarm_light"
-        android:title="提醒"
+        android:title="   提醒"
         app:showAsAction="never"/>
 </menu>

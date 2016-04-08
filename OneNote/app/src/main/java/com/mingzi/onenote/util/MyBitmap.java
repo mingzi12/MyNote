@@ -7,6 +7,7 @@ package com.mingzi.onenote.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -46,6 +47,17 @@ public class MyBitmap {
         bm.compress(Bitmap.CompressFormat.JPEG, 80, bos);
         bos.flush();
         bos.close();
+    }
+
+    public static Bitmap getVideoThumbnail(String videoPath, int width, int height, int kind) {
+        Bitmap bitmap = null;
+        // 获取视频的缩略图
+        bitmap = ThumbnailUtils.createVideoThumbnail(videoPath, kind);
+        System.out.println("w" + bitmap.getWidth());
+        System.out.println("h" + bitmap.getHeight());
+        bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height,
+                ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+        return bitmap;
     }
 
 }

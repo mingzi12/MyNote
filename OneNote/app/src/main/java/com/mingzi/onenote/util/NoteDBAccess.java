@@ -19,10 +19,10 @@ public class NoteDBAccess {
 	 * 列名
 	 */
 	private static String[] colNames = new String[]{
-		ConstantValue.NoteMetaData.NOTE_ID,
-		ConstantValue.NoteMetaData.NOTE_TITLE,
-		ConstantValue.NoteMetaData.NOTE_CONTENT,
-		ConstantValue.NoteMetaData.NOTE_DATE
+		ConstantValue.NOTE_ID,
+		ConstantValue.NOTE_TITLE,
+		ConstantValue.NOTE_CONTENT,
+		ConstantValue.NOTE_DATE
 	};
 	
 	public NoteDBAccess(Context context) {
@@ -37,9 +37,9 @@ public class NoteDBAccess {
 		db = mDbOpenHelper.getWritableDatabase();
 		
 		ContentValues cv = new ContentValues();
-		cv.put(ConstantValue.NoteMetaData.NOTE_TITLE, note.getNoteTitle());
-		cv.put(ConstantValue.NoteMetaData.NOTE_CONTENT, note.getNoteContent());
-		cv.put(ConstantValue.NoteMetaData.NOTE_DATE,
+		cv.put(ConstantValue.NOTE_TITLE, note.getNoteTitle());
+		cv.put(ConstantValue.NOTE_CONTENT, note.getNoteContent());
+		cv.put(ConstantValue.NOTE_DATE,
 				ConvertStringAndDate.datetoString(note.getNoteDate()));
 		db.insert(ConstantValue.NOTE_TABLE_NAME, null, cv);
 	}
@@ -53,7 +53,7 @@ public class NoteDBAccess {
 		db = mDbOpenHelper.getWritableDatabase();
 		
 		db.delete(ConstantValue.NOTE_TABLE_NAME,
-				ConstantValue.NoteMetaData.NOTE_ID + "=" + note.getNoteId(), null);
+				ConstantValue.NOTE_ID + "=" + note.getNoteId(), null);
 	}
 	
 	/**
@@ -64,12 +64,12 @@ public class NoteDBAccess {
 		db = mDbOpenHelper.getWritableDatabase();
 		
 		ContentValues cv = new ContentValues();
-		cv.put(ConstantValue.NoteMetaData.NOTE_TITLE, note.getNoteTitle());
-		cv.put(ConstantValue.NoteMetaData.NOTE_CONTENT, note.getNoteContent());
-		cv.put(ConstantValue.NoteMetaData.NOTE_DATE,
+		cv.put(ConstantValue.NOTE_TITLE, note.getNoteTitle());
+		cv.put(ConstantValue.NOTE_CONTENT, note.getNoteContent());
+		cv.put(ConstantValue.NOTE_DATE,
 				ConvertStringAndDate.datetoString(note.getNoteDate()));
 		db.update(ConstantValue.NOTE_TABLE_NAME, cv,
-				ConstantValue.NoteMetaData.NOTE_ID + "=" + note.getNoteId(), null);
+				ConstantValue.NOTE_ID + "=" + note.getNoteId(), null);
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public class NoteDBAccess {
 		db = mDbOpenHelper.getReadableDatabase();
 		Cursor c = db.query(ConstantValue.NOTE_TABLE_NAME, colNames,
 				selection, selectionArgs, null, null, 
-				ConstantValue.NoteMetaData.DEFAULT_ORDER);
+				ConstantValue.DEFAULT_ORDER);
 		
 		return c;
 	}
@@ -96,10 +96,10 @@ public class NoteDBAccess {
 		List<Note> noteList = new ArrayList<Note>();
 		
 		while (c.moveToNext()) {
-			int noteID = c.getInt(0);
-			String noteTitle = c.getString(1);
-			String noteContent = c.getString(2);
-			String noteDate = c.getString(3);
+			int noteID = c.getInt(c.getColumnIndex(ConstantValue.NOTE_ID));
+			String noteTitle = c.getString(c.getColumnIndex(ConstantValue.NOTE_TITLE));
+			String noteContent = c.getString(c.getColumnIndex(ConstantValue.NOTE_CONTENT));
+			String noteDate = c.getString(c.getColumnIndex(ConstantValue.NOTE_DATE));
 			
 			noteList.add(new Note(noteID, noteTitle, noteContent, ConvertStringAndDate.stringtodate(noteDate)));
 		}

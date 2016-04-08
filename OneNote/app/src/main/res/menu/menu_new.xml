@@ -8,10 +8,14 @@
         android:icon="@drawable/black_shutcuts_attach"
         android:showAsAction="always"/>
     <item
-        android:id="@+id/camera_new"
+        android:id="@+id/capture_img_new"
         android:orderInCategory="100"
         android:icon="@drawable/black_shutcuts_camera"
         android:showAsAction="always"/>
+    <item
+        android:id="@+id/capture_video_new"
+        android:title="录视频"
+        app:showAsAction="never"/>
     <item
         android:id="@+id/delete_new"
         android:orderInCategory="100"

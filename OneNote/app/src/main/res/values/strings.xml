@@ -2,13 +2,14 @@
 <resources>
     <string name="app_name">OneNote</string>
     <string-array name="theme_name">
-    	<item>天蓝</item>
-    	<item>椰壳绿</item>
-    	<item>芒果</item>
-    	<item>胭脂红</item>
-    	<item>驼绒</item>
-    	<item>鲜橙</item>
-    	<item>紫丁香</item>
+        <item>天蓝</item>
+        <item>椰壳绿</item>
+        <item>芒果</item>
+        <item>胭脂红</item>
+        <item>驼绒</item>
+        <item>鲜橙</item>
+        <item>紫丁香</item>
     </string-array>
-	<string name="action_settings">settings</string>
+    <string name="action_settings">settings</string>
+    <string name="title_activity_video_viewer">VideoViewerActivity</string>
 </resources>

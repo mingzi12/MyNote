@@ -30,7 +30,7 @@ public class SearchActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        this.setContentView(R.layout.search);
+        this.setContentView(R.layout.activity_search);
 
         access = new NoteDBAccess(this);
 

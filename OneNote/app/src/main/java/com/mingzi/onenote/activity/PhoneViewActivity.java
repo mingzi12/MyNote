@@ -21,7 +21,7 @@ public class PhoneViewActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("返回");
-        setContentView(R.layout.activity_phone_view);
+        setContentView(R.layout.activity_phone_viewer);
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         imageView = (ImageView) findViewById(R.id.phone_view_image);

@@ -36,14 +36,14 @@ public class DBOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("CREATE TABLE " + ConstantValue.NOTE_TABLE_NAME + "("
-                + ConstantValue.NoteMetaData.NOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + ConstantValue.NoteMetaData.NOTE_TITLE + " TEXT NOT NULL, "
-                + ConstantValue.NoteMetaData.NOTE_CONTENT + " TEXT NOT NULL, "
-                + ConstantValue.NoteMetaData.NOTE_DATE + " DATE)");
+                + ConstantValue.NOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + ConstantValue.NOTE_TITLE + " TEXT NOT NULL, "
+                + ConstantValue.NOTE_CONTENT + " TEXT NOT NULL, "
+                + ConstantValue.NOTE_DATE + " DATE)");
         db.execSQL("CREATE TABLE "+ConstantValue.MEDIA_TABLE_NAME+"("
-        + ConstantValue.NoteMetaData.NOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + ConstantValue.MediaMetaData.MEDIA_PATH + " TEXT NOT NULL,"
-        + ConstantValue.MediaMetaData.MEDIA_OWNER + " INTEGER NOT NULL DEFAULT 0)");
+        + ConstantValue.NOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + ConstantValue.MEDIA_PATH + " TEXT NOT NULL,"
+        + ConstantValue.MEDIA_OWNER_ID + " INTEGER NOT NULL DEFAULT 0)");
 	}
 	
 	/**

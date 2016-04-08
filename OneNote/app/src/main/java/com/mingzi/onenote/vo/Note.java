@@ -41,8 +41,7 @@ public class Note implements Parcelable {
 	 * @param noteContent
 	 * @param noteDate
 	 */
-	public Note(int noteId, String noteTitle, String noteContent,
-				Date noteDate) {
+	public Note(int noteId, String noteTitle, String noteContent, Date noteDate) {
 		this.noteId = noteId;
 		this.noteTitle = noteTitle;
 		this.noteContent = noteContent;

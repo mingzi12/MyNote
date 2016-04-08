@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -44,7 +45,9 @@ import java.util.List;
  *
  */
 public class MainActivity extends Activity {
-	
+
+    public static final String TAG = "EditActivity ----> ";
+
 	private TextView noteNumTextView;
 	private ListView noteListView;
 	private ImageView imageViewAdd, imageViewSearch;
@@ -61,7 +64,7 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_main);
         
         noteNumTextView = (TextView)findViewById(R.id.numtext);
         
@@ -218,10 +221,9 @@ public class MainActivity extends Activity {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			note = mNoteList.get(position);
-
+            Log.d(TAG,"position: "+position+ " id " +id);
 			Intent intent = new Intent();
 			intent.setClass(MainActivity.this, EditActivity.class);
-
 			Bundle bundle = new Bundle();
 	    	bundle.putParcelable("note", note);
 	    	intent.putExtra("noteBundle", bundle);

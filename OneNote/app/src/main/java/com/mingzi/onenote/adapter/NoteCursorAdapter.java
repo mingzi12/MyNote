@@ -50,14 +50,14 @@ public class NoteCursorAdapter extends CursorAdapter {
 	public void bindView(View view, Context context, Cursor cursor) {
 		TextView tvNoteTitle = (TextView)view.findViewById(R.id.itemtitle);
 		TextView tvNoteDate = (TextView)view.findViewById(R.id.itemdate);
-		tvNoteTitle.setText(cursor.getString(cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_TITLE)));
-		tvNoteDate.setText(cursor.getString(cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_DATE)));
+		tvNoteTitle.setText(cursor.getString(cursor.getColumnIndex(ConstantValue.NOTE_TITLE)));
+		tvNoteDate.setText(cursor.getString(cursor.getColumnIndex(ConstantValue.NOTE_DATE)));
 		
 		Note note = new Note();
-		note.setNoteId(this.cursor.getInt(this.cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_ID)));
-		note.setNoteTitle(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_TITLE)));
-		note.setNoteContent(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_CONTENT)));
-		note.setNoteDate(ConvertStringAndDate.stringtodate(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_DATE))));
+		note.setNoteId(this.cursor.getInt(this.cursor.getColumnIndex(ConstantValue.NOTE_ID)));
+		note.setNoteTitle(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.NOTE_TITLE)));
+		note.setNoteContent(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.NOTE_CONTENT)));
+		note.setNoteDate(ConvertStringAndDate.stringtodate(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.NOTE_DATE))));
 		
 		list.add(note);
 	}
@@ -70,7 +70,7 @@ public class NoteCursorAdapter extends CursorAdapter {
 
 	@Override
 	public CharSequence convertToString(Cursor cursor) {
-		String name = cursor.getString(cursor.getColumnIndex(ConstantValue.NoteMetaData.NOTE_TITLE));
+		String name = cursor.getString(cursor.getColumnIndex(ConstantValue.NOTE_TITLE));
 		return name;
 	}
 
@@ -85,8 +85,8 @@ public class NoteCursorAdapter extends CursorAdapter {
 		list.clear();
 		if(null != constraint){
 			String[] selectionArgs = new String[]{"%"+constraint.toString()+"%", "%"+constraint.toString()+"%"};
-			String selection = ConstantValue.NoteMetaData.NOTE_TITLE+" like ? or "
-                    +ConstantValue.NoteMetaData.NOTE_CONTENT+ " like ?";
+			String selection = ConstantValue.NOTE_TITLE+" like ? or "
+                    +ConstantValue.NOTE_CONTENT+ " like ?";
 			
 			cursor = new NoteDBAccess(context).selectAllNoteCursor(selection, selectionArgs);
 		}
