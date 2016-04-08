@@ -58,9 +58,9 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     private List<Media> mMediaList;
 
     private List<Bitmap> mBitmaps;
-    private List<String> paths;  //存放图片或者视频的路径
-    private int currentNoteId = -1;
-    private String currentPath = null;
+    private List<String> paths;  //存放和当前便签匹配的所有图片或者视频的路径
+    private int currentNoteId = -1;  //保存当前文字内容便签的ID
+    private String currentPath = null; //保存当前图片或者视频的路径
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -113,25 +113,46 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         for (int i=0;i<len;i++){
             path = mMediaList.get(i).getPath();
             paths.add(path);
-            Bitmap bitmap = MyBitmap.readBitMap(path,4);
-            mBitmaps.add(bitmap);
-            Log.d(TAG + "flush ", path);  // 调试
-            ImageView imageView = new ImageView(EditActivity.this);
-            imageView.setId(i);
-            imageView.setLayoutParams(layoutParams);
-            imageView.setImageBitmap(bitmap);
-            imageView.setOnClickListener(this);
-            mLinearLayout.addView(imageView);
+            if (path.endsWith(".jpg")){
+                Bitmap bitmap = MyBitmap.readBitMap(path,4);
+                mBitmaps.add(bitmap);
+                Log.d(TAG + "flush ", path);  // 调试
+                ImageView imageView = new ImageView(EditActivity.this);
+                imageView.setId(i);
+                imageView.setLayoutParams(layoutParams);
+                imageView.setImageBitmap(bitmap);
+                imageView.setOnClickListener(this);
+                mLinearLayout.addView(imageView);
+            }
+            else if (path.endsWith(".mp4")){
+                Bitmap bitmap = MyBitmap.getVideoThumbnail(path, 900, 400, MediaStore.Images.Thumbnails.MICRO_KIND);
+                mBitmaps.add(bitmap);
+                Log.d(TAG + "flush ", path);  // 调试
+                ImageView imageView = new ImageView(EditActivity.this);
+                imageView.setId(i);
+                imageView.setLayoutParams(layoutParams);
+                imageView.setImageBitmap(bitmap);
+                imageView.setOnClickListener(this);
+                mLinearLayout.addView(imageView);
+            }
+
         }
     }
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(EditActivity.this,PhoneViewActivity.class);
-        intent.putExtra(PhoneViewActivity.EXTRA_PATH,paths.get(v.getId()));
-        startActivity(intent);
-
-
+        Intent intent;
+        int viewId = v.getId();
+        if (paths.get(viewId).endsWith(".jpg")){
+            intent= new Intent(EditActivity.this,PhoneViewActivity.class);
+            intent.putExtra(PhoneViewActivity.EXTRA_PATH,paths.get(viewId));
+            startActivity(intent);
+        }
+        else if (paths.get(viewId).endsWith(".mp4")){
+            intent= new Intent(EditActivity.this,VideoViewerActivity.class);
+            intent.putExtra(PhoneViewActivity.EXTRA_PATH,paths.get(viewId));
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -209,6 +230,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 				builder.setNegativeButton("取消", null);
 				builder.create().show();
 				break;
+
 			case R.id.send_edit :
 				Intent iIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"));
 
@@ -220,6 +242,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 				}
 				EditActivity.this.startActivity(iIntent);
 				break;
+
 			case  android.R.id.home :
 				if (noteContent.getText().toString().length()!=contentLength ||
 						noteTitle.getText().length()!=titleLength) {
@@ -239,6 +262,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 				}
 				finish();
 				break;
+
             case R.id.capture_img_edit :
                 intent  = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 mediaFile = new File(getMediaDir(),System.currentTimeMillis()+".jpg");
@@ -253,6 +277,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(mediaFile));
                 startActivityForResult(intent, ConstantValue.REQUEST_CODE_GET_PHOTO);
                 break;
+
             case R.id.add_video_edit :
                 intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 mediaFile = new File(getMediaDir(),System.currentTimeMillis()+".mp4");
@@ -267,6 +292,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(mediaFile));
                 startActivityForResult(intent,ConstantValue.REQUEST_CODE_GET_VIDEO);
                 break;
+
 			default :
 				break;
 		}
@@ -296,17 +322,40 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case ConstantValue.REQUEST_CODE_GET_PHOTO :
-            case ConstantValue.REQUEST_CODE_GET_VIDEO :
                 if (resultCode == RESULT_OK) {
                     mMeidaDBAccess.insert(currentPath, this.currentNoteId);
+                    paths.add(currentPath);
                     Log.d(TAG + "onResult ", currentNoteId + ""); //调试
                     ImageView imageView = new ImageView(EditActivity.this);
-                    paths.add(currentPath);
                     imageView.setId(paths.size() - 1);
                     imageView.setOnClickListener(this);
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     imageView.setLayoutParams(layoutParams);
                     Bitmap bitmap = MyBitmap.readBitMap(currentPath,4);
+                    mBitmaps.add(bitmap);
+                    imageView.setImageBitmap(bitmap);
+                    mLinearLayout.addView(imageView);
+
+                }
+                else if (resultCode == RESULT_CANCELED) {
+                    File file = new File(currentPath);
+                    if (file.exists()&&file.length()==0) {
+                        file.delete();
+                    }
+                }
+                break;
+
+            case ConstantValue.REQUEST_CODE_GET_VIDEO :
+                if (resultCode == RESULT_OK) {
+                    mMeidaDBAccess.insert(currentPath, this.currentNoteId);
+                    paths.add(currentPath);
+                    Log.d(TAG + "onResult ", currentNoteId + ""); //调试
+                    ImageView imageView = new ImageView(EditActivity.this);
+                    imageView.setId(paths.size() - 1);
+                    imageView.setOnClickListener(this);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    imageView.setLayoutParams(layoutParams);
+                    Bitmap bitmap = MyBitmap.getVideoThumbnail(currentPath, 900, 600, MediaStore.Images.Thumbnails.MICRO_KIND);
                     mBitmaps.add(bitmap);
                     imageView.setImageBitmap(bitmap);
                     mLinearLayout.addView(imageView);
@@ -345,7 +394,9 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     protected void onDestroy() {
         if (mBitmaps!=null){
             for (Bitmap bitmap : mBitmaps){
-                bitmap.recycle();
+                if (bitmap!=null){
+                    bitmap.recycle();
+                }
             }
         }
         super.onDestroy();
