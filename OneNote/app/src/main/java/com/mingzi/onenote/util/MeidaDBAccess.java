@@ -86,6 +86,13 @@ public class MeidaDBAccess {
         return true;
     }
 
+    public boolean delete(int noteId){
+        mSQLiteDatabase = mDBOpenHelper.getWritableDatabase();
+        mSQLiteDatabase.delete(ConstantValue.MEDIA_TABLE_NAME,ConstantValue.MEDIA_OWNER_ID+"=?",
+                new String[]{noteId +""});
+        close();
+        return true;
+    }
     public void fixList(){
         Iterator<Media> iterator = mList.iterator();
         while (iterator.hasNext()){

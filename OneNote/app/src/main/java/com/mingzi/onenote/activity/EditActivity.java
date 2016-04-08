@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -43,10 +42,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class EditActivity extends Activity implements AdapterView.OnItemClickListener {
+public class EditActivity extends Activity implements ImageView.OnClickListener {
 
     public static final String TAG = "EditATY-> ";
-
+    public static final String filesPath = Environment.getExternalStorageDirectory()+"OneNote"+File.separator;
     private ScrollView mScrollView;
 	private LinearLayout mLinearLayout;
 	private EditText noteTitle;
@@ -59,6 +58,7 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
     private List<Media> mMediaList;
 
     private List<Bitmap> mBitmaps;
+    private List<String> paths;  //存放图片或者视频的路径
     private int currentNoteId = -1;
     private String currentPath = null;
 	@Override
@@ -106,20 +106,34 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
         mMeidaDBAccess = new MeidaDBAccess(EditActivity.this);
         mMediaList = mMeidaDBAccess.selectAll(currentNoteId);
         mBitmaps = new ArrayList<>();
+        paths = new ArrayList<>();
         int len = mMediaList.size();
         String path;
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         for (int i=0;i<len;i++){
             path = mMediaList.get(i).getPath();
+            paths.add(path);
             Bitmap bitmap = MyBitmap.readBitMap(path,4);
             mBitmaps.add(bitmap);
             Log.d(TAG + "flush ", path);  // 调试
             ImageView imageView = new ImageView(EditActivity.this);
+            imageView.setId(i);
             imageView.setLayoutParams(layoutParams);
             imageView.setImageBitmap(bitmap);
+            imageView.setOnClickListener(this);
             mLinearLayout.addView(imageView);
         }
     }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(EditActivity.this,PhoneViewActivity.class);
+        intent.putExtra(PhoneViewActivity.EXTRA_PATH,paths.get(v.getId()));
+        startActivity(intent);
+
+
+    }
+
     @Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
@@ -173,7 +187,20 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
 					public void onClick(DialogInterface dialog, int which) {
 						NoteDBAccess access = new NoteDBAccess(EditActivity.this);
 						access.deleteNote(note);
-
+                        mMeidaDBAccess.delete(currentNoteId);
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                super.run();
+                                File file;
+                                for (String fileStr : paths){
+                                    file = new File(fileStr);
+                                    if (file.exists()){
+                                        file.delete();
+                                    }
+                                }
+                            }
+                        }.start();
 						dialog.dismiss();
 						Toast.makeText(EditActivity.this, "已删除", Toast.LENGTH_LONG).show();
 						EditActivity.this.finish();
@@ -264,18 +291,9 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
 		return super.onMenuOpened(featureId, menu);
 	}
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Media media = mMediaList.get(position);
-        String path = media.getPath();
-        Intent intent = new Intent(this,PhoneViewActivity.class);
-        intent.putExtra(PhoneViewActivity.EXTRA_PATH, path);
-        startActivity(intent);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         switch (requestCode) {
             case ConstantValue.REQUEST_CODE_GET_PHOTO :
             case ConstantValue.REQUEST_CODE_GET_VIDEO :
@@ -283,6 +301,9 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
                     mMeidaDBAccess.insert(currentPath, this.currentNoteId);
                     Log.d(TAG + "onResult ", currentNoteId + ""); //调试
                     ImageView imageView = new ImageView(EditActivity.this);
+                    paths.add(currentPath);
+                    imageView.setId(paths.size() - 1);
+                    imageView.setOnClickListener(this);
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     imageView.setLayoutParams(layoutParams);
                     Bitmap bitmap = MyBitmap.readBitMap(currentPath,4);
