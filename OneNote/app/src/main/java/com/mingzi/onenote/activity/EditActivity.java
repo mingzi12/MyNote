@@ -7,6 +7,7 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,7 +28,6 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.mingzi.onenote.R;
-import com.mingzi.onenote.adapter.MediaBaseAdapter;
 import com.mingzi.onenote.util.MeidaDBAccess;
 import com.mingzi.onenote.util.MyBitmap;
 import com.mingzi.onenote.util.NoteDBAccess;
@@ -39,6 +39,7 @@ import com.mingzi.onenote.vo.PreferenceInfo;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -54,10 +55,10 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
 	private int contentLength;   // 保存内容的初始长度，用于判断内容是否变化
 	private Note note;
 
-    private MediaBaseAdapter mMediaBaseAdapter;
     private MeidaDBAccess mMeidaDBAccess;
     private List<Media> mMediaList;
 
+    private List<Bitmap> mBitmaps;
     private int currentNoteId = -1;
     private String currentPath = null;
 	@Override
@@ -94,20 +95,29 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
 
     @Override
     protected void onResume() {
-        flush();
+        if (mBitmaps==null){
+            flush();
+        }
         super.onResume();
     }
 
     public void flush(){
+
         mMeidaDBAccess = new MeidaDBAccess(EditActivity.this);
         mMediaList = mMeidaDBAccess.selectAll(currentNoteId);
+        mBitmaps = new ArrayList<>();
+        int len = mMediaList.size();
+        String path;
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        for (Media media : mMediaList){
-            Log.d(TAG+"flush ",media.getPath());  // 调试
-            ImageView iv = new ImageView(EditActivity.this);
-            iv.setLayoutParams(layoutParams);
-            iv.setImageBitmap(MyBitmap.readBitMap(media.getPath(),4));
-            mLinearLayout.addView(iv);
+        for (int i=0;i<len;i++){
+            path = mMediaList.get(i).getPath();
+            Bitmap bitmap = MyBitmap.readBitMap(path,4);
+            mBitmaps.add(bitmap);
+            Log.d(TAG + "flush ", path);  // 调试
+            ImageView imageView = new ImageView(EditActivity.this);
+            imageView.setLayoutParams(layoutParams);
+            imageView.setImageBitmap(bitmap);
+            mLinearLayout.addView(imageView);
         }
     }
     @Override
@@ -271,7 +281,15 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
             case ConstantValue.REQUEST_CODE_GET_VIDEO :
                 if (resultCode == RESULT_OK) {
                     mMeidaDBAccess.insert(currentPath, this.currentNoteId);
-                    Log.d(TAG+"onResult ", currentNoteId +""); //调试
+                    Log.d(TAG + "onResult ", currentNoteId + ""); //调试
+                    ImageView imageView = new ImageView(EditActivity.this);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    imageView.setLayoutParams(layoutParams);
+                    Bitmap bitmap = MyBitmap.readBitMap(currentPath,4);
+                    mBitmaps.add(bitmap);
+                    imageView.setImageBitmap(bitmap);
+                    mLinearLayout.addView(imageView);
+
                 }
                 else if (resultCode == RESULT_CANCELED) {
                     File file = new File(currentPath);
@@ -296,10 +314,19 @@ public class EditActivity extends Activity implements AdapterView.OnItemClickLis
         return dir;
     }
 
+    @Override
+    protected void onPause() {
+
+        super.onPause();
+    }
 
     @Override
     protected void onDestroy() {
-     //   mMediaBaseAdapter.recycleBitmap();
+        if (mBitmaps!=null){
+            for (Bitmap bitmap : mBitmaps){
+                bitmap.recycle();
+            }
+        }
         super.onDestroy();
     }
 }
