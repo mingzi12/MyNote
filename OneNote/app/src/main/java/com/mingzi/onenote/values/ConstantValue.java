@@ -34,9 +34,9 @@ public class ConstantValue {
      * @MEDIA_OWNER 多媒体所属便签
      * */
 
-    public static String MEDIA_PATH = "mediaPath";
-    public static String MEDIA_OWNER_ID = "noteId";
-
+    public static final String MEDIA_PATH = "mediaPath";
+    public static final String MEDIA_OWNER_ID = "noteId";
+    public static final String MEDIA_DATE ="mediaDate";
     /**
      * 记事本多媒体信息字段
      * @PHOTO  照片类型

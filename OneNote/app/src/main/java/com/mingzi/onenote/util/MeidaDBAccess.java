@@ -36,11 +36,12 @@ public class MeidaDBAccess {
 
     }
 
-    public void insert(String path, int noteId){
+    public void insert(String path, int noteId, String dateStr){
         mSQLiteDatabase = mDBOpenHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(ConstantValue.MEDIA_PATH, path);
         contentValues.put(ConstantValue.MEDIA_OWNER_ID,noteId);
+        contentValues.put(ConstantValue.MEDIA_DATE,dateStr);
         mSQLiteDatabase.insert(ConstantValue.MEDIA_TABLE_NAME, null, contentValues);
         closeDB();
     }
@@ -63,9 +64,10 @@ public class MeidaDBAccess {
     public List selectAll(int noteId){
         Cursor cursor = query(noteId);
         while (cursor.moveToNext()){
-            Log.d(TAG+"selectAll",cursor.getString(1));
+            Log.d(TAG + "selectAll", cursor.getString(1));
             Media media = new Media();
             media.setPath(cursor.getString(cursor.getColumnIndex(ConstantValue.MEDIA_PATH)));
+            media.setDate(ConvertStringAndDate.stringtodate(cursor.getString(cursor.getColumnIndex(ConstantValue.MEDIA_DATE))));
             mList.add(media);
         }
         close();

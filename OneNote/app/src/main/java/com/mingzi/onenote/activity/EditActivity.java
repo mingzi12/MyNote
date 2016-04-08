@@ -27,6 +27,7 @@ import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.mingzi.onenote.R;
+import com.mingzi.onenote.util.ConvertStringAndDate;
 import com.mingzi.onenote.util.MeidaDBAccess;
 import com.mingzi.onenote.util.MyBitmap;
 import com.mingzi.onenote.util.NoteDBAccess;
@@ -112,11 +113,12 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         for (int i=0;i<len;i++){
             path = mMediaList.get(i).getPath();
+            Log.d(TAG + "flush ", mMediaList.get(i).getDate().toString());  // 调试
+
             paths.add(path);
             if (path.endsWith(".jpg")){
                 Bitmap bitmap = MyBitmap.readBitMap(path,4);
                 mBitmaps.add(bitmap);
-                Log.d(TAG + "flush ", path);  // 调试
                 ImageView imageView = new ImageView(EditActivity.this);
                 imageView.setId(i);
                 imageView.setLayoutParams(layoutParams);
@@ -323,7 +325,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         switch (requestCode) {
             case ConstantValue.REQUEST_CODE_GET_PHOTO :
                 if (resultCode == RESULT_OK) {
-                    mMeidaDBAccess.insert(currentPath, this.currentNoteId);
+                    mMeidaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(new Date()));
                     paths.add(currentPath);
                     Log.d(TAG + "onResult ", currentNoteId + ""); //调试
                     ImageView imageView = new ImageView(EditActivity.this);
@@ -347,7 +349,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
             case ConstantValue.REQUEST_CODE_GET_VIDEO :
                 if (resultCode == RESULT_OK) {
-                    mMeidaDBAccess.insert(currentPath, this.currentNoteId);
+                    mMeidaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(new Date()));
                     paths.add(currentPath);
                     Log.d(TAG + "onResult ", currentNoteId + ""); //调试
                     ImageView imageView = new ImageView(EditActivity.this);

@@ -241,7 +241,6 @@ public class MainActivity extends Activity {
 			ContextMenuInfo menuInfo) {
 		// TODO Auto-generated method stub
 		super.onCreateContextMenu(menu, v, menuInfo);
-
 		menu.setHeaderIcon(R.drawable.option_light);
 		menu.setHeaderTitle("日志选项");
 		menu.add(0, 1, 1, "删除");
