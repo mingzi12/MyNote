@@ -48,8 +48,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     public static final String TAG = "EditATY-> ";
     private ScrollView mScrollView;
 	private LinearLayout mLinearLayout;
-	private EditText noteTitle;
-	private EditText noteContent;
+	private EditText mTitleEdit;
+	private EditText mContentEdit;
 	private int titleLength;     // 保存初始Title的长度，用于判断Title是否被修改
 	private int contentLength;   // 保存内容的初始长度，用于判断内容是否变化
 	private Note note;
@@ -75,10 +75,10 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 		mLinearLayout = (LinearLayout)findViewById(R.id.editlayout);
         mLinearLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
 
-        noteTitle = (EditText)findViewById(R.id.titleedit);
-		noteTitle.setBackgroundColor(Color.parseColor("#ffffff"));
-        noteContent = (EditText)findViewById(R.id.contentedit);
-		noteContent.setBackgroundColor(PreferenceInfo.themeColorValue);
+        mTitleEdit = (EditText)findViewById(R.id.titleedit);
+		mTitleEdit.setBackgroundColor(Color.parseColor("#ffffff"));
+        mContentEdit = (EditText)findViewById(R.id.contentedit);
+		mContentEdit.setBackgroundColor(PreferenceInfo.themeColorValue);
 
 
 		Intent intent = this.getIntent();
@@ -88,9 +88,9 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         Log.d(TAG+ "onCreate", currentNoteId +"");
 	    contentLength = note.getNoteContent().length();
 		titleLength = note.getNoteTitle().length();
-	    noteTitle.setText(note.getNoteTitle());
-	    noteContent.setText(note.getNoteContent());
-		noteContent.setSelection(noteContent.getText().length());
+	    mTitleEdit.setText(note.getNoteTitle());
+	    mContentEdit.setText(note.getNoteContent());
+		mContentEdit.setSelection(mContentEdit.getText().length());
 
     }
 
@@ -122,12 +122,13 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 ImageView imageView = new ImageView(EditActivity.this);
                 imageView.setId(i);
                 imageView.setLayoutParams(layoutParams);
+
                 imageView.setImageBitmap(bitmap);
                 imageView.setOnClickListener(this);
                 mLinearLayout.addView(imageView);
             }
             else if (path.endsWith(".mp4")){
-                Bitmap bitmap = MyBitmap.getVideoThumbnail(path, 900, 400, MediaStore.Images.Thumbnails.MICRO_KIND);
+                Bitmap bitmap = MyBitmap.getVideoThumbnail(path, 900, 700, MediaStore.Images.Thumbnails.MICRO_KIND);
                 mBitmaps.add(bitmap);
                 Log.d(TAG + "flush ", path);  // 调试
                 ImageView imageView = new ImageView(EditActivity.this);
@@ -161,14 +162,14 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
 		super.onBackPressed();
-		if (noteContent.getText().toString().length()!=contentLength || noteTitle.getText().length()!=titleLength){
-			if (noteTitle.getText().length()==0){
+		if (mContentEdit.getText().toString().length()!=contentLength || mTitleEdit.getText().length()!=titleLength){
+			if (mTitleEdit.getText().length()==0){
 				note.setNoteTitle("无标题");
 			}
 			else {
-				note.setNoteTitle(noteTitle.getText().toString());
+				note.setNoteTitle(mTitleEdit.getText().toString());
 			}
-			String noteContent = this.noteContent.getText().toString();
+			String noteContent = this.mContentEdit.getText().toString();
 			note.setNoteContent(noteContent);
 			note.setNoteDate(new Date());
 
@@ -249,14 +250,14 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 				break;
 
 			case  android.R.id.home :
-				if (noteContent.getText().toString().length()!=contentLength ||
-						noteTitle.getText().length()!=titleLength) {
-					if (noteTitle.getText().length() == 0) {
+				if (mContentEdit.getText().toString().length()!=contentLength ||
+						mTitleEdit.getText().length()!=titleLength) {
+					if (mTitleEdit.getText().length() == 0) {
 						note.setNoteTitle("无标题");
 					} else {
-						note.setNoteTitle(noteTitle.getText().toString());
+						note.setNoteTitle(mTitleEdit.getText().toString());
 					}
-					String noteContent = this.noteContent.getText().toString();
+					String noteContent = this.mContentEdit.getText().toString();
 					note.setNoteContent(noteContent);
 					note.setNoteDate(new Date());
 
@@ -360,7 +361,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                     imageView.setOnClickListener(this);
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     imageView.setLayoutParams(layoutParams);
-                    Bitmap bitmap = MyBitmap.getVideoThumbnail(currentPath, 900, 600, MediaStore.Images.Thumbnails.MICRO_KIND);
+                    Bitmap bitmap = MyBitmap.getVideoThumbnail(currentPath, 900, 700, MediaStore.Images.Thumbnails.MICRO_KIND);
                     mBitmaps.add(bitmap);
                     imageView.setImageBitmap(bitmap);
                     mLinearLayout.addView(imageView);

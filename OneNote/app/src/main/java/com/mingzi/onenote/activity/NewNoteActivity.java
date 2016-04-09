@@ -173,8 +173,6 @@ public class NewNoteActivity extends Activity {
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-        File mediaFile;
 		switch (item.getItemId()) {
 			case R.id.delete_new :
 				NewNoteActivity.this.finish();
@@ -225,19 +223,31 @@ public class NewNoteActivity extends Activity {
 				break;
 
             case R.id.capture_video_new :
-                break;
-            case R.id.capture_img_new :
-                intent  = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                mediaFile = new File(getMediaDir(),System.currentTimeMillis()+".jpg");
-                if (!mediaFile.exists()){
+                Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                File videoFile = new File(getMediaDir(),System.currentTimeMillis()+".mp4");
+                if (!videoFile.exists()){
                     try {
-                        mediaFile.createNewFile();
+                        videoFile.createNewFile();
                     }catch (IOException e){
                         e.printStackTrace();
                     }
                 }
-                currentPath = mediaFile.getAbsolutePath();
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mediaFile));
+                currentPath = videoFile.getAbsolutePath();
+                videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(videoFile));
+                startActivityForResult(videoIntent,ConstantValue.REQUEST_CODE_GET_VIDEO);
+                break;
+            case R.id.capture_img_new :
+                Intent intent  = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                File imageFile = new File(getMediaDir(),System.currentTimeMillis()+".jpg");
+                if (!imageFile.exists()){
+                    try {
+                        imageFile.createNewFile();
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                }
+                currentPath = imageFile.getAbsolutePath();
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
                 startActivityForResult(intent, ConstantValue.REQUEST_CODE_GET_PHOTO);
                 break;
             case R.id.send_new :
@@ -291,11 +301,34 @@ public class NewNoteActivity extends Activity {
                 }
                 else if (resultCode == RESULT_CANCELED) {
                     File file = new File(currentPath);
-                    if (file.exists()&&file.length()==0) {
+                    if (file.exists()) {
                         file.delete();
                     }
                 }
                 break;
+            case ConstantValue.REQUEST_CODE_GET_VIDEO :
+                if (resultCode == RESULT_OK) {
+                    NoteDBAccess mNoteDBAccess = new NoteDBAccess(NewNoteActivity.this);
+                    mMediaDBAccess = new MediaDBAccess(NewNoteActivity.this);
+                    mDate = new Date();
+                    currentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
+                    mMediaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(mDate));
+                    Log.d(TAG + "onResult ", currentNoteId + ""); //调试
+                    ImageView imageView = new ImageView(NewNoteActivity.this);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    imageView.setLayoutParams(layoutParams);
+                    Bitmap bitmap = MyBitmap.getVideoThumbnail(currentPath, 900, 700,
+                            MediaStore.Images.Thumbnails.MICRO_KIND);
+                    imageView.setImageBitmap(bitmap);
+                    mLinearLayout.addView(imageView);
+
+                }
+                else if (resultCode == RESULT_CANCELED) {
+                    File file = new File(currentPath);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
