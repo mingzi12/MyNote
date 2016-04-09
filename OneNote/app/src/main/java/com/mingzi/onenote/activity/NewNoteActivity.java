@@ -288,7 +288,9 @@ public class NewNoteActivity extends Activity {
                     NoteDBAccess mNoteDBAccess = new NoteDBAccess(NewNoteActivity.this);
                     mMediaDBAccess = new MediaDBAccess(NewNoteActivity.this);
                     mDate = new Date();
-                    currentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
+                    if (currentNoteId==-1){
+                        currentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
+                    }
                     mMediaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(mDate));
                     Log.d(TAG + "onResult ", currentNoteId + ""); //调试
                     ImageView imageView = new ImageView(NewNoteActivity.this);
@@ -311,7 +313,9 @@ public class NewNoteActivity extends Activity {
                     NoteDBAccess mNoteDBAccess = new NoteDBAccess(NewNoteActivity.this);
                     mMediaDBAccess = new MediaDBAccess(NewNoteActivity.this);
                     mDate = new Date();
-                    currentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
+                    if (currentNoteId==-1){
+                        currentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
+                    }
                     mMediaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(mDate));
                     Log.d(TAG + "onResult ", currentNoteId + ""); //调试
                     ImageView imageView = new ImageView(NewNoteActivity.this);
