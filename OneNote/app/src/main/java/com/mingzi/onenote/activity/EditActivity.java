@@ -28,7 +28,7 @@ import android.widget.Toast;
 
 import com.mingzi.onenote.R;
 import com.mingzi.onenote.util.ConvertStringAndDate;
-import com.mingzi.onenote.util.MeidaDBAccess;
+import com.mingzi.onenote.util.MediaDBAccess;
 import com.mingzi.onenote.util.MyBitmap;
 import com.mingzi.onenote.util.NoteDBAccess;
 import com.mingzi.onenote.values.ConstantValue;
@@ -46,22 +46,22 @@ import java.util.List;
 public class EditActivity extends Activity implements ImageView.OnClickListener {
 
     public static final String TAG = "EditATY-> ";
-    public static final String filesPath = Environment.getExternalStorageDirectory()+"OneNote"+File.separator;
     private ScrollView mScrollView;
 	private LinearLayout mLinearLayout;
 	private EditText noteTitle;
 	private EditText noteContent;
-	private int titleLength;    //保存初始Title的长度，用于判断Title是否被修改
+	private int titleLength;     // 保存初始Title的长度，用于判断Title是否被修改
 	private int contentLength;   // 保存内容的初始长度，用于判断内容是否变化
 	private Note note;
 
-    private MeidaDBAccess mMeidaDBAccess;
+    private MediaDBAccess mMediaDBAccess;
     private List<Media> mMediaList;
 
     private List<Bitmap> mBitmaps;
-    private List<String> paths;  //存放和当前便签匹配的所有图片或者视频的路径
-    private int currentNoteId = -1;  //保存当前文字内容便签的ID
-    private String currentPath = null; //保存当前图片或者视频的路径
+    private List<String> paths;        // 存放和当前便签匹配的所有图片或者视频的路径
+    private int currentNoteId = -1;    // 保存当前文字内容便签的ID
+    private String currentPath = null; // 保存当前图片或者视频的路径
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -104,8 +104,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
     public void flush(){
 
-        mMeidaDBAccess = new MeidaDBAccess(EditActivity.this);
-        mMediaList = mMeidaDBAccess.selectAll(currentNoteId);
+        mMediaDBAccess = new MediaDBAccess(EditActivity.this);
+        mMediaList = mMediaDBAccess.selectAll(currentNoteId);
         mBitmaps = new ArrayList<>();
         paths = new ArrayList<>();
         int len = mMediaList.size();
@@ -209,8 +209,11 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 				builder.setPositiveButton("确定",new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						NoteDBAccess access = new NoteDBAccess(EditActivity.this);
-						access.deleteNote(note);
-                        mMeidaDBAccess.delete(currentNoteId);
+						access.deleteNoteById(note);
+                        mMediaDBAccess.deleteById(currentNoteId);
+                        /*
+                        * 开启一个线程删除本地图片或者视频
+                        * */
                         new Thread(){
                             @Override
                             public void run() {
@@ -325,7 +328,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         switch (requestCode) {
             case ConstantValue.REQUEST_CODE_GET_PHOTO :
                 if (resultCode == RESULT_OK) {
-                    mMeidaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(new Date()));
+                    mMediaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(new Date()));
                     paths.add(currentPath);
                     Log.d(TAG + "onResult ", currentNoteId + ""); //调试
                     ImageView imageView = new ImageView(EditActivity.this);
@@ -349,7 +352,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
             case ConstantValue.REQUEST_CODE_GET_VIDEO :
                 if (resultCode == RESULT_OK) {
-                    mMeidaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(new Date()));
+                    mMediaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(new Date()));
                     paths.add(currentPath);
                     Log.d(TAG + "onResult ", currentNoteId + ""); //调试
                     ImageView imageView = new ImageView(EditActivity.this);

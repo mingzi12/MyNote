@@ -266,7 +266,7 @@ public class MainActivity extends Activity {
 			builder.setPositiveButton("确定",new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					NoteDBAccess access = new NoteDBAccess(MainActivity.this);
-					access.deleteNote(note);
+					access.deleteNoteById(note);
 						
 					dialog.dismiss();
 					Toast.makeText(MainActivity.this, "已删除", Toast.LENGTH_LONG).show();
@@ -303,7 +303,7 @@ public class MainActivity extends Activity {
     private void flush() {
     	PreferenceInfo.dataFlush();
     	
-    	mNoteList = access.findAllNote();
+    	mNoteList = access.selectAllNote();
     	
     	noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_list_item, mNoteList);
     	noteListView.setAdapter(noteBaseAdapter);

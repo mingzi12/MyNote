@@ -20,7 +20,10 @@ public class Note implements Parcelable {
 	public Note() {
 		
 	}
-	
+
+    public Note(Date date){
+        this.noteDate = date;
+    }
 	/**
 	 * 存储日志
 	 * @param noteTitle

@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
 import android.util.Log;
 
 import com.mingzi.onenote.values.ConstantValue;
@@ -18,7 +17,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2016/4/6.
  */
-public class MeidaDBAccess {
+public class MediaDBAccess {
 
     private static final String TAG = "MeidaAccess-";
 
@@ -26,10 +25,8 @@ public class MeidaDBAccess {
     private List<Media> mList;
     private DBOpenHelper mDBOpenHelper;
     private SQLiteDatabase mSQLiteDatabase;
-    private static final String path = Environment.getExternalStorageDirectory()
-            + File.separator+ "微盘" + File.separator + "123.jpg";
-    private File mFile;
-    public MeidaDBAccess(Context context) {
+
+    public MediaDBAccess(Context context) {
         mContext = context.getApplicationContext();
         mDBOpenHelper = new DBOpenHelper(mContext);
         mList = new ArrayList<>();
@@ -53,16 +50,17 @@ public class MeidaDBAccess {
         return cursor;
     }
 
-    public Cursor query(int noteId){
-        Log.d(TAG+"query",noteId+"");
+    public Cursor queryById(int noteId){
+        Log.d(TAG+"queryById",noteId+"");
         mSQLiteDatabase = mDBOpenHelper.getReadableDatabase();
         Cursor cursor = mSQLiteDatabase.query(ConstantValue.MEDIA_TABLE_NAME,null,ConstantValue.MEDIA_OWNER_ID
                 +"= ?",new String[]{noteId+""},null,null,null);
 
         return cursor;
     }
+
     public List selectAll(int noteId){
-        Cursor cursor = query(noteId);
+        Cursor cursor = queryById(noteId);
         while (cursor.moveToNext()){
             Log.d(TAG + "selectAll", cursor.getString(1));
             Media media = new Media();
@@ -71,8 +69,35 @@ public class MeidaDBAccess {
             mList.add(media);
         }
         close();
-        fixList();
+        handleList();
         return mList;
+    }
+
+    public boolean deleteByPath(String path){
+        mSQLiteDatabase = mDBOpenHelper.getWritableDatabase();
+        mSQLiteDatabase.delete(ConstantValue.MEDIA_TABLE_NAME,
+                ConstantValue.MEDIA_PATH + " = ?", new String[]{path});
+        return true;
+    }
+
+    public boolean deleteById(int noteId){
+        mSQLiteDatabase = mDBOpenHelper.getWritableDatabase();
+        mSQLiteDatabase.delete(ConstantValue.MEDIA_TABLE_NAME,ConstantValue.MEDIA_OWNER_ID+"=?",
+                new String[]{noteId +""});
+        close();
+        return true;
+    }
+
+    public void handleList(){
+        Iterator<Media> iterator = mList.iterator();
+        while (iterator.hasNext()){
+            Media media =  iterator.next();
+            Log.d(TAG+"handleList",media.getPath());
+            if (!(new File(media.getPath()).exists())){
+                iterator.remove();
+                deleteByPath(media.getPath());
+            }
+        }
     }
 
     public void closeDB(){
@@ -81,31 +106,6 @@ public class MeidaDBAccess {
         }
     }
 
-    public boolean delete(String path){
-        mSQLiteDatabase = mDBOpenHelper.getWritableDatabase();
-        mSQLiteDatabase.delete(ConstantValue.MEDIA_TABLE_NAME,
-                ConstantValue.MEDIA_PATH + " = ?",new String[]{path});
-        return true;
-    }
-
-    public boolean delete(int noteId){
-        mSQLiteDatabase = mDBOpenHelper.getWritableDatabase();
-        mSQLiteDatabase.delete(ConstantValue.MEDIA_TABLE_NAME,ConstantValue.MEDIA_OWNER_ID+"=?",
-                new String[]{noteId +""});
-        close();
-        return true;
-    }
-    public void fixList(){
-        Iterator<Media> iterator = mList.iterator();
-        while (iterator.hasNext()){
-            Media media =  iterator.next();
-            Log.d(TAG+"fixList",media.getPath());
-            if (!(new File(media.getPath()).exists())){
-                iterator.remove();
-                delete(media.getPath());
-            }
-        }
-    }
     public void close(){
         if (mSQLiteDatabase != null){
             mSQLiteDatabase.close();

@@ -33,9 +33,9 @@ public class NoteEditText extends EditText {
 		int leftPadding = this.getPaddingLeft();
 		
 		float textSize = getTextSize();
-		setGravity(Gravity.LEFT| Gravity.TOP);
+		setGravity(Gravity.LEFT| Gravity.CENTER_VERTICAL);
 		
-		int y = (int)(topPadding + textSize);
+		int y = (int)(topPadding + textSize + 3);
 		
 		for(int i = 0; i < getLineCount(); i++) {
 			canvas.drawLine(leftPadding, y + 5, getRight() - leftPadding, y + 5, paint);
