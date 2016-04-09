@@ -37,7 +37,6 @@ import com.mingzi.onenote.vo.PreferenceInfo;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 
 public class NewNoteActivity extends Activity {
 
@@ -50,9 +49,8 @@ public class NewNoteActivity extends Activity {
 	private boolean isTextChanged = true;
 	private String currentPath;
     private MediaDBAccess mMediaDBAccess;
-    private int currentNoteId;
-    private List<Bitmap> mBitmapList;
-
+    private int currentNoteId = -1;
+    private Date mDate;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -103,31 +101,55 @@ public class NewNoteActivity extends Activity {
 	
 	@Override
 	public void onBackPressed() {
-		// TODO Auto-generated method stub
 		super.onBackPressed();
-		
-		String noteTitle = this.noteTitle.getText().toString();
+        Note note;
+        NoteDBAccess access;
+        String noteTitle = this.noteTitle.getText().toString();
 		String noteContent = this.noteContent.getText().toString();
-		
-		if(noteTitle.toString().trim().equals("") && noteContent.toString().trim().equals("")) {
-			NewNoteActivity.this.finish();
-		}
-		else {
-			Note note = new Note();
-			if (noteTitle.equals("")){
-				note.setNoteTitle("无标题");
-			}
-			else {
-				note.setNoteTitle(noteTitle);
-			}
-			note.setNoteContent(noteContent);
-			note.setNoteDate(new Date());
-			
-			NoteDBAccess access = new NoteDBAccess(this);
-			access.insertNote(note);
-			Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
-	    	this.finish();
-		}
+		if (currentNoteId!=-1) {  // currentNoteId!=-1表示已插入一条空的文字便签但该便签附带有图片或者视频
+            note = new Note();
+            note.setNoteId(currentNoteId);
+            note.setNoteDate(mDate);
+            access = new NoteDBAccess(NewNoteActivity.this);
+            if(isTitleAndContentEmpty(noteTitle,noteContent)) { // 判断标题和正文是否同时为空
+                note.setNoteTitle("无标题");
+                note.setNoteContent("");
+                access.updateNoteById(note);
+                NewNoteActivity.this.finish();
+            } else {
+                if (noteTitle.equals("")) {
+                    note.setNoteTitle("无标题");
+                } else {
+                    note.setNoteTitle(noteTitle);
+                }
+                note.setNoteContent(noteContent);
+                note.setNoteDate(mDate);
+                access.updateNoteById(note);
+                Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
+                this.finish();
+            }
+        }
+        else {
+            if(isTitleAndContentEmpty(noteTitle,noteContent)) {
+                NewNoteActivity.this.finish();
+            }
+            else {
+                 note = new Note();
+                if (noteTitle.equals("")){
+                    note.setNoteTitle("无标题");
+                }
+                else {
+                    note.setNoteTitle(noteTitle);
+                }
+                note.setNoteContent(noteContent);
+                note.setNoteDate(new Date());
+                access = new NoteDBAccess(this);
+                access.insertNote(note);
+                Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
+                this.finish();
+            }
+        }
+
 	}
 
 
@@ -159,29 +181,49 @@ public class NewNoteActivity extends Activity {
 				break;
 
 			case android.R.id.home :
+                NoteDBAccess access;
 				String noteTitle = this.noteTitle.getText().toString();
 				String noteContent = this.noteContent.getText().toString();
-
-				if(noteTitle.toString().trim().equals("") && noteContent.toString().trim().equals("")) {
-					NewNoteActivity.this.finish();
-				}
+                if (currentNoteId != -1){
+                    Note note = new Note();
+                    note.setNoteId(currentNoteId);
+                    note.setNoteDate(mDate);
+                    access = new NoteDBAccess(NewNoteActivity.this);
+                    if(isTitleAndContentEmpty(noteTitle,noteContent)) {
+                        note.setNoteTitle("无标题");
+                        note.setNoteContent("");
+                        access.updateNoteById(note);
+                        NewNoteActivity.this.finish();
+                    } else {
+                        if (noteTitle.equals("")){
+                            note.setNoteTitle("无标题");
+                        } else {
+                            note.setNoteTitle(noteTitle);
+                        }
+                        note.setNoteContent(noteContent);
+                        note.setNoteDate(mDate);
+                        access.updateNoteById(note);
+                        Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
+                        this.finish();
+                    }
+                }
 				else {
-					Note note = new Note();
-					if (noteTitle.equals("")){
-						note.setNoteTitle("无标题");
-					}
-					else {
-						note.setNoteTitle(noteTitle);
-					}
-					note.setNoteContent(noteContent);
-					note.setNoteDate(new Date());
-
-					NoteDBAccess access = new NoteDBAccess(this);
-					access.insertNote(note);
-					Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
-					this.finish();
-				}
+                    Note note = new Note();
+                    if (noteTitle.equals("")){
+                        note.setNoteTitle("无标题");
+                    }
+                    else {
+                        note.setNoteTitle(noteTitle);
+                    }
+                    note.setNoteContent(noteContent);
+                    note.setNoteDate(new Date());
+                    access = new NoteDBAccess(this);
+                    access.insertNote(note);
+                    Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
+                    this.finish();
+                }
 				break;
+
             case R.id.capture_video_new :
                 break;
             case R.id.capture_img_new :
@@ -206,6 +248,18 @@ public class NewNoteActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
+    private boolean isTitleAndContentEmpty(String title, String content){
+        if (title.trim().equals("")&&content.trim().equals("")){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    /**
+     * 获取保存文件的路径
+     * */
     public File getMediaDir() {
         File dir = new File(Environment.getExternalStorageDirectory(),
                 "OneNote");
@@ -215,6 +269,7 @@ public class NewNoteActivity extends Activity {
         return dir;
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -222,9 +277,9 @@ public class NewNoteActivity extends Activity {
                 if (resultCode == RESULT_OK) {
                     NoteDBAccess mNoteDBAccess = new NoteDBAccess(NewNoteActivity.this);
                     mMediaDBAccess = new MediaDBAccess(NewNoteActivity.this);
-                    Date date = new Date();
-                    currentNoteId = mNoteDBAccess.insertNullNote(new Note(date));
-                    mMediaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(date));
+                    mDate = new Date();
+                    currentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
+                    mMediaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(mDate));
                     Log.d(TAG + "onResult ", currentNoteId + ""); //调试
                     ImageView imageView = new ImageView(NewNoteActivity.this);
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

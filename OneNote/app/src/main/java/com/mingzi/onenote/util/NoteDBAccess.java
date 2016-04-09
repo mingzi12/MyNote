@@ -66,7 +66,7 @@ public class NoteDBAccess {
 	 * 更新Note
 	 * @param note
 	 */
-	public void updateNote(Note note) {
+	public void updateNoteById(Note note) {
 		db = mDbOpenHelper.getWritableDatabase();
 		
 		ContentValues cv = new ContentValues();

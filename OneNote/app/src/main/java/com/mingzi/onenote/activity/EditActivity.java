@@ -173,7 +173,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 			note.setNoteDate(new Date());
 
 			NoteDBAccess access = new NoteDBAccess(this);
-			access.updateNote(note);
+			access.updateNoteById(note);
 
 			Toast.makeText(this, "已更新", Toast.LENGTH_SHORT).show();
 			this.finish();
@@ -261,7 +261,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 					note.setNoteDate(new Date());
 
 					NoteDBAccess access = new NoteDBAccess(this);
-					access.updateNote(note);
+					access.updateNoteById(note);
 
 					Toast.makeText(this, "已更新", Toast.LENGTH_SHORT).show();
 				}
