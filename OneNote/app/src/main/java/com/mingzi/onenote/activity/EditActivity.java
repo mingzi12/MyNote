@@ -50,8 +50,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 	private LinearLayout mLinearLayout;
 	private EditText mTitleEdit;
 	private EditText mContentEdit;
-	private int titleLength;     // 保存初始Title的长度，用于判断Title是否被修改
-	private int contentLength;   // 保存内容的初始长度，用于判断内容是否变化
+	private String mTitle;     // 保存初始Title的长度，用于判断Title是否被修改
+	private String mContent;   // 保存内容的初始长度，用于判断内容是否变化
 	private Note note;
 
     private MediaDBAccess mMediaDBAccess;
@@ -86,8 +86,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 	    note = (Note)bundle.getParcelable("note");
         currentNoteId = note.getNoteId();
         Log.d(TAG+ "onCreate", currentNoteId +"");
-	    contentLength = note.getNoteContent().length();
-		titleLength = note.getNoteTitle().length();
+	    mContent = note.getNoteContent();
+		mTitle = note.getNoteTitle();
 	    mTitleEdit.setText(note.getNoteTitle());
 	    mContentEdit.setText(note.getNoteContent());
 		mContentEdit.setSelection(mContentEdit.getText().length());
@@ -162,7 +162,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
 		super.onBackPressed();
-		if (mContentEdit.getText().toString().length()!=contentLength || mTitleEdit.getText().length()!=titleLength){
+		if (!mContentEdit.getText().toString().equals(mContent) || !mTitleEdit.getText().toString().equals(mTitle)){
 			if (mTitleEdit.getText().length()==0){
 				note.setNoteTitle("无标题");
 			}
@@ -250,8 +250,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 				break;
 
 			case  android.R.id.home :
-				if (mContentEdit.getText().toString().length()!=contentLength ||
-						mTitleEdit.getText().length()!=titleLength) {
+				if (!mContentEdit.getText().toString().equals(mContent) ||
+						!mTitleEdit.getText().equals(mTitle)) {
 					if (mTitleEdit.getText().length() == 0) {
 						note.setNoteTitle("无标题");
 					} else {
