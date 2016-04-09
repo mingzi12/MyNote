@@ -57,8 +57,9 @@
 
     <ListView
         android:id="@+id/notelist"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="2dp"
         android:cacheColorHint="#00000000"
         />
 </LinearLayout>

@@ -296,7 +296,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(videoFile));
                 startActivityForResult(videoIntent,ConstantValue.REQUEST_CODE_GET_VIDEO);
                 break;
-            case R.id.descrition_edit:
+            case R.id.description_edit:
                 final AlertDialog.Builder descBuilder = new Builder(EditActivity.this);
                 descBuilder.setTitle("详细信息");
                 descBuilder.setMessage("创建时间 : " + ConvertStringAndDate.datetoString(note.getNoteDate()) + "\n"

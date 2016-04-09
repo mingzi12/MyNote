@@ -26,7 +26,7 @@
         android:title="   发送"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/descrition_edit"
+        android:id="@+id/description_edit"
         android:title="   详情"
         app:showAsAction="never"/>
     <item

@@ -254,7 +254,7 @@ public class NewNoteActivity extends Activity {
                 break;
             case R.id.send_new :
                 break;
-            case R.id.descrition_new :
+            case R.id.description_new:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("详细信息");
                 builder.setMessage("创建时间 : " + ConvertStringAndDate.datetoString(new Date()) + "\n"
