@@ -199,8 +199,6 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-        File mediaFile;
 		switch (item.getItemId()) {
 			case R.id.delete_edit :
 				AlertDialog.Builder builder = new Builder(EditActivity.this);
@@ -270,35 +268,47 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 				break;
 
             case R.id.capture_img_edit :
-                intent  = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                mediaFile = new File(getMediaDir(),System.currentTimeMillis()+".jpg");
-                if (!mediaFile.exists()){
+                Intent imageIntent  = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                File imageFile = new File(getMediaDir(),System.currentTimeMillis()+".jpg");
+                if (!imageFile.exists()){
                     try {
-                        mediaFile.createNewFile();
+                        imageFile.createNewFile();
                     }catch (IOException e){
                         e.printStackTrace();
                     }
                 }
-                currentPath = mediaFile.getAbsolutePath();
-                intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(mediaFile));
-                startActivityForResult(intent, ConstantValue.REQUEST_CODE_GET_PHOTO);
+                currentPath = imageFile.getAbsolutePath();
+                imageIntent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(imageFile));
+                startActivityForResult(imageIntent, ConstantValue.REQUEST_CODE_GET_PHOTO);
                 break;
 
             case R.id.add_video_edit :
-                intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                mediaFile = new File(getMediaDir(),System.currentTimeMillis()+".mp4");
-                if (!mediaFile.exists()){
+               Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+                File videoFile = new File(getMediaDir(),System.currentTimeMillis()+".mp4");
+                if (!videoFile.exists()){
                     try {
-                        mediaFile.createNewFile();
+                        videoFile.createNewFile();
                     }catch (IOException e){
                         e.printStackTrace();
                     }
                 }
-                currentPath = mediaFile.getAbsolutePath();
-                intent.putExtra(MediaStore.EXTRA_OUTPUT,Uri.fromFile(mediaFile));
-                startActivityForResult(intent,ConstantValue.REQUEST_CODE_GET_VIDEO);
+                currentPath = videoFile.getAbsolutePath();
+                videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(videoFile));
+                startActivityForResult(videoIntent,ConstantValue.REQUEST_CODE_GET_VIDEO);
                 break;
-
+            case R.id.descrition_edit:
+                final AlertDialog.Builder descBuilder = new Builder(EditActivity.this);
+                descBuilder.setTitle("详细信息");
+                descBuilder.setMessage("创建时间 : " + ConvertStringAndDate.datetoString(note.getNoteDate()) + "\n"
+                        + "字数 : " + note.getNoteContent().length());
+                descBuilder.setPositiveButton("确定",new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                descBuilder.create().show();
+                break;
 			default :
 				break;
 		}

@@ -5,6 +5,8 @@ package com.mingzi.onenote.activity;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -43,8 +45,8 @@ public class NewNoteActivity extends Activity {
     private static final String TAG = "NewATY->";
     private ScrollView mScrollView;
 	private LinearLayout mLinearLayout;
-	private EditText noteTitle;
-	private EditText noteContent;
+	private EditText mTitleEdit;
+	private EditText mContentEdit;
 	
 	private boolean isTextChanged = true;
 	private String currentPath;
@@ -65,19 +67,19 @@ public class NewNoteActivity extends Activity {
 		mLinearLayout = (LinearLayout)findViewById(R.id.editlayout);
         mLinearLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
         
-        noteTitle = (EditText)findViewById(R.id.titleedit);
-		noteTitle.setBackgroundColor(Color.parseColor("#ffffff"));
-        noteContent = (EditText)findViewById(R.id.contentedit);
-		noteContent.setBackgroundColor(PreferenceInfo.themeColorValue);
-        noteContent.requestFocus();
-        noteContent.addTextChangedListener(new TextWatcher() {
+        mTitleEdit = (EditText)findViewById(R.id.titleedit);
+		mTitleEdit.setBackgroundColor(Color.parseColor("#ffffff"));
+        mContentEdit = (EditText)findViewById(R.id.contentedit);
+		mContentEdit.setBackgroundColor(PreferenceInfo.themeColorValue);
+        mContentEdit.requestFocus();
+        mContentEdit.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 if (isTextChanged) {
-                    if (noteTitle.getText().toString().equals("")){
-                        if (noteContent.getText().toString().length() > 5){
-                            noteTitle.setText(noteContent.getText().subSequence(0, 5));
+                    if (mTitleEdit.getText().toString().equals("")) {
+                        if (mContentEdit.getText().toString().length() > 5) {
+                            mTitleEdit.setText(mContentEdit.getText().subSequence(0, 5));
                         }
                     }
 
@@ -86,7 +88,7 @@ public class NewNoteActivity extends Activity {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if (!noteTitle.getText().toString().equals(noteContent.getText().toString())) {
+                if (!mTitleEdit.getText().toString().equals(mContentEdit.getText().toString())) {
                     isTextChanged = false;
                 }
             }
@@ -104,8 +106,8 @@ public class NewNoteActivity extends Activity {
 		super.onBackPressed();
         Note note;
         NoteDBAccess access;
-        String noteTitle = this.noteTitle.getText().toString();
-		String noteContent = this.noteContent.getText().toString();
+        String noteTitle = this.mTitleEdit.getText().toString();
+		String noteContent = this.mContentEdit.getText().toString();
 		if (currentNoteId!=-1) {  // currentNoteId!=-1表示已插入一条空的文字便签但该便签附带有图片或者视频
             note = new Note();
             note.setNoteId(currentNoteId);
@@ -180,8 +182,8 @@ public class NewNoteActivity extends Activity {
 
 			case android.R.id.home :
                 NoteDBAccess access;
-				String noteTitle = this.noteTitle.getText().toString();
-				String noteContent = this.noteContent.getText().toString();
+				String noteTitle = this.mTitleEdit.getText().toString();
+				String noteContent = this.mContentEdit.getText().toString();
                 if (currentNoteId != -1){
                     Note note = new Note();
                     note.setNoteId(currentNoteId);
@@ -251,6 +253,19 @@ public class NewNoteActivity extends Activity {
                 startActivityForResult(intent, ConstantValue.REQUEST_CODE_GET_PHOTO);
                 break;
             case R.id.send_new :
+                break;
+            case R.id.descrition_new :
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("详细信息");
+                builder.setMessage("创建时间 : " + ConvertStringAndDate.datetoString(new Date()) + "\n"
+                        + "字数 : " + mContentEdit.getText().toString().length());
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
                 break;
             default :
                 break;
