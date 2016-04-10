@@ -39,7 +39,8 @@ public class DBOpenHelper extends SQLiteOpenHelper {
                 + ConstantValue.NOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + ConstantValue.NOTE_TITLE + " TEXT NOT NULL DEFAULT \"\", "
                 + ConstantValue.NOTE_CONTENT + " TEXT NOT NULL DEFAULT \"\" , "
-                + ConstantValue.NOTE_DATE + " DATE)");
+                + ConstantValue.CREATE_DATE + " DATE,"
+                + ConstantValue.UPDATE_DATE + " DATE)");
         db.execSQL("CREATE TABLE "+ConstantValue.MEDIA_TABLE_NAME+"("
                 + ConstantValue.NOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + ConstantValue.MEDIA_PATH + " TEXT NOT NULL DEFAULT \"\","

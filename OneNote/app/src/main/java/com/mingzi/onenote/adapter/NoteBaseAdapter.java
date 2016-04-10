@@ -50,7 +50,7 @@ public class NoteBaseAdapter extends BaseAdapter {
 		
 		Note note = list.get(position);
 		String noteTitle = note.getNoteTitle();
-		Date noteDate = note.getNoteDate();
+		Date noteDate = note.getCreateDate();
 				
 		LayoutInflater layoutInflater = LayoutInflater.from(context);
 				

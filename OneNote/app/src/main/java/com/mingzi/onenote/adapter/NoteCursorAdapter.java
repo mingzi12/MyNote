@@ -51,13 +51,13 @@ public class NoteCursorAdapter extends CursorAdapter {
 		TextView tvNoteTitle = (TextView)view.findViewById(R.id.itemtitle);
 		TextView tvNoteDate = (TextView)view.findViewById(R.id.itemdate);
 		tvNoteTitle.setText(cursor.getString(cursor.getColumnIndex(ConstantValue.NOTE_TITLE)));
-		tvNoteDate.setText(cursor.getString(cursor.getColumnIndex(ConstantValue.NOTE_DATE)));
+		tvNoteDate.setText(cursor.getString(cursor.getColumnIndex(ConstantValue.CREATE_DATE)));
 		
 		Note note = new Note();
 		note.setNoteId(this.cursor.getInt(this.cursor.getColumnIndex(ConstantValue.NOTE_ID)));
 		note.setNoteTitle(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.NOTE_TITLE)));
 		note.setNoteContent(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.NOTE_CONTENT)));
-		note.setNoteDate(ConvertStringAndDate.stringtodate(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.NOTE_DATE))));
+		note.setCreateDate(ConvertStringAndDate.stringtodate(this.cursor.getString(this.cursor.getColumnIndex(ConstantValue.CREATE_DATE))));
 		
 		list.add(note);
 	}

@@ -22,7 +22,8 @@ public class NoteDBAccess {
 		ConstantValue.NOTE_ID,
 		ConstantValue.NOTE_TITLE,
 		ConstantValue.NOTE_CONTENT,
-		ConstantValue.NOTE_DATE
+		ConstantValue.CREATE_DATE,
+        ConstantValue.UPDATE_DATE
 	};
 	
 	public NoteDBAccess(Context context) {
@@ -39,7 +40,8 @@ public class NoteDBAccess {
 		ContentValues cv = new ContentValues();
 		cv.put(ConstantValue.NOTE_TITLE, note.getNoteTitle());
 		cv.put(ConstantValue.NOTE_CONTENT, note.getNoteContent());
-		cv.put(ConstantValue.NOTE_DATE, ConvertStringAndDate.datetoString(note.getNoteDate()));
+		cv.put(ConstantValue.CREATE_DATE, ConvertStringAndDate.datetoString(note.getCreateDate()));
+        cv.put(ConstantValue.UPDATE_DATE,ConvertStringAndDate.datetoString(note.getUpdateDate()));
 		db.insert(ConstantValue.NOTE_TABLE_NAME, null, cv);
         db.close();
 	}
@@ -47,8 +49,11 @@ public class NoteDBAccess {
 	public int insertNullNote(Note note){
         db = mDbOpenHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ConstantValue.NOTE_DATE,
-                ConvertStringAndDate.datetoString(note.getNoteDate()));
+        contentValues.put(ConstantValue.CREATE_DATE,
+                ConvertStringAndDate.datetoString(note.getCreateDate()));
+        contentValues.put(ConstantValue.UPDATE_DATE,
+                ConvertStringAndDate.datetoString(note.getCreateDate()));
+
        return (int)db.insert(ConstantValue.NOTE_TABLE_NAME,null,contentValues);
     }
 	/**
@@ -72,7 +77,7 @@ public class NoteDBAccess {
 		ContentValues cv = new ContentValues();
 		cv.put(ConstantValue.NOTE_TITLE, note.getNoteTitle());
 		cv.put(ConstantValue.NOTE_CONTENT, note.getNoteContent());
-		cv.put(ConstantValue.NOTE_DATE, ConvertStringAndDate.datetoString(note.getNoteDate()));
+		cv.put(ConstantValue.UPDATE_DATE, ConvertStringAndDate.datetoString(note.getCreateDate()));
 		db.update(ConstantValue.NOTE_TABLE_NAME, cv,
                 ConstantValue.NOTE_ID + "= ?", new String[]{note.getNoteId() + ""});
         db.close();
@@ -102,9 +107,13 @@ public class NoteDBAccess {
 			int noteID = c.getInt(c.getColumnIndex(ConstantValue.NOTE_ID));
 			String noteTitle = c.getString(c.getColumnIndex(ConstantValue.NOTE_TITLE));
 			String noteContent = c.getString(c.getColumnIndex(ConstantValue.NOTE_CONTENT));
-			String noteDate = c.getString(c.getColumnIndex(ConstantValue.NOTE_DATE));
+			String createDate = c.getString(c.getColumnIndex(ConstantValue.CREATE_DATE));
+            String updateDate = c.getString(c.getColumnIndex(ConstantValue.UPDATE_DATE));
+
 			
-			mNoteList.add(new Note(noteID, noteTitle, noteContent, ConvertStringAndDate.stringtodate(noteDate)));
+			mNoteList.add(new Note(noteID, noteTitle, noteContent,
+                    ConvertStringAndDate.stringtodate(createDate),
+                    ConvertStringAndDate.stringtodate(updateDate)));
 		}
 		DBOpenHelper.closeCursor(c);
 		DBOpenHelper.closeDB(db);

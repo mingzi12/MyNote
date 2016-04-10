@@ -111,7 +111,7 @@ public class NewNoteActivity extends Activity {
 		if (currentNoteId!=-1) {  // currentNoteId!=-1表示已插入一条空的文字便签但该便签附带有图片或者视频
             note = new Note();
             note.setNoteId(currentNoteId);
-            note.setNoteDate(mDate);
+            note.setCreateDate(mDate);
             access = new NoteDBAccess(NewNoteActivity.this);
             if(isTitleAndContentEmpty(noteTitle,noteContent)) { // 判断标题和正文是否同时为空
                 note.setNoteTitle("无标题");
@@ -125,7 +125,8 @@ public class NewNoteActivity extends Activity {
                     note.setNoteTitle(noteTitle);
                 }
                 note.setNoteContent(noteContent);
-                note.setNoteDate(mDate);
+                note.setCreateDate(mDate);
+                note.setUpdateDate(mDate);
                 access.updateNoteById(note);
                 Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
                 this.finish();
@@ -144,7 +145,9 @@ public class NewNoteActivity extends Activity {
                     note.setNoteTitle(noteTitle);
                 }
                 note.setNoteContent(noteContent);
-                note.setNoteDate(new Date());
+                Date date = new Date();
+                note.setCreateDate(date);
+                note.setUpdateDate(date);
                 access = new NoteDBAccess(this);
                 access.insertNote(note);
                 Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
@@ -187,7 +190,7 @@ public class NewNoteActivity extends Activity {
                 if (currentNoteId != -1){
                     Note note = new Note();
                     note.setNoteId(currentNoteId);
-                    note.setNoteDate(mDate);
+                    note.setCreateDate(mDate);
                     access = new NoteDBAccess(NewNoteActivity.this);
                     if(isTitleAndContentEmpty(noteTitle,noteContent)) {
                         note.setNoteTitle("无标题");
@@ -201,7 +204,7 @@ public class NewNoteActivity extends Activity {
                             note.setNoteTitle(noteTitle);
                         }
                         note.setNoteContent(noteContent);
-                        note.setNoteDate(mDate);
+                        note.setCreateDate(mDate);
                         access.updateNoteById(note);
                         Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
                         this.finish();
@@ -216,7 +219,7 @@ public class NewNoteActivity extends Activity {
                         note.setNoteTitle(noteTitle);
                     }
                     note.setNoteContent(noteContent);
-                    note.setNoteDate(new Date());
+                    note.setCreateDate(new Date());
                     access = new NoteDBAccess(this);
                     access.insertNote(note);
                     Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();

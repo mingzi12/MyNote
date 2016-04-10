@@ -26,7 +26,8 @@ public class ConstantValue {
     public static final String NOTE_ID = "_id";
     public static final String NOTE_TITLE = "noteTitle";
     public static final String NOTE_CONTENT = "noteContent";
-    public static final String NOTE_DATE = "noteDate";
+    public static final String CREATE_DATE = "createDate";
+    public static final String UPDATE_DATE = "updateDate";
     public static final String DEFAULT_ORDER = "_id desc";
     /**
      * 记事本多媒体信息字段

@@ -15,40 +15,32 @@ public class Note implements Parcelable {
 	private int noteId;
 	private String noteTitle;
 	private String noteContent;
-	private Date noteDate;
+	private Date createDate;
+    private Date updateDate;
 	
 	public Note() {
 		
 	}
 
     public Note(Date date){
-        this.noteDate = date;
+        this.createDate = date;
     }
-	/**
-	 * 存储日志
-	 * @param noteTitle
-	 * @param noteContent
-	 * @param noteDate
-	 */
+
 	public Note(String noteTitle, String noteContent,
-				Date noteDate) {
+				Date createDate, Date updateDate) {
 		this.noteTitle = noteTitle;
 		this.noteContent = noteContent;
-		this.noteDate = noteDate;
+		this.createDate = createDate;
+        this.updateDate = updateDate;
 	}
 	
-	/**
-	 * 读取日志
-	 * @param noteId
-	 * @param noteTitle
-	 * @param noteContent
-	 * @param noteDate
-	 */
-	public Note(int noteId, String noteTitle, String noteContent, Date noteDate) {
+
+	public Note(int noteId, String noteTitle, String noteContent, Date createDate, Date updateDate) {
 		this.noteId = noteId;
 		this.noteTitle = noteTitle;
 		this.noteContent = noteContent;
-		this.noteDate = noteDate;
+		this.createDate = createDate;
+        this.updateDate = updateDate;
 	}
 
 	/**
@@ -94,20 +86,28 @@ public class Note implements Parcelable {
 	}
 
 	/**
-	 * @return the noteDate
+	 * @return the createDate
 	 */
-	public Date getNoteDate() {
-		return noteDate;
+	public Date getCreateDate() {
+		return createDate;
 	}
 
 	/**
-	 * @param noteDate the noteDate to set
+	 * @param createDate the createDate to set
 	 */
-	public void setNoteDate(Date noteDate) {
-		this.noteDate = noteDate;
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
-	
-	/**
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    /**
 	 * 读取序列化的数据
 	 */
 	public static final Parcelable.Creator<Note> CREATOR = new Parcelable.Creator<Note>(){
@@ -119,8 +119,8 @@ public class Note implements Parcelable {
 			note.setNoteId(source.readInt());
 			note.setNoteTitle(source.readString());
 			note.setNoteContent(source.readString());
-			note.setNoteDate(ConvertStringAndDate.stringtodate(source.readString()));
-			
+			note.setCreateDate(ConvertStringAndDate.stringtodate(source.readString()));
+			note.setUpdateDate(ConvertStringAndDate.stringtodate(source.readString()));
 			return note;
 		}
 		
@@ -147,7 +147,8 @@ public class Note implements Parcelable {
 		dest.writeInt(this.noteId);
 		dest.writeString(this.noteTitle);
 		dest.writeString(this.noteContent);
-		dest.writeString(ConvertStringAndDate.datetoString(this.noteDate));
+		dest.writeString(ConvertStringAndDate.datetoString(this.createDate));
+        dest.writeString(ConvertStringAndDate.datetoString(this.updateDate));
 	}
 	
 }
