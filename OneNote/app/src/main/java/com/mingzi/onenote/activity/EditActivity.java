@@ -109,8 +109,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
         mMediaDBAccess = new MediaDBAccess(EditActivity.this);
         mMediaList = mMediaDBAccess.selectAll(mCurrentNoteId);
-        mBitmaps = new ArrayList<>();
-        mPathsList = new ArrayList<>();
+        mBitmaps = new ArrayList<>(3);
+        mPathsList = new ArrayList<>(3);
         int len = mMediaList.size();
         String path;
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -165,25 +165,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
 		super.onBackPressed();
-		if (!mContentEdit.getText().toString().equals(mContent) || !mTitleEdit.getText().toString().equals(mTitle)){
-			if (mTitleEdit.getText().length()==0){
-				note.setNoteTitle("无标题");
-			}
-			else {
-				note.setNoteTitle(mTitleEdit.getText().toString());
-			}
-			String noteContent = this.mContentEdit.getText().toString();
-			note.setNoteContent(noteContent);
-			note.setCreateDate(new Date());
-
-			NoteDBAccess access = new NoteDBAccess(this);
-			access.updateNoteById(note);
-
-			Toast.makeText(this, "已更新", Toast.LENGTH_SHORT).show();
-			this.finish();
-		}
-		else
-			this.finish();
+		updateOrNot();
+        this.finish();
 		
 	}
 	
@@ -243,23 +226,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 				break;
 
 			case  android.R.id.home :
-				if (!mContentEdit.getText().toString().equals(mContent) ||
-						!mTitleEdit.getText().equals(mTitle)) {
-					if (mTitleEdit.getText().length() == 0) {
-						note.setNoteTitle("无标题");
-					} else {
-						note.setNoteTitle(mTitleEdit.getText().toString());
-					}
-					String noteContent = this.mContentEdit.getText().toString();
-					note.setNoteContent(noteContent);
-					note.setCreateDate(new Date());
-
-					NoteDBAccess access = new NoteDBAccess(this);
-					access.updateNoteById(note);
-
-					Toast.makeText(this, "已更新", Toast.LENGTH_SHORT).show();
-				}
-				finish();
+                updateOrNot();
+                finish();
 				break;
 
             case R.id.capture_img_edit :
@@ -319,6 +287,22 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 		return super.onOptionsItemSelected(item);
 	}
 
+    public void updateOrNot(){
+        if (!mContentEdit.getText().toString().equals(mContent) || !mTitleEdit.getText().toString().equals(mTitle)){
+            if (mTitleEdit.getText().length()==0){
+                note.setNoteTitle("无标题");
+            }
+            else {
+                note.setNoteTitle(mTitleEdit.getText().toString());
+            }
+            String noteContent = this.mContentEdit.getText().toString();
+            note.setNoteContent(noteContent);
+            note.setCreateDate(new Date());
+            NoteDBAccess access = new NoteDBAccess(this);
+            access.updateNoteById(note);
+            Toast.makeText(this, "已更新", Toast.LENGTH_SHORT).show();
+        }
+    }
     /**
      * 分享
      * */
