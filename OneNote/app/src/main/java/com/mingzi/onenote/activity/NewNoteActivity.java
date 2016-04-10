@@ -49,9 +49,9 @@ public class NewNoteActivity extends Activity {
 	private EditText mContentEdit;
 	
 	private boolean isTextChanged = true;
-	private String currentPath;
+	private String mCurrentPath;
     private MediaDBAccess mMediaDBAccess;
-    private int currentNoteId = -1;
+    private int mCurrentNoteId = -1;
     private Date mDate;
 
 	@Override
@@ -104,14 +104,20 @@ public class NewNoteActivity extends Activity {
 	@Override
 	public void onBackPressed() {
 		super.onBackPressed();
+        updateOrNot();
+	}
+
+
+    public void updateOrNot() {
         Note note;
         NoteDBAccess access;
         String noteTitle = this.mTitleEdit.getText().toString();
-		String noteContent = this.mContentEdit.getText().toString();
-		if (currentNoteId!=-1) {  // currentNoteId!=-1表示已插入一条空的文字便签但该便签附带有图片或者视频
+        String noteContent = this.mContentEdit.getText().toString();
+        if (mCurrentNoteId !=-1) {  // mCurrentNoteId!=-1表示已插入一条空的文字便签但该便签附带有图片或者视频
             note = new Note();
-            note.setNoteId(currentNoteId);
+            note.setNoteId(mCurrentNoteId);
             note.setCreateDate(mDate);
+            note.setUpdateDate(mDate);
             access = new NoteDBAccess(NewNoteActivity.this);
             if(isTitleAndContentEmpty(noteTitle,noteContent)) { // 判断标题和正文是否同时为空
                 note.setNoteTitle("无标题");
@@ -137,7 +143,7 @@ public class NewNoteActivity extends Activity {
                 NewNoteActivity.this.finish();
             }
             else {
-                 note = new Note();
+                note = new Note();
                 if (noteTitle.equals("")){
                     note.setNoteTitle("无标题");
                 }
@@ -154,10 +160,7 @@ public class NewNoteActivity extends Activity {
                 this.finish();
             }
         }
-
-	}
-
-
+    }
 	/**
 	 * 添加菜单到ActionBar中
 	 * @param menu
@@ -166,7 +169,7 @@ public class NewNoteActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater menuInflater = getMenuInflater();
-		menuInflater.inflate(R.menu.menu_new,menu);
+		menuInflater.inflate(R.menu.menu_new, menu);
 				
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -184,47 +187,7 @@ public class NewNoteActivity extends Activity {
 				break;
 
 			case android.R.id.home :
-                NoteDBAccess access;
-				String noteTitle = this.mTitleEdit.getText().toString();
-				String noteContent = this.mContentEdit.getText().toString();
-                if (currentNoteId != -1){
-                    Note note = new Note();
-                    note.setNoteId(currentNoteId);
-                    note.setCreateDate(mDate);
-                    access = new NoteDBAccess(NewNoteActivity.this);
-                    if(isTitleAndContentEmpty(noteTitle,noteContent)) {
-                        note.setNoteTitle("无标题");
-                        note.setNoteContent("");
-                        access.updateNoteById(note);
-                        NewNoteActivity.this.finish();
-                    } else {
-                        if (noteTitle.equals("")){
-                            note.setNoteTitle("无标题");
-                        } else {
-                            note.setNoteTitle(noteTitle);
-                        }
-                        note.setNoteContent(noteContent);
-                        note.setCreateDate(mDate);
-                        access.updateNoteById(note);
-                        Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
-                        this.finish();
-                    }
-                }
-				else {
-                    Note note = new Note();
-                    if (noteTitle.equals("")){
-                        note.setNoteTitle("无标题");
-                    }
-                    else {
-                        note.setNoteTitle(noteTitle);
-                    }
-                    note.setNoteContent(noteContent);
-                    note.setCreateDate(new Date());
-                    access = new NoteDBAccess(this);
-                    access.insertNote(note);
-                    Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
-                    this.finish();
-                }
+                updateOrNot();
 				break;
 
             case R.id.capture_video_new :
@@ -237,7 +200,7 @@ public class NewNoteActivity extends Activity {
                         e.printStackTrace();
                     }
                 }
-                currentPath = videoFile.getAbsolutePath();
+                mCurrentPath = videoFile.getAbsolutePath();
                 videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(videoFile));
                 startActivityForResult(videoIntent,ConstantValue.REQUEST_CODE_GET_VIDEO);
                 break;
@@ -251,7 +214,7 @@ public class NewNoteActivity extends Activity {
                         e.printStackTrace();
                     }
                 }
-                currentPath = imageFile.getAbsolutePath();
+                mCurrentPath = imageFile.getAbsolutePath();
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
                 startActivityForResult(intent, ConstantValue.REQUEST_CODE_GET_PHOTO);
                 break;
@@ -306,21 +269,21 @@ public class NewNoteActivity extends Activity {
                     NoteDBAccess mNoteDBAccess = new NoteDBAccess(NewNoteActivity.this);
                     mMediaDBAccess = new MediaDBAccess(NewNoteActivity.this);
                     mDate = new Date();
-                    if (currentNoteId==-1){
-                        currentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
+                    if (mCurrentNoteId ==-1){
+                        mCurrentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
                     }
-                    mMediaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(mDate));
-                    Log.d(TAG + "onResult ", currentNoteId + ""); //调试
+                    mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(mDate));
+                    Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
                     ImageView imageView = new ImageView(NewNoteActivity.this);
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     imageView.setLayoutParams(layoutParams);
-                    Bitmap bitmap = MyBitmap.readBitMap(currentPath, 4);
+                    Bitmap bitmap = MyBitmap.readBitMap(mCurrentPath, 4);
                     imageView.setImageBitmap(bitmap);
                     mLinearLayout.addView(imageView);
 
                 }
                 else if (resultCode == RESULT_CANCELED) {
-                    File file = new File(currentPath);
+                    File file = new File(mCurrentPath);
                     if (file.exists()) {
                         file.delete();
                     }
@@ -331,22 +294,22 @@ public class NewNoteActivity extends Activity {
                     NoteDBAccess mNoteDBAccess = new NoteDBAccess(NewNoteActivity.this);
                     mMediaDBAccess = new MediaDBAccess(NewNoteActivity.this);
                     mDate = new Date();
-                    if (currentNoteId==-1){
-                        currentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
+                    if (mCurrentNoteId ==-1){
+                        mCurrentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
                     }
-                    mMediaDBAccess.insert(currentPath, this.currentNoteId, ConvertStringAndDate.datetoString(mDate));
-                    Log.d(TAG + "onResult ", currentNoteId + ""); //调试
+                    mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(mDate));
+                    Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
                     ImageView imageView = new ImageView(NewNoteActivity.this);
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     imageView.setLayoutParams(layoutParams);
-                    Bitmap bitmap = MyBitmap.getVideoThumbnail(currentPath, 900, 700,
+                    Bitmap bitmap = MyBitmap.getVideoThumbnail(mCurrentPath, 900, 700,
                             MediaStore.Images.Thumbnails.MICRO_KIND);
                     imageView.setImageBitmap(bitmap);
                     mLinearLayout.addView(imageView);
 
                 }
                 else if (resultCode == RESULT_CANCELED) {
-                    File file = new File(currentPath);
+                    File file = new File(mCurrentPath);
                     if (file.exists()) {
                         file.delete();
                     }
