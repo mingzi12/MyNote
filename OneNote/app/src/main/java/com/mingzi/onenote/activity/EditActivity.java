@@ -236,15 +236,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 				break;
 
 			case R.id.send_edit :
-				Intent iIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"));
-
-				if (!note.getNoteContent().equals(note.getNoteTitle())) {
-					iIntent.putExtra("sms_body", note.getNoteTitle() + "\n" + note.getNoteContent());
-				}
-				else {
-					iIntent.putExtra("sms_body", note.getNoteContent());
-				}
-				EditActivity.this.startActivity(iIntent);
+				shareMsg("分享到",mTitleEdit.getText().toString(),mContentEdit.getText().toString());
 				break;
 
 			case  android.R.id.home :
@@ -315,7 +307,19 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 		return super.onOptionsItemSelected(item);
 	}
 
-	/*
+    /**
+     * 分享
+     * */
+    public void shareMsg(String activityTitle, String msgTitle,String msgContent) {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_SUBJECT,msgTitle);
+        intent.putExtra(Intent.EXTRA_TEXT, msgContent);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(Intent.createChooser(intent, activityTitle));
+    }
+
+    /*
 	* 显示ActionBar中每个子项的图标
 	* */
 	@Override
