@@ -60,4 +60,17 @@ public class MyBitmap {
         return bitmap;
     }
 
+    public static Bitmap getBitmapByPath(String path){
+        Bitmap bitmap ;
+        if (path != null) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.RGB_565;
+            options.inSampleSize = 2;
+            bitmap = BitmapFactory.decodeFile(path,options);
+            return bitmap;
+        }
+
+        return null;
+    }
+
 }
