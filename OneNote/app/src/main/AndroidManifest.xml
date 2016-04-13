@@ -74,8 +74,7 @@
             android:label="@string/title_activity_set_alarm"
             android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
         </activity>
-        <activity android:name=".activity.ShakePhoneActivity">
-        </activity>
+
         <receiver android:name=".receiver.AlarmReceiver"
                   android:process=":remote">
         </receiver>
