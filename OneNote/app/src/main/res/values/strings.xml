@@ -12,4 +12,11 @@
     </string-array>
     <string name="action_settings">settings</string>
     <string name="title_activity_video_viewer">VideoViewerActivity</string>
+    <string name="title_activity_set_alarm">SetAlarmActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="shakeSenseValue_1">10</string>
+    <string name="shakeSenseValue_2">13</string>
+    <string name="shakeSenseValue_3">15</string>
+    <string name="pressBackAgain">再按一次退出</string>
+    <string name="unablePressBack">清醒值未达标,无法退出</string>
 </resources>

@@ -29,7 +29,7 @@ public class ConvertStringAndDate {
 	 * @param string
 	 * @return Date
 	 */
-	public static Date stringtodate(String string){
+	public static Date stringtodate(String string) {
 		Date dateString = null;
         try {
 			dateString = sdf.parse(string);

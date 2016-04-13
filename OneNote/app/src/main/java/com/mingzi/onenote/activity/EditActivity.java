@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,13 +47,15 @@ import java.util.List;
 public class EditActivity extends Activity implements ImageView.OnClickListener {
 
     public static final String TAG = "EditATY-> ";
+    private static final int SET_ALARM_REQUEST_CODE = 3;
+
     private ScrollView mScrollView;
 	private LinearLayout mLinearLayout;
 	private EditText mTitleEdit;
 	private EditText mContentEdit;
 	private String mTitle;     // 保存初始Title的长度，用于判断Title是否被修改
 	private String mContent;   // 保存内容的初始长度，用于判断内容是否变化
-	private Note note;
+	private Note mNote;
 
     private MediaDBAccess mMediaDBAccess;
     private List<Media> mMediaList;
@@ -67,6 +70,11 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setTitle("返回");
+        getWindow().addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 		setContentView(R.layout.activity_edit);
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
@@ -83,15 +91,14 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
 		Intent intent = this.getIntent();
 	    Bundle bundle = intent.getBundleExtra("noteBundle");
-	    note = (Note)bundle.getParcelable("note");
-        mCurrentNoteId = note.getNoteId();
-        Log.d(TAG+ "onCreate", mCurrentNoteId +"");
-	    mContent = note.getNoteContent();
-		mTitle = note.getNoteTitle();
-	    mTitleEdit.setText(note.getNoteTitle());
-	    mContentEdit.setText(note.getNoteContent());
+	    mNote = bundle.getParcelable("note");
+        mCurrentNoteId = mNote.getNoteId();
+        Log.d(TAG + "onCreate", mCurrentNoteId + "");
+	    mContent = mNote.getNoteContent();
+		mTitle = mNote.getNoteTitle();
+	    mTitleEdit.setText(mNote.getNoteTitle());
+	    mContentEdit.setText(mNote.getNoteContent());
 		mContentEdit.setSelection(mContentEdit.getText().length());
-
     }
 
     @Override
@@ -194,7 +201,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 				builder.setPositiveButton("确定",new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						NoteDBAccess access = new NoteDBAccess(EditActivity.this);
-						access.deleteNoteById(note);
+						access.deleteNoteById(mNote);
                         mMediaDBAccess.deleteById(mCurrentNoteId);
                         /*
                         * 开启一个线程删除本地图片或者视频
@@ -262,16 +269,16 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             case R.id.description_edit:
                 final AlertDialog.Builder descBuilder = new Builder(EditActivity.this);
                 descBuilder.setTitle("详细信息");
-                if (note.getCreateDate().compareTo(note.getUpdateDate())==0){
-                    descBuilder.setMessage("创建时间 : " + ConvertStringAndDate.datetoString(note.getCreateDate())
-                            + "\n"+"修改时间 : "+ConvertStringAndDate.datetoString(note.getCreateDate())+"\n"
-                            + "字数 : " + note.getNoteContent().length());
+                if (mNote.getCreateDate().compareTo(mNote.getUpdateDate())==0){
+                    descBuilder.setMessage("创建时间 : " + ConvertStringAndDate.datetoString(mNote.getCreateDate())
+                            + "\n"+"修改时间 : "+ConvertStringAndDate.datetoString(mNote.getCreateDate())+"\n"
+                            + "字数 : " + mNote.getNoteContent().length());
                 }
 
                 else {
-                    descBuilder.setMessage("创建时间 : " + ConvertStringAndDate.datetoString(note.getCreateDate())
-                            + "\n"+"修改时间 : "+ConvertStringAndDate.datetoString(note.getUpdateDate())+"\n"
-                            + "字数 : " + note.getNoteContent().length());
+                    descBuilder.setMessage("创建时间 : " + ConvertStringAndDate.datetoString(mNote.getCreateDate())
+                            + "\n"+"修改时间 : "+ConvertStringAndDate.datetoString(mNote.getUpdateDate())+"\n"
+                            + "字数 : " + mNote.getNoteContent().length());
                 }
                 descBuilder.setPositiveButton("确定",new DialogInterface.OnClickListener(){
                     @Override
@@ -280,6 +287,14 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                     }
                 });
                 descBuilder.create().show();
+                break;
+
+            case R.id.alarm_edit :
+                Bundle lBundle = new Bundle();
+                lBundle.putParcelable(SetAlarmActivity.SETTING_ALARM,mNote);
+                Intent alarmIntent = new Intent(EditActivity.this,SetAlarmActivity.class);
+                alarmIntent.putExtra(SetAlarmActivity.SETTING_ALARM,lBundle);
+                startActivityForResult(alarmIntent, SET_ALARM_REQUEST_CODE);
                 break;
 			default :
 				break;
@@ -290,16 +305,16 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     public void updateOrNot(){
         if (!mContentEdit.getText().toString().equals(mContent) || !mTitleEdit.getText().toString().equals(mTitle)){
             if (mTitleEdit.getText().length()==0){
-                note.setNoteTitle("无标题");
+                mNote.setNoteTitle("无标题");
             }
             else {
-                note.setNoteTitle(mTitleEdit.getText().toString());
+                mNote.setNoteTitle(mTitleEdit.getText().toString());
             }
             String noteContent = this.mContentEdit.getText().toString();
-            note.setNoteContent(noteContent);
-            note.setCreateDate(new Date());
+            mNote.setNoteContent(noteContent);
+            mNote.setCreateDate(new Date());
             NoteDBAccess access = new NoteDBAccess(this);
-            access.updateNoteById(note);
+            access.updateNoteById(mNote);
             Toast.makeText(this, "已更新", Toast.LENGTH_SHORT).show();
         }
     }
@@ -384,6 +399,9 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                     }
                 }
                 break;
+
+            case SET_ALARM_REQUEST_CODE :
+                break;
             default:
                 break;
         }
@@ -417,4 +435,5 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         }
         super.onDestroy();
     }
+
 }

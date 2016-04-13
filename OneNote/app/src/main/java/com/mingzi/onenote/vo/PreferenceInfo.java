@@ -21,7 +21,7 @@ public class PreferenceInfo {
 	public PreferenceInfo(Context context) {
 		super();
 		PreferenceInfo.context = context;
-		PreferenceInfo.share = context.getSharedPreferences("com.lht.notepad_preferences", Context.MODE_PRIVATE);
+		PreferenceInfo.share = context.getSharedPreferences("oneNote_Shared", Context.MODE_PRIVATE);
 		PreferenceInfo.editor = share.edit();
 		
 		getThemeListValue();
