@@ -58,4 +58,5 @@ public class ConstantValue {
 	public static final int THEME_BROWN = 0xffa85800;
 	public static final int THEME_ORANGE = 0xfff89800;
 	public static final int THEME_PURPLE = 0xffc898f8;
+
 }

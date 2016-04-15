@@ -32,19 +32,20 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class SetAlarmActivity extends Activity {
+
     private static final String TAG = "SetAlarm";
     public static final String SETTING_ALARM = "settingNote";
+    private  String ALARMtIME = "alarmTime";
 
     private Button mSetAlarmBtn;                                    // 申明设置时钟按钮
     private ToggleButton mEnableAlarmBtn;                        // 申明开启\关闭按钮
     private ToggleButton mAlarmStyleBtn;
     private SharedPreferences mPreferences;
-    SharedPreferences.Editor mEditor;
+    private SharedPreferences.Editor mEditor;
     private static boolean sAlarmStyle = true;            // 闹钟提示方式 (true:铃声;false:振动)
     Calendar mCalendar = Calendar.getInstance();
     final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
     static SetAlarmActivity sInstance;
-
     private Note mNote;
 
     public static void setAlarmStyle(boolean style) {
@@ -58,15 +59,16 @@ public class SetAlarmActivity extends Activity {
     private void loadData() {
         mPreferences = getSharedPreferences("oneNote", MODE_PRIVATE);
         mEditor = mPreferences.edit();
-        mSetAlarmBtn.setText(mPreferences.getString("alarmTime", mDateFormat.format(new Date(mCalendar.getTimeInMillis()))));
+        mSetAlarmBtn.setText(mPreferences.getString(ALARMtIME, mDateFormat.format(new Date(mCalendar.getTimeInMillis()))));
+        Log.d(TAG, "loadData: "+ALARMtIME);
         mEnableAlarmBtn.setChecked(mPreferences.getBoolean("on_off", false));
     }
 
-    private void saveData() {
-        mEditor.putString("alarmTime", mSetAlarmBtn.getText().toString());
+   /* private void saveData() {
+        mEditor.putString(ALARMtIME, mSetAlarmBtn.getText().toString());
         mEditor.putBoolean("on_off", mEnableAlarmBtn.isChecked());
         mEditor.commit();
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,7 @@ public class SetAlarmActivity extends Activity {
         Intent intent = this.getIntent();
         Bundle bundle = intent.getBundleExtra(SETTING_ALARM);
         mNote = bundle.getParcelable(SETTING_ALARM);
+        ALARMtIME = ALARMtIME +mNote.getNoteId();
         sInstance = this;                                        // 用于在ShakeAlarm窗口中关闭此activity
         MyOnClickListener myOnClickListener = new MyOnClickListener();    // 注册设置时间按钮监听事件
         mSetAlarmBtn = (Button) findViewById(R.id.btn_setClock);
@@ -87,7 +90,6 @@ public class SetAlarmActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        saveData();
     }
 
     class MyOnClickListener implements OnClickListener {
@@ -110,7 +112,7 @@ public class SetAlarmActivity extends Activity {
 
         private void enableAlarm(Calendar calendar) {
             mSetAlarmBtn.setText(mDateFormat.format(new Date(calendar.getTimeInMillis())));
-            mEditor.putString("alarmTime", mDateFormat.format(new Date(calendar.getTimeInMillis())));
+            mEditor.putString(ALARMtIME, mDateFormat.format(new Date(calendar.getTimeInMillis())));
             mEditor.commit();
             Bundle lBundle = new Bundle();
             lBundle.putParcelable(AlarmReceiver.RECEIVE_BUNDLE, mNote);
@@ -119,14 +121,14 @@ public class SetAlarmActivity extends Activity {
             mIntent.setAction(mDateFormat.format(new Date(calendar.getTimeInMillis())));
             mIntent.putExtra(AlarmReceiver.RECEIVE_BUNDLE, lBundle);
             mPendingIntent = PendingIntent.getBroadcast(SetAlarmActivity.this, 0, mIntent, 0);    // 创建PendingIntent
-            mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP,    // 设置闹钟，当前时间就唤醒
-                    calendar.getTimeInMillis(), 24 * 60 * 60 * 1000, mPendingIntent);
+            mAlarmManager.set(AlarmManager.RTC_WAKEUP,    // 设置闹钟，当前时间就唤醒
+                    calendar.getTimeInMillis(), mPendingIntent);
 
         }
 
         private void disableAlarm() {
             mIntent = new Intent(SetAlarmActivity.this, AlarmReceiver.class);
-            mIntent.setAction(mPreferences.getString("alarmTime", null));
+            mIntent.setAction(mPreferences.getString(ALARMtIME, null));
             mPendingIntent = PendingIntent.getBroadcast(SetAlarmActivity.this, 0, mIntent, 0);
             mAlarmManager.cancel(mPendingIntent);
             Toast.makeText(SetAlarmActivity.this, "闹钟取消成功", Toast.LENGTH_SHORT).show();
@@ -134,7 +136,6 @@ public class SetAlarmActivity extends Activity {
 
         @Override
         public void onClick(View v) {
-
             switch (v.getId()) {
                 case R.id.btn_setClock:
                     mSetAlarmLayout = (LinearLayout) mInflater.inflate(R.layout.alarm_dialog, null);
@@ -180,7 +181,8 @@ public class SetAlarmActivity extends Activity {
                     } else {
                             if (compareDate()) {
                                 try {
-                                    mCalendar.setTime(mDateFormat.parse(mPreferences.getString("alarmTime",null)));
+                                    mCalendar.setTime(mDateFormat.parse(mPreferences.getString(ALARMtIME,null)));
+                                    Log.d(TAG, "onClick: "+mPreferences.getString(ALARMtIME,null));
                                     enableAlarm(mCalendar);
                                     Toast.makeText(SetAlarmActivity.this,"重新开启闹钟成功！",Toast.LENGTH_LONG).show();
                                 } catch (ParseException e) {
@@ -199,7 +201,7 @@ public class SetAlarmActivity extends Activity {
     }
 
     private boolean compareDate(){
-        String dateStr = mPreferences.getString("alarmTime",null);
+        String dateStr = mPreferences.getString(ALARMtIME,null);
         if (dateStr !=null) {
             try {
                 return mDateFormat.parse(dateStr).after(new Date());

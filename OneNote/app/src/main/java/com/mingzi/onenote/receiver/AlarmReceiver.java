@@ -7,9 +7,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.ToggleButton;
 
 import com.mingzi.onenote.activity.EditActivity;
 import com.mingzi.onenote.vo.Note;
@@ -21,6 +23,7 @@ import com.mingzi.onenote.vo.Note;
 public class AlarmReceiver extends BroadcastReceiver
 {
 
+
     private static final String TAG = "AlarmReceiver";
     public static final String RECEIVE_BUNDLE ="alarmReceiver";
     private Note mNote;
@@ -28,10 +31,12 @@ public class AlarmReceiver extends BroadcastReceiver
     private Vibrator mVibrator;
     private SharedPreferences mSharedPreferences;
 
-
     @Override
     public void onReceive(final Context  context, Intent intent)
     {
+        PowerManager pm = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+        final PowerManager.WakeLock mWakelock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP |PowerManager.SCREEN_DIM_WAKE_LOCK, "SimpleTimer");
+        mWakelock.acquire();
         mBundle = intent.getBundleExtra(RECEIVE_BUNDLE);
         mNote = mBundle.getParcelable(RECEIVE_BUNDLE);
         AlertDialog.Builder mAlertBuilder = new AlertDialog.Builder(context);
@@ -45,6 +50,7 @@ public class AlarmReceiver extends BroadcastReceiver
         mAlertBuilder.setPositiveButton("查看", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                mWakelock.release();
                 Intent i = new Intent(context.getApplicationContext(), EditActivity.class);
                 mBundle.putParcelable("note", mNote);
                 Log.d(TAG, "onReceive: " + mNote.getNoteContent());
@@ -58,12 +64,17 @@ public class AlarmReceiver extends BroadcastReceiver
         mAlertBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                mWakelock.release();
                 mVibrator.cancel();
                 dialog.dismiss();
             }
         });
         AlertDialog mAlertDialog = mAlertBuilder.create();
-        mAlertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        mAlertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
+                |WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                |WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                |WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         mAlertDialog.show();
         Log.d(TAG, "onReceive: "+"runs here");
         mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
