@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,7 +35,7 @@ import java.util.Date;
 
 public class SetAlarmActivity extends Activity {
 
-    private static final String TAG = "SetAlarm";
+    private static final String TAG = "ringTone";
     public static final String SETTING_ALARM = "settingNote";
     private  String ALARMtIME = "alarmTime";
 
@@ -47,6 +49,11 @@ public class SetAlarmActivity extends Activity {
     final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
     static SetAlarmActivity sInstance;
     private Note mNote;
+    //用于选择铃声后作相应的判断标记
+    private static final int REQUEST_CODE_PICK_RINGTONE = 1;
+    //保存铃声的Uri的字符串形式
+    private String mRingtoneUri = null;
+
 
     public static void setAlarmStyle(boolean style) {
         sAlarmStyle = style;
@@ -63,12 +70,6 @@ public class SetAlarmActivity extends Activity {
         Log.d(TAG, "loadData: "+ALARMtIME);
         mEnableAlarmBtn.setChecked(mPreferences.getBoolean("on_off", false));
     }
-
-   /* private void saveData() {
-        mEditor.putString(ALARMtIME, mSetAlarmBtn.getText().toString());
-        mEditor.putBoolean("on_off", mEnableAlarmBtn.isChecked());
-        mEditor.commit();
-    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -224,9 +225,70 @@ public class SetAlarmActivity extends Activity {
             case R.id.add_alarm:
 
                 break;
+            case R.id.about_alarm:
+                doPickRingtone();
+                break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void doPickRingtone() {
+        Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);
+        // Allow user to pick 'Default'
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true);
+        // Show only ringtones
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE);
+        // Don't show 'Silent'
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false);
+
+        Uri ringtoneUri;
+        if (mRingtoneUri != null) {
+            ringtoneUri = Uri.parse(mRingtoneUri);
+        } else {
+            // Otherwise pick default ringtone Uri so that something is
+            // selected.
+            ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        }
+
+        // Put checkmark next to the current ringtone for this contact
+        intent.putExtra(RingtoneManager.EXTRA_RINGTONE_EXISTING_URI, ringtoneUri);
+
+        // Launch!
+        // startActivityForResult(intent, REQUEST_CODE_PICK_RINGTONE);
+        startActivityForResult(intent, REQUEST_CODE_PICK_RINGTONE);
+    }
+
+    private void handleRingtonePicked(Uri pickedUri) {
+        if (pickedUri != null) {
+            mRingtoneUri = pickedUri.toString();
+        } else {
+            mRingtoneUri = RingtoneManager.getActualDefaultRingtoneUri(SetAlarmActivity.this,
+                    RingtoneManager.TYPE_RINGTONE).toString();
+        }
+        // get ringtone name and you can save mRingtoneUri for database.
+        if (mRingtoneUri != null) {
+            mEditor.putString("ringTone", mRingtoneUri);
+            Log.d(TAG, "handleRingtonePicked: "+mRingtoneUri);
+            mEditor.commit();
+        }
+
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        switch (requestCode) {
+            case REQUEST_CODE_PICK_RINGTONE: {
+                Uri pickedUri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                handleRingtonePicked(pickedUri);
+                break;
+            }
+        }
     }
 }

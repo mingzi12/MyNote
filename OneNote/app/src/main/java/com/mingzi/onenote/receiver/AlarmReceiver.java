@@ -5,15 +5,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.WindowManager;
-import android.widget.ToggleButton;
 
 import com.mingzi.onenote.activity.EditActivity;
+import com.mingzi.onenote.service.PlayRingtoneService;
 import com.mingzi.onenote.vo.Note;
 
 /**
@@ -29,7 +28,6 @@ public class AlarmReceiver extends BroadcastReceiver
     private Note mNote;
     private Bundle mBundle;
     private Vibrator mVibrator;
-    private SharedPreferences mSharedPreferences;
 
     @Override
     public void onReceive(final Context  context, Intent intent)
@@ -37,6 +35,9 @@ public class AlarmReceiver extends BroadcastReceiver
         PowerManager pm = (PowerManager)context.getSystemService(Context.POWER_SERVICE);
         final PowerManager.WakeLock mWakelock = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP |PowerManager.SCREEN_DIM_WAKE_LOCK, "SimpleTimer");
         mWakelock.acquire();
+        final Intent ringToneServiceIntent = new Intent(context, PlayRingtoneService.class);
+        ringToneServiceIntent.setAction("com.mingzi.onenote.service.PlayRingtoneService");
+        context.startService(ringToneServiceIntent);
         mBundle = intent.getBundleExtra(RECEIVE_BUNDLE);
         mNote = mBundle.getParcelable(RECEIVE_BUNDLE);
         AlertDialog.Builder mAlertBuilder = new AlertDialog.Builder(context);
@@ -50,6 +51,7 @@ public class AlarmReceiver extends BroadcastReceiver
         mAlertBuilder.setPositiveButton("查看", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                context.stopService(new Intent("com.mingzi.onenote.service.PlayRingtoneService"));
                 mWakelock.release();
                 Intent i = new Intent(context.getApplicationContext(), EditActivity.class);
                 mBundle.putParcelable("note", mNote);
@@ -64,6 +66,7 @@ public class AlarmReceiver extends BroadcastReceiver
         mAlertBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                context.stopService(new Intent("com.mingzi.onenote.service.PlayRingtoneService"));
                 mWakelock.release();
                 mVibrator.cancel();
                 dialog.dismiss();

@@ -81,6 +81,12 @@
         <receiver android:name=".receiver.AlarmReceiver"
                   android:process=":remote">
         </receiver>
+        <service android:name=".service.PlayRingtoneService">
+            <intent-filter>
+                <action android:name="com.mingzi.onenote.service.PlayRingtoneService"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
