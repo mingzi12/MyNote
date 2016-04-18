@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+
         <item
-            android:id="@+id/add_alarm"
+            android:id="@+id/setting_ringTone"
             android:orderInCategory="2"
-            android:title="添加闹钟"/>
-        <item
-            android:id="@+id/about_alarm"
-            android:orderInCategory="2"
-            android:title="关于"/>
+            android:title="设置铃声"/>
 </menu>

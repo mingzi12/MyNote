@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -202,16 +203,29 @@ public class SetAlarmActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.setting_alarm_menu, menu);
+        SubMenu subMenu = menu.addSubMenu("提醒方式");
+        subMenu.addSubMenu(1,1,1,"震动");
+        subMenu.addSubMenu(1,2,2,"铃声");
+        subMenu.addSubMenu(1,3,3,"铃声和震动");
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.add_alarm:
-
+            case 1:
+                mEditor.putString("styleToRemain",getResources().getString(R.string.vibration));
+                mEditor.commit();
                 break;
-            case R.id.about_alarm:
+            case 2:
+                mEditor.putString("styleToRemain",getResources().getString(R.string.ringTone));
+                mEditor.commit();
+                break;
+            case 3:
+                mEditor.putString("styleToRemain",getResources().getString(R.string.ringToneAndVibration));
+                mEditor.commit();
+                break;
+            case R.id.setting_ringTone:
                 doPickRingtone();
                 break;
             default:

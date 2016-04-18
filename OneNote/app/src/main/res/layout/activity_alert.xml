@@ -33,18 +33,20 @@
 
             <Button
                 android:id="@+id/alert_cancle_btn"
-                android:layout_width="150dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button"
-                android:layout_marginRight="20dp"
-                android:text="Cancle"/>
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:text="取消"/>
 
             <Button
                 android:id="@+id/alert_ok_btn"
-                android:layout_width="150dp"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button"
-                android:text="Ok"/>
+                android:layout_marginLeft="30dp"
+                android:text="查看"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
