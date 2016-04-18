@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.IBinder;
@@ -22,7 +21,6 @@ public class PlayRingtoneService extends Service {
     private SharedPreferences mSharedPreferences;
     private MediaPlayer mMediaPlayer;
     Uri mUri;
-    String mDefaultRingtone;
 
     @Override
     public void onCreate() {
@@ -34,14 +32,12 @@ public class PlayRingtoneService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-       mMediaPlayer = MediaPlayer.create(getApplicationContext(),mUri);
-       /* try {
-            mMediaPlayer.prepare();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+        if (mUri == null) {
+            PlayRingTone(getApplicationContext(),RingtoneManager.TYPE_RINGTONE);
+        }
+        else {
+            mMediaPlayer = MediaPlayer.create(getApplicationContext(),mUri);
+        }
         mMediaPlayer.setLooping(true);
         mMediaPlayer.start();
         return super.onStartCommand(intent, flags, startId);
@@ -72,17 +68,6 @@ public class PlayRingtoneService extends Service {
 
     }
 
-    /**
-     * 获取的是铃声相应的Ringtone
-     * @param ctx
-     * @param type
-     */
-    public Ringtone getDefaultRingtone(Context ctx,int type) {
-
-        return RingtoneManager.getRingtone(ctx,
-                RingtoneManager.getActualDefaultRingtoneUri(ctx, type));
-
-    }
 
     /**
      * 播放铃声
@@ -91,10 +76,6 @@ public class PlayRingtoneService extends Service {
      */
 
     public void PlayRingTone(Context context,int type){
-         mMediaPlayer = MediaPlayer.create(context,
-                getDefaultRingtoneUri(context,type));
-        mMediaPlayer.setLooping(true);
-        mMediaPlayer.start();
-
+         mMediaPlayer = MediaPlayer.create(context, getDefaultRingtoneUri(context,type));
     }
 }

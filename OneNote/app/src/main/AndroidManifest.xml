@@ -87,6 +87,10 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </service>
+        <activity android:name=".activity.AlertActivity"
+            android:theme="@android:style/Theme.Holo.Wallpaper.NoTitleBar">
+
+        </activity>
     </application>
 
 </manifest>

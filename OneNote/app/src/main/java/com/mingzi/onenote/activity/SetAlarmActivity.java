@@ -54,15 +54,6 @@ public class SetAlarmActivity extends Activity {
     //保存铃声的Uri的字符串形式
     private String mRingtoneUri = null;
 
-
-    public static void setAlarmStyle(boolean style) {
-        sAlarmStyle = style;
-    }
-
-    public static boolean getAlarmStyle() {
-        return sAlarmStyle;
-    }
-
     private void loadData() {
         mPreferences = getSharedPreferences("oneNote", MODE_PRIVATE);
         mEditor = mPreferences.edit();
@@ -114,7 +105,9 @@ public class SetAlarmActivity extends Activity {
         private void enableAlarm(Calendar calendar) {
             mSetAlarmBtn.setText(mDateFormat.format(new Date(calendar.getTimeInMillis())));
             mEditor.putString(ALARMtIME, mDateFormat.format(new Date(calendar.getTimeInMillis())));
+            mEditor.putBoolean("style", mAlarmStyleBtn.isChecked());
             mEditor.commit();
+            Log.d(TAG, "enableAlarm: "+mPreferences.getBoolean("style",false));
             Bundle lBundle = new Bundle();
             lBundle.putParcelable(AlarmReceiver.RECEIVE_BUNDLE, mNote);
             mIntent = new Intent();    // 创建Intent对象
@@ -122,8 +115,7 @@ public class SetAlarmActivity extends Activity {
             mIntent.setAction(mDateFormat.format(new Date(calendar.getTimeInMillis())));
             mIntent.putExtra(AlarmReceiver.RECEIVE_BUNDLE, lBundle);
             mPendingIntent = PendingIntent.getBroadcast(SetAlarmActivity.this, 0, mIntent, 0);    // 创建PendingIntent
-            mAlarmManager.set(AlarmManager.RTC_WAKEUP,    // 设置闹钟，当前时间就唤醒
-                    calendar.getTimeInMillis(), mPendingIntent);
+            mAlarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), mPendingIntent);// 设置闹钟，当前时间就唤醒
 
         }
 
@@ -145,6 +137,7 @@ public class SetAlarmActivity extends Activity {
                     timePicker.setIs24HourView(true);
                     mAlarmStyleBtn = (ToggleButton) mSetAlarmLayout.findViewById(R.id.togbtn_alarm_style);
                     mAlarmStyleBtn.setChecked(mPreferences.getBoolean("style", false));
+                    Log.d(TAG, "onClick:origin : "+mPreferences.getBoolean("style", false));
                     new AlertDialog.Builder(SetAlarmActivity.this)
                             .setView(mSetAlarmLayout)
                             .setTitle("设置闹钟时间")
@@ -161,16 +154,9 @@ public class SetAlarmActivity extends Activity {
                                             lCalendar.set(Calendar.SECOND, 0); // 设置闹钟的秒数
                                             lCalendar.set(Calendar.MILLISECOND, 0); // 设置闹钟的毫秒数
                                             enableAlarm(lCalendar);
-                                            if (mAlarmStyleBtn.isChecked()) {
-                                                SetAlarmActivity.setAlarmStyle(true);
-                                            } else {
-                                                SetAlarmActivity.setAlarmStyle(false);
-                                            }
-
-                                            mEditor.putBoolean("style", mAlarmStyleBtn.isChecked());
+                                            Log.d(TAG, "onClick: after set :"+mPreferences.getBoolean("style",mAlarmStyleBtn.isChecked()));
                                             mEnableAlarmBtn.setChecked(true);
-                                            Toast.makeText(SetAlarmActivity.this, "闹钟设置成功", Toast.LENGTH_LONG)
-                                                    .show();// 提示用户
+                                            Toast.makeText(SetAlarmActivity.this, "闹钟设置成功", Toast.LENGTH_LONG).show();// 提示用户
                                         }
                                     }).setNegativeButton("取消", null).show();
                     break;
