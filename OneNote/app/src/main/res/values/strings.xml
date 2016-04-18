@@ -17,6 +17,4 @@
     <string name="vibration">震动</string>
     <string name="ringTone">铃声</string>
     <string name="ringToneAndVibration">铃声和震动</string>
-    <string name="pressBackAgain">再按一次退出</string>
-    <string name="unablePressBack">清醒值未达标,无法退出</string>
 </resources>
