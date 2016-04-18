@@ -3,11 +3,6 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.mingzi.onenote.activity.NewNoteActivity">
     <item
-        android:id="@+id/add_extra_edit"
-        android:orderInCategory="100"
-        android:icon="@drawable/black_shutcuts_attach"
-        android:showAsAction="always"/>
-    <item
         android:id="@+id/capture_img_edit"
         android:orderInCategory="100"
         android:icon="@drawable/black_shutcuts_camera"

@@ -5,17 +5,15 @@ package com.mingzi.onenote.util;
  */
 
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
+import android.provider.MediaStore;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class MyBitmap {
 
@@ -32,21 +30,6 @@ public class MyBitmap {
         }
         return BitmapFactory.decodeStream(fis, null, opt);
        // bitmap.recycle();
-    }
-    public static Bitmap readBitMap(Context context, int resId) {
-        BitmapFactory.Options opt = new BitmapFactory.Options();
-        opt.inPreferredConfig = Bitmap.Config.RGB_565;
-        opt.inSampleSize = 10; //width，hight设为原来的十分一
-        InputStream is = context.getResources().openRawResource(resId);
-        return BitmapFactory.decodeStream(is, null, opt);
-    }
-    public static void saveFile(Bitmap bm, String fileName) throws IOException {
-        File myCaptureFile = new File(fileName);
-        BufferedOutputStream bos = new BufferedOutputStream(
-                new FileOutputStream(myCaptureFile));
-        bm.compress(Bitmap.CompressFormat.JPEG, 80, bos);
-        bos.flush();
-        bos.close();
     }
 
     public static Bitmap getVideoThumbnail(String videoPath, int width, int height, int kind) {
@@ -72,5 +55,25 @@ public class MyBitmap {
 
         return null;
     }
+
+    /**
+     * 根据文件Uri获取路径
+     *
+     * @param context
+     * @param uri
+     * @return
+     */
+    public static String getFilePathByFileUri(Context context, Uri uri) {
+        String filePath = null;
+        Cursor cursor = context.getContentResolver().query(uri, null, null,
+                null, null);
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(cursor
+                    .getColumnIndex(MediaStore.Images.Media.DATA));
+        }
+        cursor.close();
+        return filePath;
+    }
+
 
 }
