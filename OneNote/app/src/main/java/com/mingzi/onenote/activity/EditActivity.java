@@ -48,10 +48,6 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
     public static final String TAG = "EditATY-> ";
     private static final int SET_ALARM_REQUEST_CODE = 3;
-    /**
-     * 选择图片的请求码
-     */
-    private final static int SELECT_IMAGE_REQUEST_CODE = 200;
 
     /**
      * 选择文件的请求码
@@ -307,8 +303,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 startActivityForResult(alarmIntent, SET_ALARM_REQUEST_CODE);
                 break;
             case R.id.extra_file_edit:
-                Intent selectFileIntent = new Intent(this,SelectFileActivity.class);
-                selectFileIntent.putExtra("noteId",mCurrentNoteId);
+                Intent selectFileIntent = new Intent(this, SelectFileActivity.class);
                 startActivityForResult(selectFileIntent, SELECT_FILE_REQUEST_CODE);
                 break;
             default:
@@ -317,22 +312,10 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         return super.onOptionsItemSelected(item);
     }
 
-    /***
-     * 从相册中取图片
+    /**
+     * 是否更新当前便签
      */
-    private void pickPhoto() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent, SELECT_FILE_REQUEST_CODE);
-    }
 
-
-    private void pickFile() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, SELECT_FILE_REQUEST_CODE);
-    }
     public void updateOrNot() {
         if (!mContentEdit.getText().toString().equals(mContent) || !mTitleEdit.getText().toString().equals(mTitle)) {
             if (mTitleEdit.getText().length() == 0) {
@@ -352,6 +335,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     /**
      * 分享
      */
+
     public void shareMsg(String activityTitle, String msgTitle, String msgContent) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");
@@ -361,9 +345,9 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         startActivity(Intent.createChooser(intent, activityTitle));
     }
 
-    /*
-    * 显示ActionBar中每个子项的图标
-	* */
+    /**
+     * 显示ActionBar中每个子项的图标
+     */
     @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {
@@ -379,24 +363,17 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         return super.onMenuOpened(featureId, menu);
     }
 
+    /**
+     * 根据resultCode的返回值，
+     * 做相应处理
+     */
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case ConstantValue.REQUEST_CODE_GET_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
-                    mPathsList.add(mCurrentPath);
-                    Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
-                    ImageView imageView = new ImageView(EditActivity.this);
-                    imageView.setId(mPathsList.size() - 1);
-                    imageView.setOnClickListener(this);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    imageView.setLayoutParams(layoutParams);
-                    Bitmap bitmap = BitmapUtils.readBitMap(mCurrentPath, 4);
-                    mBitmaps.add(bitmap);
-                    imageView.setImageBitmap(bitmap);
-                    mLinearLayout.addView(imageView);
+                    addView();
 
                 } else if (resultCode == RESULT_CANCELED) {
                     File file = new File(mCurrentPath);
@@ -408,19 +385,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
             case ConstantValue.REQUEST_CODE_GET_VIDEO:
                 if (resultCode == RESULT_OK) {
-                    mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
-                    mPathsList.add(mCurrentPath);
                     Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
-                    ImageView imageView = new ImageView(EditActivity.this);
-                    imageView.setId(mPathsList.size() - 1);
-                    imageView.setOnClickListener(this);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    imageView.setLayoutParams(layoutParams);
-                    Bitmap bitmap = BitmapUtils.getVideoThumbnail(mCurrentPath, 900, 700, MediaStore.Images.Thumbnails.MICRO_KIND);
-                    mBitmaps.add(bitmap);
-                    imageView.setImageBitmap(bitmap);
-                    mLinearLayout.addView(imageView);
-
+                    addView();
                 } else if (resultCode == RESULT_CANCELED) {
                     File file = new File(mCurrentPath);
                     if (file.exists() && file.length() == 0) {
@@ -434,19 +400,11 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                     if (data != null && data.getData() != null) {//有数据返回直接使用返回的图片地址
                         mCurrentPath = BitmapUtils.getFilePathByFileUri(this, data.getData());
                     }
-                    mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
+                    if (mCurrentPath==null) {
+                        mCurrentPath = Uri.decode(data.getDataString());
+                    }
                     Log.d(TAG, "onActivityResult: " + mCurrentPath);
-                    mPathsList.add(mCurrentPath);
-                    Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
-                    ImageView imageView = new ImageView(EditActivity.this);
-                    imageView.setId(mPathsList.size() - 1);
-                    imageView.setOnClickListener(this);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    imageView.setLayoutParams(layoutParams);
-                    Bitmap bitmap = BitmapUtils.getBitmapByPath(mCurrentPath);
-                    mBitmaps.add(bitmap);
-                    imageView.setImageBitmap(bitmap);
-                    mLinearLayout.addView(imageView);
+                    addView();
                 }
 
                 break;
@@ -457,6 +415,47 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private void addView() {
+        Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
+        if (mCurrentPath.endsWith(".jpg") || mCurrentPath.endsWith("jpeg")
+                || mCurrentPath.endsWith(".png")) {
+            mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
+            Log.d(TAG, "onActivityResult: " + mCurrentPath);
+            mPathsList.add(mCurrentPath);
+            Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
+            ImageView imageView = new ImageView(EditActivity.this);
+            imageView.setId(mPathsList.size() - 1);
+            imageView.setOnClickListener(this);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,200);
+            imageView.setLayoutParams(layoutParams);
+            imageView.setPadding(5,5,5,5);
+            Bitmap bitmap = BitmapUtils.getBitmapByPath(mCurrentPath);
+            mBitmaps.add(bitmap);
+            imageView.setImageBitmap(bitmap);
+            mLinearLayout.addView(imageView);
+        } else if (mCurrentPath.endsWith(".mp4") || mCurrentPath.endsWith(".rmvb")
+                || mCurrentPath.endsWith(".avi")) {
+            mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
+            mPathsList.add(mCurrentPath);
+            ImageView imageView = new ImageView(EditActivity.this);
+            imageView.setId(mPathsList.size() - 1);
+            imageView.setOnClickListener(this);
+            imageView.setPadding(5,5,5,5);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            imageView.setLayoutParams(layoutParams);
+            Bitmap bitmap = BitmapUtils.getVideoThumbnail(mCurrentPath, 900, 700, MediaStore.Images.Thumbnails.MICRO_KIND);
+            mBitmaps.add(bitmap);
+            imageView.setImageBitmap(bitmap);
+            mLinearLayout.addView(imageView);
+        } else {
+            Toast.makeText(this, "不支持添加该类型的文件", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    /**
+     * 获取存放文件的文件名
+     */
     public File getMediaDir() {
         File dir = new File(Environment.getExternalStorageDirectory(),
                 "OneNote");

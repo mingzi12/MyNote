@@ -10,7 +10,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.provider.MediaStore;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -67,12 +66,14 @@ public class BitmapUtils {
         String filePath = null;
         Cursor cursor = context.getContentResolver().query(uri, null, null,
                 null, null);
-        if (cursor.moveToFirst()) {
-            filePath = cursor.getString(cursor
-                    .getColumnIndex(MediaStore.Images.Media.DATA));
+        if (cursor !=null) {
+            if (cursor.moveToFirst()) {
+                filePath = cursor.getString(cursor.getColumnIndex("_data"));
         }
-        cursor.close();
-        return filePath;
+            cursor.close();
+            return Uri.decode(filePath);
+        }
+       return null;
     }
 
 

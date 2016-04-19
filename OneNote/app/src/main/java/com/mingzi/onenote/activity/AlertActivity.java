@@ -36,6 +36,7 @@ public class AlertActivity extends Activity implements View.OnClickListener {
     private SharedPreferences mSharedPreferences;
     private String mStyleStr = null;
     @SuppressLint("ShowToast")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
