@@ -30,7 +30,7 @@ import android.widget.Toast;
 import com.mingzi.onenote.R;
 import com.mingzi.onenote.util.ConvertStringAndDate;
 import com.mingzi.onenote.util.MediaDBAccess;
-import com.mingzi.onenote.util.MyBitmap;
+import com.mingzi.onenote.util.BitmapUtils;
 import com.mingzi.onenote.util.NoteDBAccess;
 import com.mingzi.onenote.values.ConstantValue;
 import com.mingzi.onenote.vo.Media;
@@ -136,7 +136,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
             mPathsList.add(path);
             if (path.endsWith(".jpg")) {
-                Bitmap bitmap = MyBitmap.readBitMap(path, 4);
+                Bitmap bitmap = BitmapUtils.readBitMap(path, 4);
                 mBitmaps.add(bitmap);
                 ImageView imageView = new ImageView(EditActivity.this);
                 imageView.setId(i);
@@ -146,7 +146,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 imageView.setOnClickListener(this);
                 mLinearLayout.addView(imageView);
             } else if (path.endsWith(".mp4")) {
-                Bitmap bitmap = MyBitmap.getVideoThumbnail(path, 900, 700, MediaStore.Images.Thumbnails.MICRO_KIND);
+                Bitmap bitmap = BitmapUtils.getVideoThumbnail(path, 900, 700, MediaStore.Images.Thumbnails.MICRO_KIND);
                 mBitmaps.add(bitmap);
                 Log.d(TAG + "flush ", path);  // 调试
                 ImageView imageView = new ImageView(EditActivity.this);
@@ -393,7 +393,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                     imageView.setOnClickListener(this);
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     imageView.setLayoutParams(layoutParams);
-                    Bitmap bitmap = MyBitmap.readBitMap(mCurrentPath, 4);
+                    Bitmap bitmap = BitmapUtils.readBitMap(mCurrentPath, 4);
                     mBitmaps.add(bitmap);
                     imageView.setImageBitmap(bitmap);
                     mLinearLayout.addView(imageView);
@@ -416,7 +416,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                     imageView.setOnClickListener(this);
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     imageView.setLayoutParams(layoutParams);
-                    Bitmap bitmap = MyBitmap.getVideoThumbnail(mCurrentPath, 900, 700, MediaStore.Images.Thumbnails.MICRO_KIND);
+                    Bitmap bitmap = BitmapUtils.getVideoThumbnail(mCurrentPath, 900, 700, MediaStore.Images.Thumbnails.MICRO_KIND);
                     mBitmaps.add(bitmap);
                     imageView.setImageBitmap(bitmap);
                     mLinearLayout.addView(imageView);
@@ -432,8 +432,9 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             case SELECT_FILE_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     if (data != null && data.getData() != null) {//有数据返回直接使用返回的图片地址
-                        mCurrentPath = MyBitmap.getFilePathByFileUri(this, data.getData());
+                        mCurrentPath = BitmapUtils.getFilePathByFileUri(this, data.getData());
                     }
+                    mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
                     Log.d(TAG, "onActivityResult: " + mCurrentPath);
                     mPathsList.add(mCurrentPath);
                     Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
@@ -442,7 +443,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                     imageView.setOnClickListener(this);
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                     imageView.setLayoutParams(layoutParams);
-                    Bitmap bitmap = MyBitmap.getBitmapByPath(mCurrentPath);
+                    Bitmap bitmap = BitmapUtils.getBitmapByPath(mCurrentPath);
                     mBitmaps.add(bitmap);
                     imageView.setImageBitmap(bitmap);
                     mLinearLayout.addView(imageView);

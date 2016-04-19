@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.mingzi.onenote.R;
-import com.mingzi.onenote.util.MyBitmap;
+import com.mingzi.onenote.util.BitmapUtils;
 
 public class PhoneViewActivity extends Activity {
 
@@ -28,7 +28,7 @@ public class PhoneViewActivity extends Activity {
         String path = getIntent().getStringExtra(EXTRA_PATH);
         if (path != null) {
 
-            bitmap = MyBitmap.getBitmapByPath(path);
+            bitmap = BitmapUtils.getBitmapByPath(path);
             imageView.setImageBitmap(bitmap);
         } else {
             finish();
