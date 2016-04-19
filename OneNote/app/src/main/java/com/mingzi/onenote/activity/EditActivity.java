@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -50,9 +49,14 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     public static final String TAG = "EditATY-> ";
     private static final int SET_ALARM_REQUEST_CODE = 3;
     /**
-     * 选择图片的返回码
+     * 选择图片的请求码
      */
-    private final static int SELECT_IMAGE_RESULT_CODE = 200;
+    private final static int SELECT_IMAGE_REQUEST_CODE = 200;
+
+    /**
+     * 选择文件的请求码
+     */
+    private final static int SELECT_FILE_REQUEST_CODE = 300;
 
     private ScrollView mScrollView;
     private LinearLayout mLinearLayout;
@@ -190,11 +194,11 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_edit, menu);
-        SubMenu subMenu = menu.addSubMenu("附件");
+       /* SubMenu subMenu = menu.addSubMenu("附件");
         subMenu.setIcon(R.drawable.black_shutcuts_attach);
         subMenu.addSubMenu(1, 1, 1, "照片");
         subMenu.addSubMenu(1, 2, 2, "文件");
-
+*/
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -260,7 +264,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 startActivityForResult(imageIntent, ConstantValue.REQUEST_CODE_GET_PHOTO);
                 break;
 
-            case R.id.add_video_edit:
+            case R.id.capture_video_edit:
                 Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 File videoFile = new File(getMediaDir(), System.currentTimeMillis() + ".mp4");
                 if (!videoFile.exists()) {
@@ -302,11 +306,10 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 alarmIntent.putExtra(SetAlarmActivity.SETTING_ALARM, lBundle);
                 startActivityForResult(alarmIntent, SET_ALARM_REQUEST_CODE);
                 break;
-            case 1:
-                pickPhoto();
-                break;
-            case 2:
-
+            case R.id.extra_file_edit:
+                Intent selectFileIntent = new Intent(this,SelectFileActivity.class);
+                selectFileIntent.putExtra("noteId",mCurrentNoteId);
+                startActivityForResult(selectFileIntent, SELECT_FILE_REQUEST_CODE);
                 break;
             default:
                 break;
@@ -320,9 +323,16 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     private void pickPhoto() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
-        startActivityForResult(intent, SELECT_IMAGE_RESULT_CODE);
+        startActivityForResult(intent, SELECT_FILE_REQUEST_CODE);
     }
 
+
+    private void pickFile() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        startActivityForResult(intent, SELECT_FILE_REQUEST_CODE);
+    }
     public void updateOrNot() {
         if (!mContentEdit.getText().toString().equals(mContent) || !mTitleEdit.getText().toString().equals(mTitle)) {
             if (mTitleEdit.getText().length() == 0) {
@@ -419,22 +429,25 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 }
                 break;
 
-            case SELECT_IMAGE_RESULT_CODE:
-                if (data != null && data.getData() != null) {//有数据返回直接使用返回的图片地址
-                    mCurrentPath = MyBitmap.getFilePathByFileUri(this, data.getData());
+            case SELECT_FILE_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    if (data != null && data.getData() != null) {//有数据返回直接使用返回的图片地址
+                        mCurrentPath = MyBitmap.getFilePathByFileUri(this, data.getData());
+                    }
+                    Log.d(TAG, "onActivityResult: " + mCurrentPath);
+                    mPathsList.add(mCurrentPath);
+                    Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
+                    ImageView imageView = new ImageView(EditActivity.this);
+                    imageView.setId(mPathsList.size() - 1);
+                    imageView.setOnClickListener(this);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    imageView.setLayoutParams(layoutParams);
+                    Bitmap bitmap = MyBitmap.getBitmapByPath(mCurrentPath);
+                    mBitmaps.add(bitmap);
+                    imageView.setImageBitmap(bitmap);
+                    mLinearLayout.addView(imageView);
                 }
-                mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
-                mPathsList.add(mCurrentPath);
-                Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
-                ImageView imageView = new ImageView(EditActivity.this);
-                imageView.setId(mPathsList.size() - 1);
-                imageView.setOnClickListener(this);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                imageView.setLayoutParams(layoutParams);
-                Bitmap bitmap = MyBitmap.getBitmapByPath(mCurrentPath);
-                mBitmaps.add(bitmap);
-                imageView.setImageBitmap(bitmap);
-                mLinearLayout.addView(imageView);
+
                 break;
             default:
                 break;

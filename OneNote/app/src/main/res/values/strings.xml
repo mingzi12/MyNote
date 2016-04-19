@@ -17,4 +17,5 @@
     <string name="vibration">震动</string>
     <string name="ringTone">铃声</string>
     <string name="ringToneAndVibration">铃声和震动</string>
+    <string name="title_activity_select_file">SelectFileActivity</string>
 </resources>

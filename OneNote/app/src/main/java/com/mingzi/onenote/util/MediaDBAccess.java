@@ -40,7 +40,7 @@ public class MediaDBAccess {
         contentValues.put(ConstantValue.MEDIA_OWNER_ID,noteId);
         contentValues.put(ConstantValue.MEDIA_DATE,dateStr);
         mSQLiteDatabase.insert(ConstantValue.MEDIA_TABLE_NAME, null, contentValues);
-        closeDB();
+        close();
     }
 
     public Cursor queryAll(){
