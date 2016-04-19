@@ -40,6 +40,7 @@ public class MediaDBAccess {
         contentValues.put(ConstantValue.MEDIA_OWNER_ID,noteId);
         contentValues.put(ConstantValue.MEDIA_DATE,dateStr);
         mSQLiteDatabase.insert(ConstantValue.MEDIA_TABLE_NAME, null, contentValues);
+        Log.d(TAG, "insert: "+path+" "+noteId);
         close();
     }
 
@@ -51,18 +52,17 @@ public class MediaDBAccess {
     }
 
     public Cursor queryById(int noteId){
-        Log.d(TAG+"queryById",noteId+"");
+        Log.d(TAG + "queryById", noteId + "");
         mSQLiteDatabase = mDBOpenHelper.getReadableDatabase();
         Cursor cursor = mSQLiteDatabase.query(ConstantValue.MEDIA_TABLE_NAME,null,ConstantValue.MEDIA_OWNER_ID
                 +"= ?",new String[]{noteId+""},null,null,null);
-
+        Log.d(TAG + "queryById", cursor.getCount()+ "");
         return cursor;
     }
 
     public List selectAll(int noteId){
         Cursor cursor = queryById(noteId);
-        while (cursor.moveToNext()){
-            Log.d(TAG + "selectAll", cursor.getString(1));
+        while (cursor.moveToNext()) {
             Media media = new Media();
             media.setPath(cursor.getString(cursor.getColumnIndex(ConstantValue.MEDIA_PATH)));
             media.setDate(ConvertStringAndDate.stringtodate(cursor.getString(cursor.getColumnIndex(ConstantValue.MEDIA_DATE))));
@@ -70,6 +70,11 @@ public class MediaDBAccess {
         }
         close();
         handleList();
+        Iterator<Media> iterator = mList.iterator();
+        while (iterator.hasNext()) {
+            Media media = iterator.next();
+            Log.d(TAG + "selectAll", media.getPath());
+        }
         return mList;
     }
 
@@ -88,12 +93,15 @@ public class MediaDBAccess {
         return true;
     }
 
+    /**
+     * 如果文件不存在，删除相应记录并在list中删除
+     * */
     public void handleList(){
         Iterator<Media> iterator = mList.iterator();
         while (iterator.hasNext()){
             Media media =  iterator.next();
             Log.d(TAG+"handleList",media.getPath());
-            if (!(new File(media.getPath()).exists())){
+            if (!(new File(media.getPath()).exists())) {
                 iterator.remove();
                 deleteByPath(media.getPath());
             }

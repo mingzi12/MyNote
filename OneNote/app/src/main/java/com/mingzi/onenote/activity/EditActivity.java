@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +27,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mingzi.onenote.R;
@@ -132,15 +135,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
             mPathsList.add(path);
             if (path.endsWith(".jpg")) {
-                Bitmap bitmap = BitmapUtils.readBitMap(path, 4);
-                mBitmaps.add(bitmap);
-                ImageView imageView = new ImageView(EditActivity.this);
-                imageView.setId(i);
-                imageView.setLayoutParams(layoutParams);
+                addThumbnail(path,i);
 
-                imageView.setImageBitmap(bitmap);
-                imageView.setOnClickListener(this);
-                mLinearLayout.addView(imageView);
             } else if (path.endsWith(".mp4")) {
                 Bitmap bitmap = BitmapUtils.getVideoThumbnail(path, 900, 700, MediaStore.Images.Thumbnails.MICRO_KIND);
                 mBitmaps.add(bitmap);
@@ -151,10 +147,32 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 imageView.setImageBitmap(bitmap);
                 imageView.setOnClickListener(this);
                 mLinearLayout.addView(imageView);
+            } else if (path.endsWith(".doc")||path.endsWith(".pdf")
+                    ||path.endsWith(".html")||path.endsWith(".txt")) {
+                addFileView(path);
+                Log.d(TAG, "flush: "+path);
+
             }
 
         }
     }
+
+    /**
+     * 动态添加视频或者图片缩略图视图
+     * */
+    private void addThumbnail(String meidaPath,int id) {
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, null);
+        ImageView imageView = (ImageView) mThumbnailLayout.findViewById(R.id.mImageThumbnail);
+        Bitmap bitmap = BitmapUtils.readBitMap(meidaPath, 4);
+        mBitmaps.add(bitmap);
+        imageView.setId(id);
+        imageView.setImageBitmap(bitmap);
+        imageView.setOnClickListener(this);
+        mLinearLayout.addView(mThumbnailLayout);
+    }
+
+
 
     @Override
     public void onClick(View v) {
@@ -190,11 +208,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_edit, menu);
-       /* SubMenu subMenu = menu.addSubMenu("附件");
-        subMenu.setIcon(R.drawable.black_shutcuts_attach);
-        subMenu.addSubMenu(1, 1, 1, "照片");
-        subMenu.addSubMenu(1, 2, 2, "文件");
-*/
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -402,6 +416,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                     }
                     if (mCurrentPath==null) {
                         mCurrentPath = Uri.decode(data.getDataString());
+                        int len = mCurrentPath.length();
+                        mCurrentPath = mCurrentPath.substring(7,len);
                     }
                     Log.d(TAG, "onActivityResult: " + mCurrentPath);
                     addView();
@@ -447,10 +463,32 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             mBitmaps.add(bitmap);
             imageView.setImageBitmap(bitmap);
             mLinearLayout.addView(imageView);
-        } else {
-            Toast.makeText(this, "不支持添加该类型的文件", Toast.LENGTH_SHORT).show();
+        } else if (mCurrentPath.endsWith(".doc")||mCurrentPath.endsWith(".pdf")
+                ||mCurrentPath.endsWith(".html")||mCurrentPath.endsWith(".txt")) {
+            mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
+            mPathsList.add(mCurrentPath);
+
+            addFileView(mCurrentPath);
         }
 
+        else {
+            Toast.makeText(this, "不支持添加该类型的文件", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    /**
+     * 动态添加文本文件视图
+     * */
+    private void addFileView(String path) {
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout mTextFileLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_text_file_layout, null);
+        mTextFileLayout.setPadding(10,10,10,10);
+        TextView mTextView = (TextView) mTextFileLayout.findViewById(R.id.mTextView);
+        int index = path.lastIndexOf("/")+1;
+        String fileName = path.substring(index,path.length());
+        mTextView.setText("  "+fileName);
+        mLinearLayout.addView(mTextFileLayout);
     }
 
     /**
