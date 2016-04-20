@@ -152,6 +152,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 addFileView(path,i);
                 Log.d(TAG, "flush: "+path);
 
+            } else if (path.endsWith(".mp3")) {
+                addFileView(path,i);
             }
 
         }
@@ -178,20 +180,39 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     public void onClick(View v) {
         Intent intent;
         int viewId = v.getId();
-        if (mPathsList.get(viewId).endsWith(".jpg")) {
+        if (mPathsList.get(viewId).endsWith(".jpg")||mPathsList.get(viewId).endsWith(".jpeg")
+                ||mPathsList.get(viewId).endsWith(".png")) {
             intent = new Intent(EditActivity.this, PhoneViewActivity.class);
             intent.putExtra(PhoneViewActivity.EXTRA_PATH, mPathsList.get(viewId));
             startActivity(intent);
-        } else if (mPathsList.get(viewId).endsWith(".mp4")) {
+        } else if (mPathsList.get(viewId).endsWith(".mp4")||mPathsList.get(viewId).endsWith(".rmvb")
+                ||mPathsList.get(viewId).endsWith(".avi")) {
             intent = new Intent(EditActivity.this, VideoViewerActivity.class);
             intent.putExtra(PhoneViewActivity.EXTRA_PATH, mPathsList.get(viewId));
             startActivity(intent);
-        } else if (mPathsList.get(viewId).endsWith(".doc")||mPathsList.get(viewId).endsWith(".pdf")) {
+        } else if (mPathsList.get(viewId).endsWith(".doc")||mPathsList.get(viewId).endsWith(".pdf")
+                ||mPathsList.get(viewId).endsWith(".ppt")) {
             intent = new Intent(Intent.ACTION_VIEW);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             Uri uri = Uri.fromFile(new File(mPathsList.get(viewId)));
             intent.setDataAndType(uri, "application/*");
             startActivity(intent);
+        }
+        else if (mPathsList.get(viewId).endsWith(".html")) {
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Uri uri = Uri.fromFile(new File(mPathsList.get(viewId)));
+            intent.setDataAndType(uri, "application/html");
+            startActivity(intent);
+        } else if (mPathsList.get(viewId).endsWith(".mp3")) {
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Uri uri = Uri.fromFile(new File(mPathsList.get(viewId)));
+            intent.setDataAndType (uri, "audio/*");
+            this.startActivity(intent);
+        }
+        else {
+            Toast.makeText(this,"没有打开该类型文件的程序",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -472,6 +493,11 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             mLinearLayout.addView(imageView);
         } else if (mCurrentPath.endsWith(".doc")||mCurrentPath.endsWith(".pdf")
                 ||mCurrentPath.endsWith(".html")||mCurrentPath.endsWith(".txt")||mCurrentPath.endsWith(".ppt")) {
+            mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
+            mPathsList.add(mCurrentPath);
+
+            addFileView(mCurrentPath,mPathsList.size() - 1);
+        } else if (mCurrentPath.endsWith(".mp3")) {
             mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
             mPathsList.add(mCurrentPath);
 
