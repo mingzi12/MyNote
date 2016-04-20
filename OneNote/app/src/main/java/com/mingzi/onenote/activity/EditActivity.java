@@ -134,10 +134,10 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             Log.d(TAG + "flush ", mMediaList.get(i).getDate().toString());  // 调试
 
             mPathsList.add(path);
-            if (path.endsWith(".jpg")) {
+            if (path.endsWith(".jpg")||path.endsWith(".jpeg")||path.endsWith(".png")) {
                 addThumbnail(path,i);
 
-            } else if (path.endsWith(".mp4")) {
+            } else if (path.endsWith(".mp4")||path.endsWith(".rmvb")||path.endsWith(".avi")) {
                 Bitmap bitmap = BitmapUtils.getVideoThumbnail(path, 900, 700, MediaStore.Images.Thumbnails.MICRO_KIND);
                 mBitmaps.add(bitmap);
                 Log.d(TAG + "flush ", path);  // 调试
@@ -148,7 +148,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 imageView.setOnClickListener(this);
                 mLinearLayout.addView(imageView);
             } else if (path.endsWith(".doc")||path.endsWith(".pdf")
-                    ||path.endsWith(".html")||path.endsWith(".txt")) {
+                    ||path.endsWith(".html")||path.endsWith(".txt")||path.endsWith(".ppt")) {
                 addFileView(path,i);
                 Log.d(TAG, "flush: "+path);
 
@@ -186,7 +186,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             intent = new Intent(EditActivity.this, VideoViewerActivity.class);
             intent.putExtra(PhoneViewActivity.EXTRA_PATH, mPathsList.get(viewId));
             startActivity(intent);
-        } else if (mPathsList.get(viewId).endsWith(".doc")) {
+        } else if (mPathsList.get(viewId).endsWith(".doc")||mPathsList.get(viewId).endsWith(".pdf")) {
             intent = new Intent(Intent.ACTION_VIEW);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             Uri uri = Uri.fromFile(new File(mPathsList.get(viewId)));
@@ -234,7 +234,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                         /*
                         * 开启一个线程删除本地图片或者视频
                         * */
-                        new Thread() {
+                       /* new Thread() {
                             @Override
                             public void run() {
                                 super.run();
@@ -246,7 +246,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                                     }
                                 }
                             }
-                        }.start();
+                        }.start();*/
+
                         dialog.dismiss();
                         Toast.makeText(EditActivity.this, "已删除", Toast.LENGTH_LONG).show();
                         EditActivity.this.finish();
@@ -470,7 +471,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             imageView.setImageBitmap(bitmap);
             mLinearLayout.addView(imageView);
         } else if (mCurrentPath.endsWith(".doc")||mCurrentPath.endsWith(".pdf")
-                ||mCurrentPath.endsWith(".html")||mCurrentPath.endsWith(".txt")) {
+                ||mCurrentPath.endsWith(".html")||mCurrentPath.endsWith(".txt")||mCurrentPath.endsWith(".ppt")) {
             mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
             mPathsList.add(mCurrentPath);
 
