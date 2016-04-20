@@ -70,6 +70,7 @@ public class SelectFileActivity extends Activity implements View.OnClickListener
             }
             else {
                 setResult(RESULT_CANCELED);
+                this.finish();
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

@@ -5,32 +5,32 @@
 
     <item
         android:id="@+id/capture_img_new"
-        android:orderInCategory="100"
-        android:icon="@drawable/black_shutcuts_camera"
+        android:icon="@drawable/ic_widget_4x1_camera"
         android:showAsAction="always"/>
     <item
         android:id="@+id/capture_video_new"
-        android:title="录视频"
+        android:title="    录视频"
+        android:icon="@drawable/ic_attach_flag_video_light"
         app:showAsAction="never"/>
     <item
         android:id="@+id/delete_new"
-        android:orderInCategory="100"
-        android:title="删除"
+        android:icon="@drawable/ic_menu_delete_light"
+        android:title="     删除"
         app:showAsAction="never"/>
     <item
         android:id="@+id/send_new"
-        android:orderInCategory="100"
-        android:title="发送"
+        android:icon="@drawable/ic_menu_send_light"
+        android:title="     发送"
         app:showAsAction="never"/>
     <item
         android:id="@+id/description_new"
-        android:orderInCategory="100"
-        android:title="详情"
+        android:icon="@drawable/ic_menu_detail_light"
+        android:title="     详情"
         app:showAsAction="never"/>
     <item
         android:id="@+id/add_extra_file_new"
-        android:orderInCategory="100"
-        android:title="附件"
-        android:icon="@drawable/black_shutcuts_attach"
+        android:title="     附件"
+        android:icon="@drawable/ic_widget_4x1_attach"
+        app:showAsAction="never"
         />
 </menu>

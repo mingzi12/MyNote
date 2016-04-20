@@ -5,35 +5,36 @@
     <item
         android:id="@+id/capture_img_edit"
         android:orderInCategory="100"
-        android:icon="@drawable/black_shutcuts_camera"
+        android:icon="@drawable/ic_widget_4x1_camera"
         android:showAsAction="always"/>
     <item
         android:id="@+id/capture_video_edit"
-        android:title="录视频"
+        android:title="  录视频"
+        android:icon="@drawable/ic_attach_flag_video_light"
         app:showAsAction="never"/>
     <item
         android:id="@+id/delete_edit"
-        android:icon="@drawable/ic_delete_normal"
-        android:title="   删除"
+        android:icon="@drawable/ic_menu_delete_light"
+        android:title="    删除"
         app:showAsAction="never"/>
     <item
         android:id="@+id/send_edit"
-        android:title="   发送"
-        android:icon="@drawable/ic_menu_share_holo_light"
+        android:title="    发送"
+        android:icon="@drawable/ic_menu_send_light"
         app:showAsAction="never"/>
     <item
         android:id="@+id/description_edit"
-        android:title="   详情"
-        android:icon="@drawable/ic_detail_reminder"
+        android:title="    详情"
+        android:icon="@drawable/ic_menu_detail_light"
         app:showAsAction="never"/>
     <item
         android:id="@+id/alarm_edit"
-        android:icon="@drawable/ic_menu_reminder"
-        android:title="   提醒"
+        android:icon="@drawable/ic_detail_top_cal_light"
+        android:title="    提醒"
         app:showAsAction="never"/>
     <item
         android:id="@+id/extra_file_edit"
-        android:icon="@drawable/black_shutcuts_attach"
-        android:title="    附件"
+        android:icon="@drawable/ic_widget_4x1_attach"
+        android:title="     附件"
         app:showAsAction="never"/>
 </menu>
