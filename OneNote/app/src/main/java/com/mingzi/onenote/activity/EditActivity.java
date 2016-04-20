@@ -149,7 +149,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 mLinearLayout.addView(imageView);
             } else if (path.endsWith(".doc")||path.endsWith(".pdf")
                     ||path.endsWith(".html")||path.endsWith(".txt")) {
-                addFileView(path);
+                addFileView(path,i);
                 Log.d(TAG, "flush: "+path);
 
             }
@@ -160,11 +160,11 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     /**
      * 动态添加视频或者图片缩略图视图
      * */
-    private void addThumbnail(String meidaPath,int id) {
+    private void addThumbnail(String mediaPath,int id) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, null);
         ImageView imageView = (ImageView) mThumbnailLayout.findViewById(R.id.mImageThumbnail);
-        Bitmap bitmap = BitmapUtils.readBitMap(meidaPath, 4);
+        Bitmap bitmap = BitmapUtils.readBitMap(mediaPath, 4);
         mBitmaps.add(bitmap);
         imageView.setId(id);
         imageView.setImageBitmap(bitmap);
@@ -185,6 +185,12 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         } else if (mPathsList.get(viewId).endsWith(".mp4")) {
             intent = new Intent(EditActivity.this, VideoViewerActivity.class);
             intent.putExtra(PhoneViewActivity.EXTRA_PATH, mPathsList.get(viewId));
+            startActivity(intent);
+        } else if (mPathsList.get(viewId).endsWith(".doc")) {
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Uri uri = Uri.fromFile(new File(mPathsList.get(viewId)));
+            intent.setDataAndType(uri, "application/*");
             startActivity(intent);
         }
     }
@@ -468,7 +474,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
             mPathsList.add(mCurrentPath);
 
-            addFileView(mCurrentPath);
+            addFileView(mCurrentPath,mPathsList.size() - 1);
         }
 
         else {
@@ -480,11 +486,13 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     /**
      * 动态添加文本文件视图
      * */
-    private void addFileView(String path) {
+    private void addFileView(String path ,int id) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout mTextFileLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_text_file_layout, null);
         mTextFileLayout.setPadding(10,10,10,10);
         TextView mTextView = (TextView) mTextFileLayout.findViewById(R.id.mTextView);
+        mTextFileLayout.setId(id);
+        mTextFileLayout.setOnClickListener(this);
         int index = path.lastIndexOf("/")+1;
         String fileName = path.substring(index,path.length());
         mTextView.setText("  "+fileName);
