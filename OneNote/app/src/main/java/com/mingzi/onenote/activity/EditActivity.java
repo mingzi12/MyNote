@@ -128,7 +128,6 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         mPathsList = new ArrayList<>(3);
         int len = mMediaList.size();
         String path;
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         for (int i = 0; i < len; i++) {
             path = mMediaList.get(i).getPath();
             Log.d(TAG + "flush ", mMediaList.get(i).getDate().toString());  // 调试
@@ -138,22 +137,14 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 addThumbnail(path,i);
 
             } else if (path.endsWith(".mp4")||path.endsWith(".rmvb")||path.endsWith(".avi")) {
-                Bitmap bitmap = BitmapUtils.getVideoThumbnail(path, 900, 700, MediaStore.Images.Thumbnails.MICRO_KIND);
-                mBitmaps.add(bitmap);
-                Log.d(TAG + "flush ", path);  // 调试
-                ImageView imageView = new ImageView(EditActivity.this);
-                imageView.setId(i);
-                imageView.setLayoutParams(layoutParams);
-                imageView.setImageBitmap(bitmap);
-                imageView.setOnClickListener(this);
-                mLinearLayout.addView(imageView);
+                addFileView(path, i, R.layout.add_video_file_layout);
             } else if (path.endsWith(".doc")||path.endsWith(".pdf")
                     ||path.endsWith(".html")||path.endsWith(".txt")||path.endsWith(".ppt")) {
-                addFileView(path,i);
+                addFileView(path,i,R.layout.add_text_file_layout);
                 Log.d(TAG, "flush: "+path);
 
             } else if (path.endsWith(".mp3")) {
-                addFileView(path,i);
+                addFileView(path,i,R.layout.add_audio_file_layout);
             }
 
         }
@@ -481,27 +472,18 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 || mCurrentPath.endsWith(".avi")) {
             mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
             mPathsList.add(mCurrentPath);
-            ImageView imageView = new ImageView(EditActivity.this);
-            imageView.setId(mPathsList.size() - 1);
-            imageView.setOnClickListener(this);
-            imageView.setPadding(5,5,5,5);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            imageView.setLayoutParams(layoutParams);
-            Bitmap bitmap = BitmapUtils.getVideoThumbnail(mCurrentPath, 900, 700, MediaStore.Images.Thumbnails.MICRO_KIND);
-            mBitmaps.add(bitmap);
-            imageView.setImageBitmap(bitmap);
-            mLinearLayout.addView(imageView);
+            addFileView(mCurrentPath,mPathsList.size()-1,R.layout.add_video_file_layout);
         } else if (mCurrentPath.endsWith(".doc")||mCurrentPath.endsWith(".pdf")
                 ||mCurrentPath.endsWith(".html")||mCurrentPath.endsWith(".txt")||mCurrentPath.endsWith(".ppt")) {
             mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
             mPathsList.add(mCurrentPath);
 
-            addFileView(mCurrentPath,mPathsList.size() - 1);
+            addFileView(mCurrentPath,mPathsList.size() - 1,R.layout.add_text_file_layout);
         } else if (mCurrentPath.endsWith(".mp3")) {
             mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
             mPathsList.add(mCurrentPath);
 
-            addFileView(mCurrentPath,mPathsList.size() - 1);
+            addFileView(mCurrentPath,mPathsList.size() - 1,R.layout.add_audio_file_layout);
         }
 
         else {
@@ -513,9 +495,9 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     /**
      * 动态添加文本文件视图
      * */
-    private void addFileView(String path ,int id) {
+    private void addFileView(String path ,int id , int layoutId) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout mTextFileLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_text_file_layout, null);
+        LinearLayout mTextFileLayout = (LinearLayout) layoutInflater.inflate(layoutId, null);
         mTextFileLayout.setPadding(10,10,10,10);
         TextView mTextView = (TextView) mTextFileLayout.findViewById(R.id.mTextView);
         mTextFileLayout.setId(id);

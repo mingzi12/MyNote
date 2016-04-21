@@ -2,7 +2,9 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:divider="@android:color/holo_blue_bright"
+    android:dividerPadding="2dp"
     android:orientation="vertical">
     <LinearLayout
         android:id="@+id/mPictureLinear"
@@ -15,10 +17,12 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/file"/>
+            android:layout_marginLeft="34dp"
+            android:src="@drawable/ic_attach_flag_pic_light"/>
         <TextView
-            android:layout_width="180dp"
+            android:layout_width="200dp"
             android:layout_height="match_parent"
+            android:layout_marginLeft="14dp"
             android:gravity="center_vertical"
             android:text="  图片"/>
         <ImageView
@@ -26,46 +30,56 @@
             android:layout_height="match_parent"
             android:src="@drawable/action_view_fwd"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="290dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center"
+        android:background="@android:color/holo_blue_light"/>
     <LinearLayout
         android:id="@+id/mFileLinear"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:divider="@android:color/holo_blue_bright"
-        android:dividerPadding="@dimen/activity_horizontal_margin"
         android:showDividers="middle"
         android:orientation="horizontal">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/file"/>
+            android:layout_marginLeft="34dp"
+            android:src="@drawable/add_new_text_light"/>
         <TextView
-            android:layout_width="180dp"
+            android:layout_width="200dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
+            android:layout_marginLeft="16dp"
             android:text="  文件"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/action_view_fwd"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="290dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center"
+        android:background="@android:color/holo_blue_light"/>
     <LinearLayout
         android:id="@+id/mVideoLinear"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="@dimen/activity_horizontal_margin"
         android:divider="@android:color/holo_blue_bright"
-        android:dividerPadding="@dimen/activity_horizontal_margin"
-        android:showDividers="middle"
+        android:dividerPadding="2dp"
+        android:showDividers="beginning"
         android:orientation="horizontal">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:src="@drawable/attach_type_video"/>
+            android:layout_marginLeft="30dp"
+            android:src="@drawable/ic_attach_flag_video_light"/>
         <TextView
-            android:layout_width="180dp"
+            android:layout_width="200dp"
             android:layout_height="match_parent"
-            android:layout_marginLeft="13dp"
+            android:layout_marginLeft="12dp"
             android:gravity="center_vertical"
             android:text="  视频"/>
         <ImageView
@@ -73,21 +87,29 @@
             android:layout_height="match_parent"
             android:src="@drawable/action_view_fwd"/>
     </LinearLayout>
+    <ImageView
+        android:layout_width="290dp"
+        android:layout_height="1dp"
+        android:layout_gravity="center"
+        android:background="@android:color/holo_blue_light"/>
     <LinearLayout
         android:id="@+id/mAudioLinear"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="@dimen/activity_horizontal_margin"
         android:divider="@android:color/holo_blue_bright"
+        android:dividerPadding="2dp"
+        android:showDividers="beginning"
         android:orientation="horizontal">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/file"/>
+            android:layout_marginLeft="30dp"
+            android:src="@drawable/ic_attach_flag_voice_light"/>
         <TextView
-            android:layout_width="180dp"
+            android:layout_width="200dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
+            android:layout_marginLeft="12dp"
             android:text="  音频"/>
         <ImageView
             android:layout_width="wrap_content"
