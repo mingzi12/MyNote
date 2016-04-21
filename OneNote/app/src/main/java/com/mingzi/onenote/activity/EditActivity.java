@@ -133,21 +133,26 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             Log.d(TAG + "flush ", mMediaList.get(i).getDate().toString());  // 调试
 
             mPathsList.add(path);
-            if (path.endsWith(".jpg")||path.endsWith(".jpeg")||path.endsWith(".png")) {
-                addThumbnail(path,i);
+            if (path.endsWith(".jpg") || path.endsWith(".jpeg") || path.endsWith(".png")) {
+                addThumbnail(path, i);
 
-            } else if (path.endsWith(".mp4")||path.endsWith(".rmvb")||path.endsWith(".avi")) {
-                addFileView(path, i, R.layout.add_video_file_layout);
-            } else if (path.endsWith(".doc")||path.endsWith(".pdf")
-                    ||path.endsWith(".html")||path.endsWith(".txt")||path.endsWith(".ppt")) {
-                addFileView(path,i,R.layout.add_text_file_layout);
-                Log.d(TAG, "flush: "+path);
+            }
+        }
+            for (int j = 0;j< len; j++) {
+                path = mMediaList.get(j).getPath();
+                if (path.endsWith(".mp4")||path.endsWith(".rmvb")||path.endsWith(".avi")) {
+                    addFileView(path, j, R.layout.add_video_file_layout);
+                } else if (path.endsWith(".doc")||path.endsWith(".pdf")
+                        ||path.endsWith(".html")||path.endsWith(".txt")||path.endsWith(".ppt")) {
+                    addFileView(path,j,R.layout.add_text_file_layout);
+                    Log.d(TAG, "flush: "+path);
 
-            } else if (path.endsWith(".mp3")) {
-                addFileView(path,i,R.layout.add_audio_file_layout);
+                } else if (path.endsWith(".mp3")) {
+                    addFileView(path,j,R.layout.add_audio_file_layout);
+                }
+
             }
 
-        }
     }
 
     /**

@@ -6,6 +6,7 @@ package com.mingzi.onenote.activity;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -17,21 +18,24 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mingzi.onenote.R;
+import com.mingzi.onenote.util.BitmapUtils;
 import com.mingzi.onenote.util.ConvertStringAndDate;
 import com.mingzi.onenote.util.MediaDBAccess;
-import com.mingzi.onenote.util.BitmapUtils;
 import com.mingzi.onenote.util.NoteDBAccess;
 import com.mingzi.onenote.values.ConstantValue;
 import com.mingzi.onenote.vo.Note;
@@ -40,9 +44,11 @@ import com.mingzi.onenote.vo.PreferenceInfo;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class NewNoteActivity extends Activity {
+public class NewNoteActivity extends Activity implements View.OnClickListener {
 
     private static final String TAG = "NewATY->";
     private static final int SELECT_FILE_REQUEST_CODE = 3;
@@ -56,6 +62,8 @@ public class NewNoteActivity extends Activity {
     private MediaDBAccess mMediaDBAccess;
     private int mCurrentNoteId = -1;
     private Date mDate;
+    private List<String> mPathsList = null;
+    private List<Bitmap> mBitmaps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +110,11 @@ public class NewNoteActivity extends Activity {
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -202,6 +215,7 @@ public class NewNoteActivity extends Activity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         switch (item.getItemId()) {
             case R.id.delete_new:
                 NewNoteActivity.this.finish();
@@ -212,6 +226,9 @@ public class NewNoteActivity extends Activity {
                 break;
 
             case R.id.capture_video_new:
+                if (mPathsList == null) {
+                    mPathsList = new ArrayList<>(3);
+                }
                 Intent videoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 File videoFile = new File(getMediaDir(), System.currentTimeMillis() + ".mp4");
                 if (!videoFile.exists()) {
@@ -226,6 +243,12 @@ public class NewNoteActivity extends Activity {
                 startActivityForResult(videoIntent, ConstantValue.REQUEST_CODE_GET_VIDEO);
                 break;
             case R.id.capture_img_new:
+                if (mPathsList == null) {
+                    mPathsList = new ArrayList<>(3);
+                }
+                if (mBitmaps == null) {
+                    mBitmaps = new ArrayList<>(3);
+                }
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 File imageFile = new File(getMediaDir(), System.currentTimeMillis() + ".jpg");
                 if (!imageFile.exists()) {
@@ -258,6 +281,12 @@ public class NewNoteActivity extends Activity {
                 break;
 
             case R.id.add_extra_file_new:
+                if (mPathsList == null) {
+                    mPathsList = new ArrayList<>(3);
+                }
+                if (mBitmaps == null) {
+                    mBitmaps = new ArrayList<>(3);
+                }
                 Intent selectFileIntent = new Intent(this, SelectFileActivity.class);
                 selectFileIntent.putExtra("noteId", mCurrentNoteId);
                 startActivityForResult(selectFileIntent, SELECT_FILE_REQUEST_CODE);
@@ -314,13 +343,7 @@ public class NewNoteActivity extends Activity {
                     }
                     mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(mDate));
                     Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
-                    ImageView imageView = new ImageView(NewNoteActivity.this);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    imageView.setLayoutParams(layoutParams);
-                    Bitmap bitmap = BitmapUtils.readBitMap(mCurrentPath, 4);
-                    imageView.setImageBitmap(bitmap);
-                    mLinearLayout.addView(imageView);
-
+                    addView();
                 } else if (resultCode == RESULT_CANCELED) {
                     File file = new File(mCurrentPath);
                     if (file.exists()) {
@@ -339,14 +362,7 @@ public class NewNoteActivity extends Activity {
                     }
                     mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(mDate));
                     Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
-                    ImageView imageView = new ImageView(NewNoteActivity.this);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    imageView.setLayoutParams(layoutParams);
-                    Bitmap bitmap = BitmapUtils.getVideoThumbnail(mCurrentPath, 900, 700,
-                            MediaStore.Images.Thumbnails.MICRO_KIND);
-                    imageView.setImageBitmap(bitmap);
-                    mLinearLayout.addView(imageView);
-
+                    addView();
                 } else if (resultCode == RESULT_CANCELED) {
                     File file = new File(mCurrentPath);
                     if (file.exists()) {
@@ -359,29 +375,123 @@ public class NewNoteActivity extends Activity {
                 if (resultCode == RESULT_OK) {
                     if (data != null && data.getData() != null) {//有数据返回直接使用返回的图片地址
                         mCurrentPath = BitmapUtils.getFilePathByFileUri(this, data.getData());
-                        NoteDBAccess mNoteDBAccess = new NoteDBAccess(NewNoteActivity.this);
-                        mMediaDBAccess = new MediaDBAccess(NewNoteActivity.this);
-                        mDate = new Date();
-                        if (mCurrentNoteId == -1) {
-                            mCurrentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
-                        }
-                        mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(mDate));
-                        Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
-                        ImageView imageView = new ImageView(NewNoteActivity.this);
-                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                        imageView.setLayoutParams(layoutParams);
-                        Bitmap bitmap = BitmapUtils.readBitMap(mCurrentPath, 4);
-                        imageView.setImageBitmap(bitmap);
-                        mLinearLayout.addView(imageView);
                     }
-
+                    if (mCurrentPath == null) {
+                        mCurrentPath = Uri.decode(data.getDataString());
+                        int len = mCurrentPath.length();
+                        mCurrentPath = mCurrentPath.substring(7, len);
+                    }
+                    NoteDBAccess mNoteDBAccess = new NoteDBAccess(NewNoteActivity.this);
+                    mMediaDBAccess = new MediaDBAccess(NewNoteActivity.this);
+                    mDate = new Date();
+                    if (mCurrentNoteId == -1) {
+                        mCurrentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
+                    }
+                    mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(mDate));
+                    Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
+                    addView();
                 }
-                break;
             }
-
+            break;
             default:
                 break;
         }
+
+
         super.onActivityResult(requestCode, resultCode, data);
     }
+
+
+    @Override
+    public void onClick(View v) {
+        Intent intent;
+        int viewId = v.getId();
+        if (mPathsList.get(viewId).endsWith(".jpg")||mPathsList.get(viewId).endsWith(".jpeg")
+                ||mPathsList.get(viewId).endsWith(".png")) {
+            intent = new Intent(this, PhoneViewActivity.class);
+            intent.putExtra(PhoneViewActivity.EXTRA_PATH, mPathsList.get(viewId));
+            startActivity(intent);
+        } else if (mPathsList.get(viewId).endsWith(".mp4")||mPathsList.get(viewId).endsWith(".rmvb")
+                ||mPathsList.get(viewId).endsWith(".avi")) {
+            intent = new Intent(this, VideoViewerActivity.class);
+            intent.putExtra(PhoneViewActivity.EXTRA_PATH, mPathsList.get(viewId));
+            startActivity(intent);
+        } else if (mPathsList.get(viewId).endsWith(".doc")||mPathsList.get(viewId).endsWith(".pdf")
+                ||mPathsList.get(viewId).endsWith(".ppt")) {
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Uri uri = Uri.fromFile(new File(mPathsList.get(viewId)));
+            intent.setDataAndType(uri, "application/*");
+            startActivity(intent);
+        }
+        else if (mPathsList.get(viewId).endsWith(".html")) {
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Uri uri = Uri.fromFile(new File(mPathsList.get(viewId)));
+            intent.setDataAndType(uri, "application/html");
+            startActivity(intent);
+        } else if (mPathsList.get(viewId).endsWith(".mp3")) {
+            intent = new Intent(Intent.ACTION_VIEW);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            Uri uri = Uri.fromFile(new File(mPathsList.get(viewId)));
+            intent.setDataAndType (uri, "audio/*");
+            this.startActivity(intent);
+        }
+        else {
+            Toast.makeText(this,"没有打开该类型文件的程序",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void addView() {
+        if (mCurrentPath.endsWith(".jpg") || mCurrentPath.endsWith("jpeg")
+                || mCurrentPath.endsWith(".png")) {
+
+            Log.d(TAG, "onActivityResult: " + mCurrentPath);
+            mPathsList.add(mCurrentPath);
+            Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
+            ImageView imageView = new ImageView(this);
+            imageView.setId(mPathsList.size() - 1);
+            imageView.setOnClickListener(this);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200);
+            imageView.setLayoutParams(layoutParams);
+            imageView.setPadding(5, 5, 5, 5);
+            Bitmap bitmap = BitmapUtils.getBitmapByPath(mCurrentPath);
+            mBitmaps.add(bitmap);
+            imageView.setImageBitmap(bitmap);
+            mLinearLayout.addView(imageView);
+        } else if (mCurrentPath.endsWith(".mp4") || mCurrentPath.endsWith(".rmvb")
+                || mCurrentPath.endsWith(".avi")) {
+            mPathsList.add(mCurrentPath);
+            addFileView(mCurrentPath, mPathsList.size() - 1, R.layout.add_video_file_layout);
+        } else if (mCurrentPath.endsWith(".doc") || mCurrentPath.endsWith(".pdf")
+                || mCurrentPath.endsWith(".html") || mCurrentPath.endsWith(".txt") || mCurrentPath.endsWith(".ppt")) {
+            mPathsList.add(mCurrentPath);
+
+            addFileView(mCurrentPath, mPathsList.size() - 1, R.layout.add_text_file_layout);
+        } else if (mCurrentPath.endsWith(".mp3")) {
+            mPathsList.add(mCurrentPath);
+
+            addFileView(mCurrentPath, mPathsList.size() - 1, R.layout.add_audio_file_layout);
+        } else {
+            Toast.makeText(this, "不支持添加该类型的文件", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    /**
+     * 动态添加文本文件视图
+     */
+    private void addFileView(String path, int id, int layoutId) {
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout mTextFileLayout = (LinearLayout) layoutInflater.inflate(layoutId, null);
+        mTextFileLayout.setPadding(10, 10, 10, 10);
+        TextView mTextView = (TextView) mTextFileLayout.findViewById(R.id.mTextView);
+        mTextFileLayout.setId(id);
+        mTextFileLayout.setOnClickListener(this);
+        int index = path.lastIndexOf("/") + 1;
+        String fileName = path.substring(index, path.length());
+        mTextView.setText("  " + fileName);
+        mLinearLayout.addView(mTextFileLayout);
+    }
+
 }
