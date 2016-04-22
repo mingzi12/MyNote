@@ -42,10 +42,8 @@ public class SetAlarmActivity extends Activity {
 
     private Button mSetAlarmBtn;                                    // 申明设置时钟按钮
     private ToggleButton mEnableAlarmBtn;                        // 申明开启\关闭按钮
-    private ToggleButton mAlarmStyleBtn;
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
-    private static boolean sAlarmStyle = true;            // 闹钟提示方式 (true:铃声;false:振动)
     Calendar mCalendar = Calendar.getInstance();
     final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
     static SetAlarmActivity sInstance;
@@ -106,9 +104,9 @@ public class SetAlarmActivity extends Activity {
         private void enableAlarm(Calendar calendar) {
             mSetAlarmBtn.setText(mDateFormat.format(new Date(calendar.getTimeInMillis())));
             mEditor.putString(ALARMtIME, mDateFormat.format(new Date(calendar.getTimeInMillis())));
-            mEditor.putBoolean("style", mAlarmStyleBtn.isChecked());
+            mEditor.putBoolean("on_off",true);
             mEditor.commit();
-            Log.d(TAG, "enableAlarm: "+mPreferences.getBoolean("style",false));
+            Log.d(TAG, "enableAlarm: " + mPreferences.getBoolean("style", false));
             Bundle lBundle = new Bundle();
             lBundle.putParcelable(AlarmReceiver.RECEIVE_BUNDLE, mNote);
             mIntent = new Intent();    // 创建Intent对象
@@ -125,6 +123,8 @@ public class SetAlarmActivity extends Activity {
             mIntent.setAction(mPreferences.getString(ALARMtIME, null));
             mPendingIntent = PendingIntent.getBroadcast(SetAlarmActivity.this, 0, mIntent, 0);
             mAlarmManager.cancel(mPendingIntent);
+            mEditor.putBoolean("on_off",false);
+            mEditor.commit();
             Toast.makeText(SetAlarmActivity.this, "闹钟取消成功", Toast.LENGTH_SHORT).show();
         }
 
@@ -136,8 +136,6 @@ public class SetAlarmActivity extends Activity {
                     mDatePicker = (DatePicker) mSetAlarmLayout.findViewById(R.id.datepicker);
                     timePicker = (TimePicker) mSetAlarmLayout.findViewById(R.id.timepicker);
                     timePicker.setIs24HourView(true);
-                    mAlarmStyleBtn = (ToggleButton) mSetAlarmLayout.findViewById(R.id.togbtn_alarm_style);
-                    mAlarmStyleBtn.setChecked(mPreferences.getBoolean("style", false));
                     Log.d(TAG, "onClick:origin : "+mPreferences.getBoolean("style", false));
                     new AlertDialog.Builder(SetAlarmActivity.this)
                             .setView(mSetAlarmLayout)
@@ -155,7 +153,6 @@ public class SetAlarmActivity extends Activity {
                                             lCalendar.set(Calendar.SECOND, 0); // 设置闹钟的秒数
                                             lCalendar.set(Calendar.MILLISECOND, 0); // 设置闹钟的毫秒数
                                             enableAlarm(lCalendar);
-                                            Log.d(TAG, "onClick: after set :"+mPreferences.getBoolean("style",mAlarmStyleBtn.isChecked()));
                                             mEnableAlarmBtn.setChecked(true);
                                             Toast.makeText(SetAlarmActivity.this, "闹钟设置成功", Toast.LENGTH_LONG).show();// 提示用户
                                         }
