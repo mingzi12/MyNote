@@ -100,7 +100,10 @@
             android:label="附件"
             android:theme="@android:style/Theme.Holo.Light.Dialog">
         </activity>
-
+        <activity android:name=".activity.ViewNoteActivity"
+            android:label="查看"
+            android:theme="@android:style/Theme.Holo.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

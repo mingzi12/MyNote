@@ -43,7 +43,7 @@ public class AlertActivity extends Activity implements View.OnClickListener {
         window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         setContentView(R.layout.activity_alert);
-        mPowerManager = (PowerManager)getSystemService(Context.POWER_SERVICE);
+        mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakelock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SimpleTimer");
         mWakelock.acquire();
         Bundle mBundle = getIntent().getBundleExtra("noteBundle");
@@ -51,19 +51,17 @@ public class AlertActivity extends Activity implements View.OnClickListener {
         mSharedPreferences = getSharedPreferences("oneNote", Context.MODE_PRIVATE);
         if (getStyleToRemain() != null) {
             if (mStyleStr.equals("震动")) {
-                mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+                mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 startVibrate();
-            }
-            else if (mStyleStr.equals("铃声")) {
+            } else if (mStyleStr.equals("铃声")) {
                 startRingToneService();
-            }
-            else if (mStyleStr.equals("铃声和震动")) {
-                mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+            } else if (mStyleStr.equals("铃声和震动")) {
+                mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
                 startVibrate();
                 startRingToneService();
             }
         } else {
-            mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+            mVibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             startVibrate();
         }
         initView();
@@ -85,7 +83,7 @@ public class AlertActivity extends Activity implements View.OnClickListener {
     }
 
     private void startRingToneService() {
-        if (mSharedPreferences.getString("ringTone",null)!=null) {
+        if (mSharedPreferences.getString("ringTone", null) != null) {
             Intent ringToneServiceIntent = new Intent(this, PlayRingtoneService.class);
             ringToneServiceIntent.setAction("com.mingzi.onenote.service.PlayRingtoneService");
             startService(ringToneServiceIntent);
@@ -93,10 +91,11 @@ public class AlertActivity extends Activity implements View.OnClickListener {
 
     }
 
-    private String getStyleToRemain(){
-        mStyleStr = mSharedPreferences.getString("styleToRemain",null);
+    private String getStyleToRemain() {
+        mStyleStr = mSharedPreferences.getString("styleToRemain", null);
         return mStyleStr;
     }
+
     @Override
     protected void onResume() {
 
@@ -110,7 +109,7 @@ public class AlertActivity extends Activity implements View.OnClickListener {
 
     private void startVibrate() {
         long[] vib =
-                {0, 200, 3000, 500, 2000, 1000 };
+                {0, 200, 3000, 500, 2000, 1000};
         mVibrator.vibrate(vib, 4);
     }
 
@@ -120,7 +119,7 @@ public class AlertActivity extends Activity implements View.OnClickListener {
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         Intent ringToneServiceIntent;
-        if(v == mCancelBtn){
+        if (v == mCancelBtn) {
             mWakelock.release();
             if (mStyleStr != null) {
                 if (mStyleStr.equals("震动")) {
@@ -141,7 +140,7 @@ public class AlertActivity extends Activity implements View.OnClickListener {
 
 
             finish();
-        }else if(v == mCheckBtn){
+        } else if (v == mCheckBtn) {
             mWakelock.release();
             if (mStyleStr != null) {
                 if (mStyleStr.equals("震动")) {
@@ -159,9 +158,10 @@ public class AlertActivity extends Activity implements View.OnClickListener {
             } else {
                 mVibrator.cancel();
             }
-            Intent viewIntent = new Intent(this, EditActivity.class);
+            Intent viewIntent = new Intent(this, ViewNoteActivity.class);
+            viewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             Bundle viewBundle = new Bundle();
-            viewBundle.putParcelable("note",mNote);
+            viewBundle.putParcelable("note", mNote);
             viewIntent.putExtra("noteBundle", viewBundle);
             startActivity(viewIntent);
             finish();

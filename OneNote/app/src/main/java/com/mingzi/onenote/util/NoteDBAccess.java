@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.mingzi.onenote.values.ConstantValue;
 import com.mingzi.onenote.vo.Note;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NoteDBAccess {
+    private static final String TAG = "NoteDBAccess";
 	private DBOpenHelper mDbOpenHelper;
 	private SQLiteDatabase db;
 	
@@ -63,7 +65,7 @@ public class NoteDBAccess {
 	public void deleteNoteById(Note note) {
 		db = mDbOpenHelper.getWritableDatabase();
 		db.delete(ConstantValue.NOTE_TABLE_NAME,
-				ConstantValue.NOTE_ID + "= ?",new String[]{note.getNoteId()+""} );
+                ConstantValue.NOTE_ID + "= ?", new String[]{note.getNoteId() + ""});
         db.close();
 	}
 	
@@ -119,5 +121,30 @@ public class NoteDBAccess {
 		DBOpenHelper.closeDB(db);
 		return mNoteList;
 	}
+
+    public Note selectNoteById(int id) {
+        db = mDbOpenHelper.getReadableDatabase();
+        Cursor cursor = db.query(ConstantValue.NOTE_TABLE_NAME,colNames,ConstantValue.NOTE_ID+"= ?",
+                new String[]{id+" "},null,null,null );
+        String noteTitle =null;
+        String noteContent = null;
+        if (cursor.moveToFirst()) {
+             noteTitle = cursor.getString(cursor.getColumnIndex(ConstantValue.NOTE_TITLE));
+             noteContent = cursor.getString(cursor.getColumnIndex(ConstantValue.NOTE_CONTENT));
+        }
+        Log.d(TAG, "selectNoteById: "+noteContent);
+        close();
+        cursor.close();
+        return new Note(noteTitle,noteContent);
+    }
+
+    private void close() {
+        if (mDbOpenHelper != null) {
+            mDbOpenHelper.close();
+        }
+        if (db != null) {
+            db.close();
+        }
+    }
 	
 }

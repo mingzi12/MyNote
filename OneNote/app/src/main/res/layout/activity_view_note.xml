@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView_view_note"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbars="vertical"
+    >
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:id="@+id/viewLayout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <TextView
+            android:id="@+id/mTitleText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10px"
+            android:layout_marginLeft="10px"
+            android:layout_marginRight="10px"
+            android:layout_marginBottom="10px"
+            android:singleLine="true"
+            android:textColor="#000"
+            android:textSize="20sp"
+            />
+
+        <com.mingzi.onenote.view.NoteTextView
+            android:id="@+id/mContentText"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+
+            android:paddingTop="10px"
+            android:paddingLeft="10px"
+            android:paddingRight="10px"
+            android:paddingBottom="10px"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="#484848"
+            android:background="#ffffff"
+            android:scrollbars="vertical"
+            android:fadingEdge="vertical"
+            android:fadingEdgeLength="10px"
+            />
+    </LinearLayout>
+</ScrollView>
