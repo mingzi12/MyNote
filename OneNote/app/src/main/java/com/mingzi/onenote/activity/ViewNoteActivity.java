@@ -51,12 +51,6 @@ public class ViewNoteActivity extends Activity implements ImageView.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-
-      /*  getWindow().addFlags(
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);*/
         setContentView(R.layout.activity_view_note);
         mScrollView = (ScrollView) findViewById(R.id.scrollView_view_note);
         mScrollView.setBackgroundColor(PreferenceInfo.themeColorValue);
@@ -205,9 +199,6 @@ public class ViewNoteActivity extends Activity implements ImageView.OnClickListe
 
     @Override
     protected void onDestroy() {
-        /*getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);*/
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (mBitmaps != null) {
             for (Bitmap bitmap : mBitmaps) {

@@ -9,8 +9,8 @@
         android:showAsAction="always"/>
     <item
         android:id="@+id/capture_video_new"
-        android:title="    录视频"
         android:icon="@drawable/ic_attach_flag_video_light"
+        android:title="   录视频"
         app:showAsAction="never"/>
     <item
         android:id="@+id/delete_new"
@@ -28,9 +28,14 @@
         android:title="     详情"
         app:showAsAction="never"/>
     <item
+        android:id="@+id/alarm_new"
+        android:icon="@drawable/ic_detail_top_cal_light"
+        android:title="     提醒"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/add_extra_file_new"
-        android:title="     附件"
         android:icon="@drawable/ic_widget_4x1_attach"
+        android:title="      附件"
         app:showAsAction="never"
         />
 </menu>

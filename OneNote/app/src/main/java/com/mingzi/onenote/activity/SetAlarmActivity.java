@@ -36,7 +36,7 @@ import java.util.Date;
 
 public class SetAlarmActivity extends Activity {
 
-    private static final String TAG = "ringTone";
+    private static final String TAG = "SetAlarmActivity";
     public static final String SETTING_ALARM = "settingNote";
     private  String ALARMtIME = "alarmTime";
 
@@ -68,6 +68,7 @@ public class SetAlarmActivity extends Activity {
         Intent intent = this.getIntent();
         Bundle bundle = intent.getBundleExtra(SETTING_ALARM);
         mNote = bundle.getParcelable(SETTING_ALARM);
+        Log.d(TAG, "onCreate: "+mNote.getNoteId());
         ALARMtIME = ALARMtIME +mNote.getNoteId();
         sInstance = this;                                        // 用于在ShakeAlarm窗口中关闭此activity
         MyOnClickListener myOnClickListener = new MyOnClickListener();    // 注册设置时间按钮监听事件

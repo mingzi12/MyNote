@@ -50,8 +50,9 @@ import java.util.List;
 
 public class NewNoteActivity extends Activity implements View.OnClickListener {
 
-    private static final String TAG = "NewATY->";
+    private static final String TAG = "NewNoteActivity";
     private static final int SELECT_FILE_REQUEST_CODE = 3;
+    private static final int SETTING_ALARM_REQUEST_CODE = 6;
     private ScrollView mScrollView;
     private LinearLayout mLinearLayout;
     private EditText mTitleEdit;
@@ -64,6 +65,7 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
     private Date mDate;
     private List<String> mPathsList = null;
     private List<Bitmap> mBitmaps;
+    private int mResultCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,8 +149,6 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
                     note.setNoteTitle(noteTitle);
                 }
                 note.setNoteContent(noteContent);
-                note.setCreateDate(mDate);
-                note.setUpdateDate(mDate);
                 access.updateNoteById(note);
                 Toast.makeText(this, "已保存", Toast.LENGTH_LONG).show();
                 this.finish();
@@ -279,6 +279,32 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
                 });
                 builder.create().show();
                 break;
+            case R.id.alarm_new:
+                if (mTitleEdit.getText().toString().equals("")&&mContentEdit.getText().toString().equals("")
+                        &&mPathsList==null) {
+                    Toast.makeText(this,"不能为空的便签设置闹钟",Toast.LENGTH_LONG).show();
+                } else {
+                    if (mCurrentNoteId==-1) {  //如果mCurrentNoteId为-1，则先插入一条记录
+                        mDate = new Date();
+                        Note note = new Note(mTitleEdit.getText().toString(),
+                                mContentEdit.getText().toString(),mDate,mDate);
+                        NoteDBAccess noteDBAccess= new NoteDBAccess(this);
+                        mCurrentNoteId = noteDBAccess.insertNote(note);
+
+                    } else {
+                        mDate = new Date();
+                    }
+                        Note note = new Note(mCurrentNoteId,mTitleEdit.getText().toString(),
+                                mContentEdit.getText().toString(),mDate,mDate);
+                        Bundle lBundle = new Bundle();
+                        lBundle.putParcelable(SetAlarmActivity.SETTING_ALARM, note);
+                        Intent alarmIntent = new Intent(this, SetAlarmActivity.class);
+                        alarmIntent.putExtra(SetAlarmActivity.SETTING_ALARM, lBundle);
+                        startActivityForResult(alarmIntent, SETTING_ALARM_REQUEST_CODE);
+                    }
+                    Log.d(TAG, "onOptionsItemSelected: "+mCurrentNoteId);
+
+                break;
 
             case R.id.add_extra_file_new:
                 if (mPathsList == null) {
@@ -291,6 +317,7 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
                 selectFileIntent.putExtra("noteId", mCurrentNoteId);
                 startActivityForResult(selectFileIntent, SELECT_FILE_REQUEST_CODE);
                 break;
+
             default:
                 break;
         }
@@ -342,7 +369,6 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
                         mCurrentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
                     }
                     mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(mDate));
-                    Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
                     addView();
                 } else if (resultCode == RESULT_CANCELED) {
                     File file = new File(mCurrentPath);
@@ -361,7 +387,6 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
                         mCurrentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
                     }
                     mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(mDate));
-                    Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
                     addView();
                 } else if (resultCode == RESULT_CANCELED) {
                     File file = new File(mCurrentPath);
@@ -388,11 +413,14 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
                         mCurrentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
                     }
                     mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(mDate));
-                    Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
                     addView();
                 }
             }
             break;
+            case SETTING_ALARM_REQUEST_CODE:
+                mResultCode = resultCode;
+                Log.d(TAG, "onActivityResult: "+mResultCode);
+                break;
             default:
                 break;
         }
@@ -448,7 +476,6 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
 
             Log.d(TAG, "onActivityResult: " + mCurrentPath);
             mPathsList.add(mCurrentPath);
-            Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
             ImageView imageView = new ImageView(this);
             imageView.setId(mPathsList.size() - 1);
             imageView.setOnClickListener(this);

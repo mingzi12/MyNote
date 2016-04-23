@@ -36,16 +36,17 @@ public class NoteDBAccess {
 	 * 增加Note到数据库
 	 * @param note
 	 */
-	public void insertNote(Note note) {
+	public int insertNote(Note note) {
 		db = mDbOpenHelper.getWritableDatabase();
 		
 		ContentValues cv = new ContentValues();
 		cv.put(ConstantValue.NOTE_TITLE, note.getNoteTitle());
 		cv.put(ConstantValue.NOTE_CONTENT, note.getNoteContent());
 		cv.put(ConstantValue.CREATE_DATE, ConvertStringAndDate.datetoString(note.getCreateDate()));
-        cv.put(ConstantValue.UPDATE_DATE,ConvertStringAndDate.datetoString(note.getUpdateDate()));
-		db.insert(ConstantValue.NOTE_TABLE_NAME, null, cv);
+        cv.put(ConstantValue.UPDATE_DATE, ConvertStringAndDate.datetoString(note.getUpdateDate()));
+		int rowId =(int)db.insert(ConstantValue.NOTE_TABLE_NAME, null, cv);
         db.close();
+        return rowId;
 	}
 	
 	public int insertNullNote(Note note){
@@ -55,8 +56,9 @@ public class NoteDBAccess {
                 ConvertStringAndDate.datetoString(note.getCreateDate()));
         contentValues.put(ConstantValue.UPDATE_DATE,
                 ConvertStringAndDate.datetoString(note.getCreateDate()));
-
-       return (int)db.insert(ConstantValue.NOTE_TABLE_NAME,null,contentValues);
+        int rowId =(int)db.insert(ConstantValue.NOTE_TABLE_NAME,null,contentValues);
+        close();
+       return rowId;
     }
 	/**
 	 * 删除Note
