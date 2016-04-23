@@ -38,13 +38,8 @@ public class ConstantValue {
     public static final String MEDIA_PATH = "mediaPath";
     public static final String MEDIA_OWNER_ID = "noteId";
     public static final String MEDIA_DATE ="mediaDate";
-    /**
-     * 记事本多媒体信息字段
-     * @PHOTO  照片类型
-     * @VIDEO 视频类型
-     * */
-    public static final int PHOTO = 1;
-    public static final int VIDEO = 2;
+
+
     public static final int REQUEST_CODE_GET_PHOTO = 1;
     public static final int REQUEST_CODE_GET_VIDEO = 2;
 

@@ -20,7 +20,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -31,11 +30,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mingzi.onenote.R;
+import com.mingzi.onenote.util.BitmapUtils;
 import com.mingzi.onenote.util.ConvertStringAndDate;
 import com.mingzi.onenote.util.MediaDBAccess;
-import com.mingzi.onenote.util.BitmapUtils;
 import com.mingzi.onenote.util.NoteDBAccess;
-import com.mingzi.onenote.values.ConstantValue;
 import com.mingzi.onenote.vo.Media;
 import com.mingzi.onenote.vo.Note;
 import com.mingzi.onenote.vo.PreferenceInfo;
@@ -50,6 +48,9 @@ import java.util.List;
 public class EditActivity extends Activity implements ImageView.OnClickListener {
 
     public static final String TAG = "EditATY-> ";
+
+    private static final int CAPTURE_IMAGE_REQUEST_CODE = 1;
+    private static final int CAPTURE_VIDEO_REQUEST_CODE = 2;
     private static final int SET_ALARM_REQUEST_CODE = 3;
 
     /**
@@ -162,7 +163,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, null);
         ImageView imageView = (ImageView) mThumbnailLayout.findViewById(R.id.mImageThumbnail);
-        Bitmap bitmap = BitmapUtils.readBitMap(mediaPath, 4);
+        Bitmap bitmap = BitmapUtils.readBitMap(mediaPath, 2);
         mBitmaps.add(bitmap);
         imageView.setId(id);
         imageView.setImageBitmap(bitmap);
@@ -295,7 +296,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 }
                 mCurrentPath = imageFile.getAbsolutePath();
                 imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
-                startActivityForResult(imageIntent, ConstantValue.REQUEST_CODE_GET_PHOTO);
+                startActivityForResult(imageIntent, CAPTURE_IMAGE_REQUEST_CODE);
                 break;
 
             case R.id.capture_video_edit:
@@ -310,7 +311,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 }
                 mCurrentPath = videoFile.getAbsolutePath();
                 videoIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(videoFile));
-                startActivityForResult(videoIntent, ConstantValue.REQUEST_CODE_GET_VIDEO);
+                startActivityForResult(videoIntent,CAPTURE_VIDEO_REQUEST_CODE);
                 break;
             case R.id.description_edit:
                 final AlertDialog.Builder descBuilder = new Builder(EditActivity.this);
@@ -409,7 +410,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case ConstantValue.REQUEST_CODE_GET_PHOTO:
+            case CAPTURE_IMAGE_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     addView();
 
@@ -421,7 +422,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 }
                 break;
 
-            case ConstantValue.REQUEST_CODE_GET_VIDEO:
+            case CAPTURE_VIDEO_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
                     addView();
@@ -462,17 +463,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
             Log.d(TAG, "onActivityResult: " + mCurrentPath);
             mPathsList.add(mCurrentPath);
-            Log.d(TAG + "onResult ", mCurrentNoteId + ""); //调试
-            ImageView imageView = new ImageView(EditActivity.this);
-            imageView.setId(mPathsList.size() - 1);
-            imageView.setOnClickListener(this);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,200);
-            imageView.setLayoutParams(layoutParams);
-            imageView.setPadding(5,5,5,5);
-            Bitmap bitmap = BitmapUtils.getBitmapByPath(mCurrentPath);
-            mBitmaps.add(bitmap);
-            imageView.setImageBitmap(bitmap);
-            mLinearLayout.addView(imageView);
+           addThumbnail(mCurrentPath,mPathsList.size()-1);
         } else if (mCurrentPath.endsWith(".mp4") || mCurrentPath.endsWith(".rmvb")
                 || mCurrentPath.endsWith(".avi")) {
             mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
