@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -161,14 +162,13 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
      * */
     private void addThumbnail(String mediaPath,int id) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, null);
+        LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, mLinearLayout);
         ImageView imageView = (ImageView) mThumbnailLayout.findViewById(R.id.mImageThumbnail);
         Bitmap bitmap = BitmapUtils.readBitMap(mediaPath, 2);
         mBitmaps.add(bitmap);
         imageView.setId(id);
         imageView.setImageBitmap(bitmap);
         imageView.setOnClickListener(this);
-        mLinearLayout.addView(mThumbnailLayout);
     }
 
 
@@ -494,14 +494,15 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     private void addFileView(String path ,int id , int layoutId) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout mTextFileLayout = (LinearLayout) layoutInflater.inflate(layoutId, null);
-        mTextFileLayout.setPadding(10,10,10,10);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,150);
+        layoutParams.setMargins(20,5,20,5);
         TextView mTextView = (TextView) mTextFileLayout.findViewById(R.id.mTextView);
         mTextFileLayout.setId(id);
         mTextFileLayout.setOnClickListener(this);
         int index = path.lastIndexOf("/")+1;
         String fileName = path.substring(index,path.length());
         mTextView.setText("  "+fileName);
-        mLinearLayout.addView(mTextFileLayout);
+        mLinearLayout.addView(mTextFileLayout,layoutParams);
     }
 
     /**

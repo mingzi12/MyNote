@@ -476,16 +476,8 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
 
             Log.d(TAG, "onActivityResult: " + mCurrentPath);
             mPathsList.add(mCurrentPath);
-            ImageView imageView = new ImageView(this);
-            imageView.setId(mPathsList.size() - 1);
-            imageView.setOnClickListener(this);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200);
-            imageView.setLayoutParams(layoutParams);
-            imageView.setPadding(5, 5, 5, 5);
-            Bitmap bitmap = BitmapUtils.getBitmapByPath(mCurrentPath);
-            mBitmaps.add(bitmap);
-            imageView.setImageBitmap(bitmap);
-            mLinearLayout.addView(imageView);
+
+            addThumbnail(mCurrentPath,mPathsList.size()-1);
         } else if (mCurrentPath.endsWith(".mp4") || mCurrentPath.endsWith(".rmvb")
                 || mCurrentPath.endsWith(".avi")) {
             mPathsList.add(mCurrentPath);
@@ -507,18 +499,32 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
 
     /**
      * 动态添加文本文件视图
-     */
-    private void addFileView(String path, int id, int layoutId) {
+     * */
+    private void addFileView(String path ,int id , int layoutId) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout mTextFileLayout = (LinearLayout) layoutInflater.inflate(layoutId, null);
-        mTextFileLayout.setPadding(10, 10, 10, 10);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,150);
+        layoutParams.setMargins(20, 5, 20, 5);
         TextView mTextView = (TextView) mTextFileLayout.findViewById(R.id.mTextView);
         mTextFileLayout.setId(id);
         mTextFileLayout.setOnClickListener(this);
-        int index = path.lastIndexOf("/") + 1;
-        String fileName = path.substring(index, path.length());
-        mTextView.setText("  " + fileName);
-        mLinearLayout.addView(mTextFileLayout);
+        int index = path.lastIndexOf("/")+1;
+        String fileName = path.substring(index,path.length());
+        mTextView.setText("  "+fileName);
+        mLinearLayout.addView(mTextFileLayout,layoutParams);
+    }
+    /**
+     * 动态添加视频或者图片缩略图视图
+     * */
+    private void addThumbnail(String mediaPath,int id) {
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, mLinearLayout);
+        ImageView imageView = (ImageView) mThumbnailLayout.findViewById(R.id.mImageThumbnail);
+        Bitmap bitmap = BitmapUtils.readBitMap(mediaPath, 2);
+        mBitmaps.add(bitmap);
+        imageView.setId(id);
+        imageView.setImageBitmap(bitmap);
+        imageView.setOnClickListener(this);
     }
 
 }
