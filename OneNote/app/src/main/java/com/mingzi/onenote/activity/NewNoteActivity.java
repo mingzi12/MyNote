@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -81,7 +80,6 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
         mLinearLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
 
         mTitleEdit = (EditText) findViewById(R.id.titleedit);
-        mTitleEdit.setBackgroundColor(Color.parseColor("#ffffff"));
         mContentEdit = (EditText) findViewById(R.id.contentedit);
         mContentEdit.setBackgroundColor(PreferenceInfo.themeColorValue);
         mContentEdit.requestFocus();

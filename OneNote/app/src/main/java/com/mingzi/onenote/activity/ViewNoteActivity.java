@@ -4,12 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -51,6 +51,11 @@ public class ViewNoteActivity extends Activity implements ImageView.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.activity_view_note);
         mScrollView = (ScrollView) findViewById(R.id.scrollView_view_note);
         mScrollView.setBackgroundColor(PreferenceInfo.themeColorValue);
@@ -58,7 +63,6 @@ public class ViewNoteActivity extends Activity implements ImageView.OnClickListe
         mLinearLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
 
         mTitleView = (TextView) findViewById(R.id.mTitleText);
-        mTitleView.setBackgroundColor(Color.parseColor("#ffffff"));
         mContentView = (TextView) findViewById(R.id.mContentText);
         mContentView.setBackgroundColor(PreferenceInfo.themeColorValue);
 
@@ -163,14 +167,13 @@ public class ViewNoteActivity extends Activity implements ImageView.OnClickListe
      */
     private void addThumbnail(String mediaPath, int id) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, null);
+        LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, mLinearLayout);
         ImageView imageView = (ImageView) mThumbnailLayout.findViewById(R.id.mImageThumbnail);
         Bitmap bitmap = BitmapUtils.readBitMap(mediaPath, 4);
         mBitmaps.add(bitmap);
         imageView.setId(id);
         imageView.setImageBitmap(bitmap);
         imageView.setOnClickListener(this);
-        mLinearLayout.addView(mThumbnailLayout);
     }
 
 
@@ -180,14 +183,15 @@ public class ViewNoteActivity extends Activity implements ImageView.OnClickListe
     private void addFileView(String path, int id, int layoutId) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout mTextFileLayout = (LinearLayout) layoutInflater.inflate(layoutId, null);
-        mTextFileLayout.setPadding(10, 10, 10, 10);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,150);
+        layoutParams.setMargins(20,5,20,5);
         TextView mTextView = (TextView) mTextFileLayout.findViewById(R.id.mTextView);
         mTextFileLayout.setId(id);
         mTextFileLayout.setOnClickListener(this);
         int index = path.lastIndexOf("/") + 1;
         String fileName = path.substring(index, path.length());
         mTextView.setText("  " + fileName);
-        mLinearLayout.addView(mTextFileLayout);
+        mLinearLayout.addView(mTextFileLayout,layoutParams);
     }
 
 
@@ -199,6 +203,9 @@ public class ViewNoteActivity extends Activity implements ImageView.OnClickListe
 
     @Override
     protected void onDestroy() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (mBitmaps != null) {
             for (Bitmap bitmap : mBitmaps) {

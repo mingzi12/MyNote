@@ -4,7 +4,7 @@
        android:shape="rectangle"  >
 
     <!-- 设置边框的大小和颜色 -->
-    <stroke android:width="1dip" android:color="#bbb" />
+    <stroke android:width="2dip" android:color="#000" />
 
     <!-- 设置矩形内的颜色,此处为透明色 -->
     <solid android:color="#fff"/>

@@ -45,13 +45,13 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="34dp"
-            android:src="@drawable/add_new_text_light"/>
+            android:layout_marginLeft="32dp"
+            android:src="@drawable/detail_attach_file_dark"/>
         <TextView
             android:layout_width="200dp"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="12dp"
             android:text="  文件"/>
         <ImageView
             android:layout_width="wrap_content"

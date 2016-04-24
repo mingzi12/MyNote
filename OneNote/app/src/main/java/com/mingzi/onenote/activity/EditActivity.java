@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -80,11 +78,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setTitle("返回");
-        getWindow().addFlags(
-                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                        | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
         setContentView(R.layout.activity_edit);
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -94,7 +88,6 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         mLinearLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
 
         mTitleEdit = (EditText) findViewById(R.id.titleedit);
-        mTitleEdit.setBackgroundColor(Color.parseColor("#ffffff"));
         mContentEdit = (EditText) findViewById(R.id.contentedit);
         mContentEdit.setBackgroundColor(PreferenceInfo.themeColorValue);
 
@@ -525,10 +518,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
     @Override
     protected void onDestroy() {
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         if (mBitmaps != null) {
             for (Bitmap bitmap : mBitmaps) {
                 if (bitmap != null) {

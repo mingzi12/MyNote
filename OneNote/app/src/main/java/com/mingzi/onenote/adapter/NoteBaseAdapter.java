@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.mingzi.onenote.R;
 import com.mingzi.onenote.util.ConvertStringAndDate;
 import com.mingzi.onenote.vo.Note;
-import com.mingzi.onenote.vo.PreferenceInfo;
 
 import java.util.Date;
 import java.util.List;
@@ -55,7 +54,6 @@ public class NoteBaseAdapter extends BaseAdapter {
 		LayoutInflater layoutInflater = LayoutInflater.from(context);
 				
 		View view = layoutInflater.inflate(resource, null);
-		view.setBackgroundColor(PreferenceInfo.themeColorValue);
 		TextView tvNoteTitle = (TextView)view.findViewById(R.id.itemtitle);
 		TextView tvNoteDate = (TextView)view.findViewById(R.id.itemdate);
 		tvNoteTitle.setText(noteTitle);
