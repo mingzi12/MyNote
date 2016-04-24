@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/capture_img_new"
-        android:icon="@drawable/ic_widget_4x1_camera"
+        android:icon="@drawable/action_bar_camera_light"
         android:showAsAction="always"/>
     <item
         android:id="@+id/capture_video_new"

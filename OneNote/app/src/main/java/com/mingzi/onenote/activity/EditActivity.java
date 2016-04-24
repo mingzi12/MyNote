@@ -77,8 +77,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        setTitle("返回");
-
+        setTitle("   返回");
         setContentView(R.layout.activity_edit);
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
