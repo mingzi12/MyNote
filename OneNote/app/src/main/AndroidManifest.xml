@@ -17,25 +17,20 @@
         android:allowBackup="true"
         android:icon="@mipmap/icon"
         android:label="@string/app_name"
-        android:logo="@null"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.MainActivity"
             android:label="所有便签"
-            android:logo="@null"
             android:launchMode="singleTask"
+            android:logo="@null"
             android:theme="@style/CustomMianActionBarTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
         </activity>
         <activity
             android:name=".activity.OneNotePreferenceActivity"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.Light.NoTitleBar">
+            android:theme="@style/CustomActionBarTheme">
         </activity>
         <activity
             android:name=".activity.NewNoteActivity"
@@ -102,10 +97,19 @@
             android:label="附件"
             android:theme="@android:style/Theme.Holo.Light.Dialog">
         </activity>
-        <activity android:name=".activity.ViewNoteActivity"
+        <activity
+            android:name=".activity.ViewNoteActivity"
             android:label="查看"
             android:theme="@android:style/Theme.Holo.NoActionBar">
         </activity>
+        <activity android:name=".activity.LockActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".util.Lock"></activity>
     </application>
 
 </manifest>

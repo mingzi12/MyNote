@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android">
+  xmlns:android="http://schemas.android.com/apk/res/android"
+    >
     <PreferenceCategory
     	android:title="设置主题颜色"
     >
@@ -26,7 +27,7 @@
     	/>
     </PreferenceCategory>
     
-    <PreferenceCategory 
+    <PreferenceCategory
     	android:title="关于"
     >
     	<Preference 

@@ -8,13 +8,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.InputType;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -26,7 +24,6 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -79,37 +76,6 @@ public class MainActivity extends Activity {
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
-
-        if (PreferenceInfo.ifLocked) {
-            final EditText keytext = new EditText(MainActivity.this);
-            keytext.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-
-            AlertDialog.Builder builder = new Builder(MainActivity.this);
-            builder.setTitle("请输入密码");
-            builder.setIcon(R.drawable.lock_light);
-            builder.setView(keytext);
-            builder.setPositiveButton("确定", new OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (PreferenceInfo.userPasswordValue.equals(keytext.getText().toString())) {
-                        PreferenceInfo.appLock(false);
-                        Toast.makeText(MainActivity.this, "已解除锁定", Toast.LENGTH_LONG).show();
-                    } else {
-                        Toast.makeText(MainActivity.this, "密码错误", Toast.LENGTH_LONG).show();
-                        MainActivity.this.finish();
-                    }
-                }
-            });
-            builder.setOnCancelListener(new OnCancelListener() {
-
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    MainActivity.this.finish();
-                }
-            });
-            builder.create().show();
-        }
 
         flush();
 
@@ -176,6 +142,7 @@ public class MainActivity extends Activity {
     /**
      * 短按日志事件
      */
+
     private class OnItemSelectedListener implements OnItemClickListener {
 
         @Override

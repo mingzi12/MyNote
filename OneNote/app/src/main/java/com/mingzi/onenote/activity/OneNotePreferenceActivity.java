@@ -22,75 +22,82 @@ import com.mingzi.onenote.vo.PreferenceInfo;
 
 
 public class OneNotePreferenceActivity extends PreferenceActivity {
-    private ListPreference themeList;
-    private Preference usersafety, aboutapp;
-    private LayoutInflater inflater;
-    private LinearLayout linearlayout_1, linearlayout_2;
-    private EditText newkeytext, newkeyagaintext;
-    private EditText oldkeytext, modifykeytext, modifykeyagaintext;
-    private AlertDialog.Builder builder_1, builder_2;
-    private Dialog dialog_1, dialog_2;
+
+    private ListPreference mThemeList;
+    private Preference mUserSafety;
+    private Preference mAboutApp;
+    private LayoutInflater mInflater;
+    private LinearLayout mLinearlayout1;
+    private LinearLayout mLinearlayout2;
+    private EditText mNewPassEdit;
+    private EditText mNewPassAgainEdit;
+    private EditText mOldPassEdit;
+    private EditText mModifyPassEdit;
+    private EditText mModifyPassAgainEdit;
+    private AlertDialog.Builder mNewPassBuilder;
+    private AlertDialog.Builder mModifyBuilder;
+    private Dialog mDialog1, mDialog2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preference);
-        themeList = (ListPreference) findPreference("themelist");
-        themeList.setSummary(PreferenceInfo.themeListValue);
-        themeList.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        mThemeList = (ListPreference) findPreference("themelist");
+        mThemeList.setSummary(PreferenceInfo.themeListValue);
+        mThemeList.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 // TODO Auto-generated method stub
                 String value = (String) newValue;
-                themeList.setSummary(value);
+                mThemeList.setSummary(value);
                 PreferenceInfo.setThemeListValue(value);
                 return true;
             }
         });
 
-        aboutapp = findPreference("aboutapp");
-        aboutapp.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        mAboutApp = findPreference("aboutapp");
+        mAboutApp.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 // TODO Auto-generated method stub
                 AlertDialog ad = new AlertDialog.Builder(OneNotePreferenceActivity.this).create();
-                ad.setTitle("NotePad");
+                ad.setTitle("OneNote");
                 ad.setIcon(R.mipmap.icon);
-                ad.setMessage("Author: Mingzi      2016.3.14");
+                ad.setMessage("Author: MingZi      2016.3.14");
                 ad.setCanceledOnTouchOutside(true);
                 ad.show();
                 return false;
             }
         });
 
-        inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        linearlayout_1 = (LinearLayout) inflater.inflate(R.layout.newkey, null);
-        linearlayout_2 = (LinearLayout) inflater.inflate(R.layout.modifykey, null);
+        mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mLinearlayout1 = (LinearLayout) mInflater.inflate(R.layout.newkey, null);
+        mLinearlayout2 = (LinearLayout) mInflater.inflate(R.layout.modifykey, null);
 
-        newkeytext = (EditText) linearlayout_1.findViewById(R.id.newkeytext);
-        newkeyagaintext = (EditText) linearlayout_1.findViewById(R.id.newkeyagaintext);
+        mNewPassEdit = (EditText) mLinearlayout1.findViewById(R.id.newkeytext);
+        mNewPassAgainEdit = (EditText) mLinearlayout1.findViewById(R.id.newkeyagaintext);
 
-        oldkeytext = (EditText) linearlayout_2.findViewById(R.id.oldkeytext);
-        modifykeytext = (EditText) linearlayout_2.findViewById(R.id.modifykeytext);
-        modifykeyagaintext = (EditText) linearlayout_2.findViewById(R.id.modifykeyagaintext);
+        mOldPassEdit = (EditText) mLinearlayout2.findViewById(R.id.oldkeytext);
+        mModifyPassEdit = (EditText) mLinearlayout2.findViewById(R.id.modifykeytext);
+        mModifyPassAgainEdit = (EditText) mLinearlayout2.findViewById(R.id.modifykeyagaintext);
 
-        builder_1 = new Builder(OneNotePreferenceActivity.this);
-        builder_1.setView(linearlayout_1);
-        builder_1.setTitle("设置新密码");
-        builder_1.setIcon(R.drawable.lock_light);
-        builder_1.setPositiveButton("确定", new OnClickListener() {
+        mNewPassBuilder = new Builder(OneNotePreferenceActivity.this);
+        mNewPassBuilder.setView(mLinearlayout1);
+        mNewPassBuilder.setTitle("设置新密码");
+        mNewPassBuilder.setIcon(R.drawable.preferences_security_light);
+        mNewPassBuilder.setPositiveButton("确定", new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                String key = newkeytext.getText().toString();
-                String keyagain = newkeyagaintext.getText().toString();
+                String pass = mNewPassEdit.getText().toString();
+                String passAgain = mNewPassAgainEdit.getText().toString();
 
-                if (key.equals("")) {
+                if (pass.equals("")) {
                     Toast.makeText(OneNotePreferenceActivity.this, "密码不能为空", Toast.LENGTH_LONG).show();
-                } else if (key.equals(keyagain)) {
-                    PreferenceInfo.setUserPassword(key);
-                    usersafety.setTitle("修改密码");
+                } else if (pass.equals(passAgain)) {
+                    new PreferenceInfo(getApplicationContext()).setUserPassword(pass);
+                    mUserSafety.setTitle("修改密码");
                 } else {
                     Toast.makeText(OneNotePreferenceActivity.this, "两次输入不正确", Toast.LENGTH_LONG).show();
                 }
@@ -99,7 +106,7 @@ public class OneNotePreferenceActivity extends PreferenceActivity {
                 clearText();
             }
         });
-        builder_1.setNegativeButton("取消", new OnClickListener() {
+        mNewPassBuilder.setNegativeButton("取消", new OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -107,24 +114,24 @@ public class OneNotePreferenceActivity extends PreferenceActivity {
                 clearText();
             }
         });
-        dialog_1 = builder_1.create();
+        mDialog1 = mNewPassBuilder.create();
 
-        builder_2 = new Builder(OneNotePreferenceActivity.this);
-        builder_2.setView(linearlayout_2);
-        builder_2.setTitle("修改密码");
-        builder_2.setIcon(R.drawable.lock_light);
-        builder_2.setPositiveButton("确定", new OnClickListener() {
+        mModifyBuilder = new Builder(OneNotePreferenceActivity.this);
+        mModifyBuilder.setView(mLinearlayout2);
+        mModifyBuilder.setTitle("修改密码");
+        mModifyBuilder.setIcon(R.drawable.preferences_security_light);
+        mModifyBuilder.setPositiveButton("确定", new OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-                String oldkey = oldkeytext.getText().toString();
-                String key = modifykeytext.getText().toString();
-                String keyagain = modifykeyagaintext.getText().toString();
+                String oldPass = mOldPassEdit.getText().toString();
+                String pass = mModifyPassEdit.getText().toString();
+                String passAgain = mModifyPassAgainEdit.getText().toString();
 
-                if (!oldkey.equals(PreferenceInfo.userPasswordValue)) {
+                if (!oldPass.equals(PreferenceInfo.userPasswordValue)) {
                     Toast.makeText(OneNotePreferenceActivity.this, "密码错误", Toast.LENGTH_LONG).show();
-                } else if (key.equals("")) {
+                } else if (pass.equals("")) {
                     Toast.makeText(OneNotePreferenceActivity.this, "新密码不能为空", Toast.LENGTH_LONG).show();
-                } else if (key.equals(keyagain)) {
-                    PreferenceInfo.setUserPassword(key);
+                } else if (pass.equals(passAgain)) {
+                    PreferenceInfo.setUserPassword(pass);
                 } else {
                     Toast.makeText(OneNotePreferenceActivity.this, "两次输入不正确", Toast.LENGTH_LONG).show();
                 }
@@ -133,7 +140,7 @@ public class OneNotePreferenceActivity extends PreferenceActivity {
                 clearText();
             }
         });
-        builder_2.setNegativeButton("取消", new OnClickListener() {
+        mModifyBuilder.setNegativeButton("取消", new OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -141,23 +148,22 @@ public class OneNotePreferenceActivity extends PreferenceActivity {
                 clearText();
             }
         });
-        dialog_2 = builder_2.create();
+        mDialog2 = mModifyBuilder.create();
 
-        usersafety =  findPreference("usersafety");
+        mUserSafety =  findPreference("usersafety");
         if (PreferenceInfo.userPasswordValue.equals("")) {
-            usersafety.setTitle("设置新密码");
+            mUserSafety.setTitle("设置新密码");
         } else {
-            usersafety.setTitle("修改密码");
+            mUserSafety.setTitle("修改密码");
         }
-        usersafety.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        mUserSafety.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 if (PreferenceInfo.userPasswordValue.equals("")) {
-                    dialog_1.show();
-                }
-                else {
-                    dialog_2.show();
+                    mDialog1.show();
+                } else {
+                    mDialog2.show();
                 }
 
                 return false;
@@ -170,14 +176,14 @@ public class OneNotePreferenceActivity extends PreferenceActivity {
      * 清空EditText
      */
     private void clearText() {
-        newkeytext.setText("");
-        newkeyagaintext.setText("");
-        newkeytext.requestFocus();
+        mNewPassEdit.setText("");
+        mNewPassAgainEdit.setText("");
+        mNewPassEdit.requestFocus();
 
-        oldkeytext.setText("");
-        modifykeytext.setText("");
-        modifykeyagaintext.setText("");
-        oldkeytext.requestFocus();
+        mOldPassEdit.setText("");
+        mModifyPassEdit.setText("");
+        mModifyPassAgainEdit.setText("");
+        mOldPassEdit.requestFocus();
     }
 
 }

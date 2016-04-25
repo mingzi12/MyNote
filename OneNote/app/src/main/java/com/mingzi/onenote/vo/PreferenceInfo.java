@@ -21,7 +21,7 @@ public class PreferenceInfo {
 	public PreferenceInfo(Context context) {
 		super();
 		PreferenceInfo.context = context;
-		PreferenceInfo.share = context.getSharedPreferences("oneNote", Context.MODE_PRIVATE);
+		PreferenceInfo.share = context.getSharedPreferences("OneNote", Context.MODE_PRIVATE);
 		PreferenceInfo.editor = share.edit();
 		
 		getThemeListValue();
@@ -32,7 +32,7 @@ public class PreferenceInfo {
 	 * 主题颜色读写
 	 */
 	public static void getThemeListValue() {
-		themeListValue = share.getString("themelist", "天蓝");
+		themeListValue = share.getString("themeList", "天蓝");
 		
 		if (themeListValue.equals("天蓝")) {
 			themeColorValue = ConstantValue.THEME_BLUE;
@@ -58,7 +58,7 @@ public class PreferenceInfo {
 	}
 	
 	public static void setThemeListValue(String value) {
-		editor.putString("themelist", value);
+		editor.putString("themeList", value);
 		editor.commit();
 		
 		getThemeListValue();
@@ -68,13 +68,13 @@ public class PreferenceInfo {
 	 * 用户密码读写
 	 */
 	public static void getUserPassword() {
-		userPasswordValue = share.getString("userpassword", "");
-		ifLocked = share.getBoolean("iflocked", false);
+		userPasswordValue = share.getString("userPassword", "");
+		ifLocked = share.getBoolean("isLock", false);
 	}
 	
 	public static void setUserPassword(String value) {
-		editor.putString("userpassword", value);
-		editor.putBoolean("iflocked", true);
+		editor.putString("userPassword", value);
+		editor.putBoolean("isLock", true);
 		editor.commit();
 		Toast.makeText(context, "已设置新密码", Toast.LENGTH_LONG).show();
 		
@@ -93,7 +93,7 @@ public class PreferenceInfo {
 	 * 程序锁定
 	 */
 	public static void appLock(boolean flag) {
-		editor.putBoolean("iflocked", flag);
+		editor.putBoolean("isLock", flag);
 		editor.commit();
 		
 		getUserPassword();

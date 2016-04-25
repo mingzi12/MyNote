@@ -23,6 +23,7 @@
         android:layout_marginLeft="10px"
         android:layout_marginRight="10px"
         android:layout_marginBottom="10px"
+        android:hint="请输入标题"
         android:background="@drawable/imageviewboundshape"
         android:singleLine="true"
         android:textColor="#00CC00"
