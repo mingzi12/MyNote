@@ -62,10 +62,10 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("所有便签");
         setContentView(R.layout.activity_main);
         ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        actionBar.setDisplayUseLogoEnabled(true);
         noteListView = (ListView) findViewById(R.id.notelist);
         noteListView.setOnItemClickListener(new OnItemSelectedListener());
         mNoteList = new ArrayList<Note>();
