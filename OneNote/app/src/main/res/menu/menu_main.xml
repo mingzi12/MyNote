@@ -3,8 +3,21 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.mingzi.onenote.MainActivity">
     <item
+        android:id="@+id/ab_add_main"
+        android:icon="@drawable/action_bar_add_light"
+        android:orderInCategory="100"
+        android:title="新建便签"
+        android:showAsAction="always"/>
+    <item
+        android:id="@+id/ab_search_main"
+        android:icon="@drawable/ic_menu_search_light"
+        android:orderInCategory="100"
+        android:title="    查找"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="    设置"
+        android:icon="@drawable/ic_menu_setting_light"
         app:showAsAction="never"/>
 </menu>

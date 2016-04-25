@@ -10,7 +10,7 @@
         <item>鲜橙</item>
         <item>紫丁香</item>
     </string-array>
-    <string name="action_settings">settings</string>
+    <string name="action_settings">设置</string>
     <string name="title_activity_video_viewer">VideoViewerActivity</string>
     <string name="title_activity_set_alarm">SetAlarmActivity</string>
 
