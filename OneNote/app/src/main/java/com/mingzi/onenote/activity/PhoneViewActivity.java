@@ -1,66 +1,97 @@
 package com.mingzi.onenote.activity;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ImageView;
+import android.view.MotionEvent;
+import android.widget.Toast;
 
 import com.mingzi.onenote.R;
 import com.mingzi.onenote.util.BitmapUtils;
+import com.mingzi.onenote.view.MyImage;
+
 
 public class PhoneViewActivity extends Activity {
 
-    private ImageView imageView;
-    Bitmap bitmap;
     public static final String EXTRA_PATH = "path";
+    MyImage imageView;
+
+    private Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setTitle("返回");
         setContentView(R.layout.activity_phone_viewer);
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        imageView = (ImageView) findViewById(R.id.phone_view_image);
         String path = getIntent().getStringExtra(EXTRA_PATH);
         if (path != null) {
 
             bitmap = BitmapUtils.getBitmapByPath(path);
-            imageView.setImageBitmap(bitmap);
         } else {
             finish();
         }
+        findView();
+
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        init();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
 
-            case android.R.id.home :
-                finish();
-                break;
-            default:
-                break;
+
+    private void findView() {
+        imageView = (MyImage) findViewById(R.id.phone_view_image);
+    }
+
+    private void init() {
+
+        Rect frame = new Rect();
+        getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+        int statusBarHeight = frame.top;
+        int screenW = this.getWindowManager().getDefaultDisplay().getWidth();
+        int screenH = this.getWindowManager().getDefaultDisplay().getHeight()
+                - statusBarHeight;
+        if (bitmap != null) {
+            imageView.imageInit(bitmap, screenW, screenH, statusBarHeight);
+
         }
-        return super.onOptionsItemSelected(item);
+        else
+        {
+            Toast.makeText(this, "图片加载失败，请稍候再试！", Toast.LENGTH_SHORT)
+                    .show();
+        }
+
     }
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        return super.onPrepareOptionsMenu(menu);
-    }
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                imageView.mouseDown(event);
+                break;
 
-    @Override
-    protected void onDestroy() {
-        bitmap.recycle();
-        super.onDestroy();
+            /**
+             * 非第一个点按下
+             */
+            case MotionEvent.ACTION_POINTER_DOWN:
+
+                imageView.mousePointDown(event);
+
+                break;
+            case MotionEvent.ACTION_MOVE:
+                imageView.mouseMove(event);
+
+                break;
+
+            case MotionEvent.ACTION_UP:
+                imageView.mouseUp();
+                break;
+
+        }
+
+        return super.onTouchEvent(event);
     }
-}
+}  
