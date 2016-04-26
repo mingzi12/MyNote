@@ -22,6 +22,9 @@ public class Note implements Parcelable {
 		
 	}
 
+    public Note(int noteId) {
+        this.noteId = noteId;
+    }
     public Note(Date date){
         this.createDate = date;
     }

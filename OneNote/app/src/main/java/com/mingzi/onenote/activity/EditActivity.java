@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class EditActivity extends Activity implements ImageView.OnClickListener {
+public class EditActivity extends Activity implements ImageView.OnClickListener ,View.OnLongClickListener {
 
     public static final String TAG = "EditATY-> ";
 
@@ -154,13 +154,17 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
      * */
     private void addThumbnail(String mediaPath,int id) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, mLinearLayout);
+        LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, null);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,750);
+        layoutParams.setMargins(20,10,20,10);
+        mThumbnailLayout.setId(id);
         ImageView imageView = (ImageView) mThumbnailLayout.findViewById(R.id.mImageThumbnail);
         Bitmap bitmap = BitmapUtils.readBitMap(mediaPath, 2);
         mBitmaps.add(bitmap);
-        imageView.setId(id);
         imageView.setImageBitmap(bitmap);
-        imageView.setOnClickListener(this);
+        mThumbnailLayout.setOnClickListener(this);
+        mThumbnailLayout.setOnLongClickListener(this);
+        mLinearLayout.addView(mThumbnailLayout,layoutParams);
     }
 
 
@@ -203,6 +207,37 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         else {
             Toast.makeText(this,"没有打开该类型文件的程序",Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        final int viewId = v.getId();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("确定要删除吗？")
+                .setPositiveButton("删除文件", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new MediaDBAccess(EditActivity.this).deleteByPath(mPathsList.get(viewId));
+                        EditActivity.this.mLinearLayout.removeView(findViewById(viewId));
+                        File file=new File(mPathsList.get(viewId));
+                        if (file.exists()) {
+                            file.delete();
+                            Toast.makeText(EditActivity.this, "文件已删除", Toast.LENGTH_SHORT).show();
+                        }
+                        dialog.dismiss();
+
+                    }
+                })
+                .setNegativeButton("取消附加", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new MediaDBAccess(EditActivity.this).deleteByPath(mPathsList.get(viewId));
+                        Toast.makeText(EditActivity.this, "已取消附加文件", Toast.LENGTH_SHORT).show();
+                        EditActivity.this.mLinearLayout.removeView(findViewById(viewId));
+                        dialog.dismiss();
+                    }
+                }).show();
+        return false;
     }
 
     @Override
@@ -487,10 +522,11 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout mTextFileLayout = (LinearLayout) layoutInflater.inflate(layoutId, null);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,150);
-        layoutParams.setMargins(20,5,20,5);
+        layoutParams.setMargins(20,10,20,10);
         TextView mTextView = (TextView) mTextFileLayout.findViewById(R.id.mTextView);
         mTextFileLayout.setId(id);
         mTextFileLayout.setOnClickListener(this);
+        mTextFileLayout.setOnLongClickListener(this);
         int index = path.lastIndexOf("/")+1;
         String fileName = path.substring(index,path.length());
         mTextView.setText("  "+fileName);
@@ -513,6 +549,12 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     protected void onPause() {
 
         super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        Log.d(TAG, "onRestart: ");
+        super.onRestart();
     }
 
     @Override

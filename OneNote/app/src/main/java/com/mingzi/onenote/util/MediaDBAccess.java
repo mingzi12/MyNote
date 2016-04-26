@@ -82,6 +82,7 @@ public class MediaDBAccess {
         mSQLiteDatabase = mDBOpenHelper.getWritableDatabase();
         mSQLiteDatabase.delete(ConstantValue.MEDIA_TABLE_NAME,
                 ConstantValue.MEDIA_PATH + " = ?", new String[]{path});
+        close();
         return true;
     }
 

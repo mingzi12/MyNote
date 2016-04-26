@@ -12,7 +12,7 @@
     </string-array>
     <string name="action_settings">设置</string>
     <string name="title_activity_video_viewer">VideoViewerActivity</string>
-    <string name="title_activity_set_alarm">SetAlarmActivity</string>
+    <string name="title_activity_set_alarm">设置闹钟</string>
 
     <string name="vibration">震动</string>
     <string name="ringTone">铃声</string>

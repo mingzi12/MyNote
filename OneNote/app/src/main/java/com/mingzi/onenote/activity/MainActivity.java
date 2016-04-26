@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.mingzi.onenote.R;
 import com.mingzi.onenote.adapter.NoteBaseAdapter;
+import com.mingzi.onenote.util.MediaDBAccess;
 import com.mingzi.onenote.util.NoteDBAccess;
 import com.mingzi.onenote.vo.Note;
 import com.mingzi.onenote.vo.PreferenceInfo;
@@ -195,6 +196,8 @@ public class MainActivity extends Activity {
                 builder.setPositiveButton("确定", new OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         NoteDBAccess access = new NoteDBAccess(MainActivity.this);
+                        MediaDBAccess mediaDBAccess = new MediaDBAccess(MainActivity.this);
+                        mediaDBAccess.deleteById(note.getNoteId());
                         access.deleteNoteById(note);
 
                         dialog.dismiss();

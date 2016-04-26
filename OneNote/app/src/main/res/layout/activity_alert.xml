@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_margin="10dp"
-        android:background="#fff"
         android:orientation="vertical"
-        android:id="@+id/linearLayout">
+        android:background="@drawable/imageviewboundshape">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="50dp"
+            android:layout_above="@+id/linearLayout"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:text="闹钟提示"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
-            android:layout_above="@+id/linearLayout"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_horizontal"/>
+            android:textSize="20sp"/>
 
         <TextView
             android:id="@+id/msg_title_textV"
@@ -46,17 +49,17 @@
                 android:id="@+id/alert_cancle_btn"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/button"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
+                android:background="@drawable/button"
                 android:text="取消"/>
 
             <Button
                 android:id="@+id/alert_ok_btn"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:background="@drawable/button"
                 android:layout_marginLeft="30dp"
+                android:background="@drawable/button"
                 android:text="查看"/>
         </LinearLayout>
     </LinearLayout>

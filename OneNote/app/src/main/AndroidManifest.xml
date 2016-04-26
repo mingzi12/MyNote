@@ -72,7 +72,7 @@
         <activity
             android:name=".activity.SetAlarmActivity"
             android:label="@string/title_activity_set_alarm"
-            android:theme="@android:style/Theme.Holo.Light.DarkActionBar">
+            android:theme="@style/CustomMianActionBarTheme">
         </activity>
 
         <receiver

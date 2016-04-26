@@ -47,7 +47,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class NewNoteActivity extends Activity implements View.OnClickListener {
+public class NewNoteActivity extends Activity implements View.OnClickListener ,View.OnLongClickListener{
 
     private static final String TAG = "NewNoteActivity";
     private static final int SELECT_FILE_REQUEST_CODE = 3;
@@ -216,6 +216,12 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
 
         switch (item.getItemId()) {
             case R.id.delete_new:
+                if (mCurrentNoteId != -1) {
+                    MediaDBAccess mediaDBAccess = new MediaDBAccess(this);
+                    NoteDBAccess noteDBAccess = new NoteDBAccess(this);
+                    mediaDBAccess.deleteById(mCurrentNoteId);
+                    noteDBAccess.deleteNoteById(new Note(mCurrentNoteId));
+                }
                 NewNoteActivity.this.finish();
                 break;
 
@@ -468,6 +474,8 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
         }
     }
 
+
+
     private void addView() {
         if (mCurrentPath.endsWith(".jpg") || mCurrentPath.endsWith("jpeg")
                 || mCurrentPath.endsWith(".png")) {
@@ -475,7 +483,7 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
             Log.d(TAG, "onActivityResult: " + mCurrentPath);
             mPathsList.add(mCurrentPath);
 
-            addThumbnail(mCurrentPath,mPathsList.size()-1);
+            addThumbnail(mCurrentPath, mPathsList.size() - 1);
         } else if (mCurrentPath.endsWith(".mp4") || mCurrentPath.endsWith(".rmvb")
                 || mCurrentPath.endsWith(".avi")) {
             mPathsList.add(mCurrentPath);
@@ -502,10 +510,11 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout mTextFileLayout = (LinearLayout) layoutInflater.inflate(layoutId, null);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,150);
-        layoutParams.setMargins(20, 5, 20, 5);
+        layoutParams.setMargins(20, 10, 20, 10);
         TextView mTextView = (TextView) mTextFileLayout.findViewById(R.id.mTextView);
         mTextFileLayout.setId(id);
         mTextFileLayout.setOnClickListener(this);
+        mTextFileLayout.setOnLongClickListener(this);
         int index = path.lastIndexOf("/")+1;
         String fileName = path.substring(index,path.length());
         mTextView.setText("  "+fileName);
@@ -516,13 +525,57 @@ public class NewNoteActivity extends Activity implements View.OnClickListener {
      * */
     private void addThumbnail(String mediaPath,int id) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, mLinearLayout);
+        LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, null);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,750);
+        layoutParams.setMargins(20,10,20,10);
+        mThumbnailLayout.setId(id);
         ImageView imageView = (ImageView) mThumbnailLayout.findViewById(R.id.mImageThumbnail);
         Bitmap bitmap = BitmapUtils.readBitMap(mediaPath, 2);
         mBitmaps.add(bitmap);
-        imageView.setId(id);
         imageView.setImageBitmap(bitmap);
-        imageView.setOnClickListener(this);
+        mThumbnailLayout.setOnClickListener(this);
+        mThumbnailLayout.setOnLongClickListener(this);
+        mLinearLayout.addView(mThumbnailLayout, layoutParams);
     }
 
+    @Override
+    public boolean onLongClick(View v) {
+        final int viewId = v.getId();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("确定要删除吗？")
+                .setPositiveButton("删除文件", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new MediaDBAccess(NewNoteActivity.this).deleteByPath(mPathsList.get(viewId));
+                        NewNoteActivity.this.mLinearLayout.removeView(findViewById(viewId));
+                        File file=new File(mPathsList.get(viewId));
+                        if (file.exists()) {
+                            file.delete();
+                            Toast.makeText(NewNoteActivity.this, "文件已删除", Toast.LENGTH_SHORT).show();
+                        }
+                        dialog.dismiss();
+
+                    }
+                })
+                .setNegativeButton("取消附加", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        new MediaDBAccess(NewNoteActivity.this).deleteByPath(mPathsList.get(viewId));
+                        Toast.makeText(NewNoteActivity.this, "已取消附加文件", Toast.LENGTH_SHORT).show();
+                        NewNoteActivity.this.mLinearLayout.removeView(findViewById(viewId));
+                        dialog.dismiss();
+                    }
+                }).show();
+        return false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mBitmaps != null) {
+            for (Bitmap bitmap :mBitmaps) {
+                bitmap.recycle();
+            }
+        }
+        super.onDestroy();
+    }
 }
