@@ -26,6 +26,14 @@
     		android:title="设置新密码"
     	/>
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="取消加锁"
+        >
+        <Preference
+            android:key="unLock"
+            android:title="取消加锁"
+            />
+    </PreferenceCategory>
     
     <PreferenceCategory
     	android:title="关于"

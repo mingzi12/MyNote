@@ -13,6 +13,11 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.READ_PROFILE"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/icon"
@@ -25,7 +30,6 @@
             android:launchMode="singleTask"
             android:logo="@null"
             android:theme="@style/CustomMianActionBarTheme">
-
         </activity>
         <activity
             android:name=".activity.OneNotePreferenceActivity"
@@ -102,14 +106,17 @@
             android:label="查看"
             android:theme="@android:style/Theme.Holo.NoActionBar">
         </activity>
-        <activity android:name=".activity.LockActivity">
+        <activity android:name=".activity.IsLockActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".util.Lock"></activity>
+        <activity android:name=".activity.LockActivity"
+            android:launchMode="singleInstance">
+        </activity>
+
     </application>
 
 </manifest>

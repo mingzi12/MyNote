@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">OneNote</string>
     <string-array name="theme_name">
-        <item>天蓝</item>
+        <item>默认</item>
         <item>椰壳绿</item>
         <item>芒果</item>
         <item>胭脂红</item>
@@ -18,4 +18,18 @@
     <string name="ringTone">铃声</string>
     <string name="ringToneAndVibration">铃声和震动</string>
     <string name="title_activity_select_file">SelectFileActivity</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">解锁</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
 </resources>

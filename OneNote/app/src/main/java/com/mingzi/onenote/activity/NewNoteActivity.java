@@ -65,6 +65,7 @@ public class NewNoteActivity extends Activity implements View.OnClickListener ,V
     private List<String> mPathsList = null;
     private List<Bitmap> mBitmaps;
     private int mResultCode;
+    private PreferenceInfo mPreferenceInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,16 +73,17 @@ public class NewNoteActivity extends Activity implements View.OnClickListener ,V
         super.onCreate(savedInstanceState);
         setTitle("返回");
         setContentView(R.layout.activity_edit);
+        mPreferenceInfo =PreferenceInfo.getPreferenceInfo(this);
         ActionBar mActionBar = getActionBar();
         mActionBar.setDisplayHomeAsUpEnabled(true);
         mScrollView = (ScrollView) findViewById(R.id.scrollView_edit);
-        mScrollView.setBackgroundColor(PreferenceInfo.themeColorValue);
+        mScrollView.setBackgroundColor(mPreferenceInfo.themeColorValue);
         mLinearLayout = (LinearLayout) findViewById(R.id.editlayout);
-        mLinearLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
+        mLinearLayout.setBackgroundColor(mPreferenceInfo.themeColorValue);
 
         mTitleEdit = (EditText) findViewById(R.id.titleedit);
         mContentEdit = (EditText) findViewById(R.id.contentedit);
-        mContentEdit.setBackgroundColor(PreferenceInfo.themeColorValue);
+        mContentEdit.setBackgroundColor(mPreferenceInfo.themeColorValue);
         mContentEdit.requestFocus();
         mContentEdit.addTextChangedListener(new TextWatcher() {
             @Override

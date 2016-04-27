@@ -13,29 +13,40 @@ public class PreferenceInfo {
 	public static int themeColorValue;
 	public static String userPasswordValue;
 	public static boolean ifLocked;
-	
+
+    private static PreferenceInfo mPreferenceInfo;
 	private static Context context;
 	private static SharedPreferences share;
 	private static Editor editor;
 	
-	public PreferenceInfo(Context context) {
+	private PreferenceInfo(Context context) {
 		super();
-		PreferenceInfo.context = context;
+		PreferenceInfo.context = context.getApplicationContext();
 		PreferenceInfo.share = context.getSharedPreferences("OneNote", Context.MODE_PRIVATE);
 		PreferenceInfo.editor = share.edit();
 		
 		getThemeListValue();
 		getUserPassword();
 	}
-	
+
+    public static PreferenceInfo getPreferenceInfo(Context context) {
+                if (mPreferenceInfo == null) {
+                    synchronized (PreferenceInfo.class) {
+                        if (mPreferenceInfo == null) {
+                            mPreferenceInfo = new PreferenceInfo(context);
+                        }
+                    }
+                }
+        return mPreferenceInfo;
+    }
 	/**
 	 * 主题颜色读写
 	 */
 	public static void getThemeListValue() {
-		themeListValue = share.getString("themeList", "天蓝");
+		themeListValue = share.getString("themeList", "默认");
 		
-		if (themeListValue.equals("天蓝")) {
-			themeColorValue = ConstantValue.THEME_BLUE;
+		if (themeListValue.equals("默认")) {
+			themeColorValue = ConstantValue.THEME_WHITE;
 		}
 		else if (themeListValue.equals("椰壳绿")) {
 			themeColorValue = ConstantValue.THEME_GREEN;
@@ -88,15 +99,11 @@ public class PreferenceInfo {
 		getThemeListValue();
 		getUserPassword();
 	}
-	
-	/**
-	 * 程序锁定
-	 */
-	public static void appLock(boolean flag) {
-		editor.putBoolean("isLock", flag);
-		editor.commit();
-		
-		getUserPassword();
-	}
-	
+
+    public static void unLockApp(boolean unLock) {
+        editor.putBoolean("isLock",unLock);
+        editor.putString("userPassword","");
+        editor.commit();
+    }
+
 }

@@ -9,13 +9,13 @@ import android.widget.Toast;
 
 import com.mingzi.onenote.R;
 import com.mingzi.onenote.util.BitmapUtils;
-import com.mingzi.onenote.view.MyImage;
+import com.mingzi.onenote.view.MyImageView;
 
 
 public class PhoneViewActivity extends Activity {
 
     public static final String EXTRA_PATH = "path";
-    MyImage imageView;
+    MyImageView imageView;
 
     private Bitmap bitmap;
 
@@ -43,7 +43,7 @@ public class PhoneViewActivity extends Activity {
 
 
     private void findView() {
-        imageView = (MyImage) findViewById(R.id.phone_view_image);
+        imageView = (MyImageView) findViewById(R.id.phone_view_image);
     }
 
     private void init() {

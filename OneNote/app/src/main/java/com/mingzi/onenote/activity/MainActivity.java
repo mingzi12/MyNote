@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
         noteListView.setOnItemClickListener(new OnItemSelectedListener());
         mNoteList = new ArrayList<Note>();
         access = new NoteDBAccess(this);
-        mPreferenceInfo = new PreferenceInfo(this);
+        mPreferenceInfo = PreferenceInfo.getPreferenceInfo(this);
 
         this.registerForContextMenu(noteListView);
     }
@@ -232,7 +232,7 @@ public class MainActivity extends Activity {
      */
 
     private void flush() {
-        PreferenceInfo.dataFlush();
+        mPreferenceInfo.dataFlush();
 
         mNoteList = access.selectAllNote();
 

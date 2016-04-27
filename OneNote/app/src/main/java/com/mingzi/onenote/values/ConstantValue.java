@@ -46,7 +46,7 @@ public class ConstantValue {
     /**
      * 各种主题颜色值
      * */
-	public static final int THEME_BLUE = 0xffffffff;
+	public static final int THEME_WHITE = 0xffffffff;
 	public static final int THEME_GREEN = 0xff8fd400;
 	public static final int THEME_YELLOW = 0xffffdd1e;
 	public static final int THEME_RED = 0xfffc574f;

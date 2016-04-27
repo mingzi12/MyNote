@@ -7,19 +7,19 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ImageView;  
   
-public class MyImage extends ImageView {
+public class MyImageView extends ImageView {
 
-    public MyImage(Context context) {
+    public MyImageView(Context context) {
         super(context);  
         // TODO Auto-generated constructor stub  
     }  
   
-    public MyImage(Context context, AttributeSet attrs) {
+    public MyImageView(Context context, AttributeSet attrs) {
         super(context, attrs);  
         // TODO Auto-generated constructor stub  
     }  
   
-    public MyImage(Context context, AttributeSet attrs, int defStyle) {
+    public MyImageView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);  
         // TODO Auto-generated constructor stub  
     }  
@@ -63,8 +63,7 @@ public class MyImage extends ImageView {
     float limitY1;  
     float limitY2;  
 
-    public void imageInit(Bitmap bitmap, int contentW, int contentH,  
-            int topHeight) {
+    public void imageInit(Bitmap bitmap, int contentW, int contentH, int topHeight) {
         this.primaryBitmap = bitmap;  
         this.contentW = contentW;  
         this.contentH = contentH;  

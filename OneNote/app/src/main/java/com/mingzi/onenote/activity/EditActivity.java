@@ -72,6 +72,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     private List<String> mPathsList;        // 存放和当前便签匹配的所有图片或者视频的路径
     private int mCurrentNoteId = -1;    // 保存当前文字内容便签的ID
     private String mCurrentPath = null; // 保存当前图片或者视频的路径
+    private PreferenceInfo mPreferenceInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,14 +82,15 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         setContentView(R.layout.activity_edit);
         ActionBar actionBar = getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        mPreferenceInfo = PreferenceInfo.getPreferenceInfo(this);
         mScrollView = (ScrollView) findViewById(R.id.scrollView_edit);
-        mScrollView.setBackgroundColor(PreferenceInfo.themeColorValue);
+        mScrollView.setBackgroundColor(mPreferenceInfo.themeColorValue);
         mLinearLayout = (LinearLayout) findViewById(R.id.editlayout);
-        mLinearLayout.setBackgroundColor(PreferenceInfo.themeColorValue);
+        mLinearLayout.setBackgroundColor(mPreferenceInfo.themeColorValue);
 
         mTitleEdit = (EditText) findViewById(R.id.titleedit);
         mContentEdit = (EditText) findViewById(R.id.contentedit);
-        mContentEdit.setBackgroundColor(PreferenceInfo.themeColorValue);
+        mContentEdit.setBackgroundColor(mPreferenceInfo.themeColorValue);
 
 
         Intent intent = this.getIntent();
@@ -155,8 +157,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     private void addThumbnail(String mediaPath,int id) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, null);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,750);
-        layoutParams.setMargins(20,10,20,10);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,650);
+        layoutParams.setMargins(20,15,20,15);
         mThumbnailLayout.setId(id);
         ImageView imageView = (ImageView) mThumbnailLayout.findViewById(R.id.mImageThumbnail);
         Bitmap bitmap = BitmapUtils.readBitMap(mediaPath, 2);
