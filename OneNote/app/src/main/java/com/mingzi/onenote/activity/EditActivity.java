@@ -270,8 +270,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         switch (item.getItemId()) {
             case R.id.delete_edit:
                 AlertDialog.Builder builder = new Builder(EditActivity.this);
-                builder.setTitle("删除");
-                builder.setIcon(R.drawable.delete_light);
+                builder.setTitle("    删除");
+                builder.setIcon(R.drawable.ic_delete);
                 builder.setMessage("您确定要把日志删除吗？");
                 builder.setPositiveButton("确定", new OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

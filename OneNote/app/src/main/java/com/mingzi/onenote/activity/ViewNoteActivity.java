@@ -167,13 +167,16 @@ public class ViewNoteActivity extends Activity implements ImageView.OnClickListe
      */
     private void addThumbnail(String mediaPath, int id) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, mLinearLayout);
+        LinearLayout mThumbnailLayout = (LinearLayout) layoutInflater.inflate(R.layout.add_image_file_layout, null);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,650);
+        layoutParams.setMargins(20,15,20,15);
         ImageView imageView = (ImageView) mThumbnailLayout.findViewById(R.id.mImageThumbnail);
         Bitmap bitmap = BitmapUtils.readBitMap(mediaPath, 4);
         mBitmaps.add(bitmap);
         imageView.setId(id);
         imageView.setImageBitmap(bitmap);
         imageView.setOnClickListener(this);
+        mLinearLayout.addView(mThumbnailLayout,layoutParams);
     }
 
 
@@ -184,7 +187,7 @@ public class ViewNoteActivity extends Activity implements ImageView.OnClickListe
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout mTextFileLayout = (LinearLayout) layoutInflater.inflate(layoutId, null);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,150);
-        layoutParams.setMargins(20,5,20,5);
+        layoutParams.setMargins(20,15,20,15);
         TextView mTextView = (TextView) mTextFileLayout.findViewById(R.id.mTextView);
         mTextFileLayout.setId(id);
         mTextFileLayout.setOnClickListener(this);

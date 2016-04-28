@@ -177,7 +177,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
         int id1 = mNoteList.get(position).getNoteId();
         Log.d(TAG, "onItemLongClick: "+ id + " "+ id1);
         AlertDialog.Builder builder = new Builder(MainActivity.this);
-        builder.setTitle("删除");
+        builder.setTitle("    删除");
         builder.setIcon(R.drawable.ic_delete);
         builder.setMessage("您确定要把日志删除吗？");
         builder.setPositiveButton("确定", new OnClickListener() {

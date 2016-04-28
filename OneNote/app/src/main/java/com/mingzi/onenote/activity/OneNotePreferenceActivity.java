@@ -43,6 +43,7 @@ public class OneNotePreferenceActivity extends PreferenceActivity {
     private Dialog mDialog1, mDialog2;
     private Dialog mDialog3;
     private PreferenceInfo mPreferenceInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // TODO Auto-generated method stub
@@ -62,6 +63,8 @@ public class OneNotePreferenceActivity extends PreferenceActivity {
                 return true;
             }
         });
+
+
 
         mAboutApp = findPreference("aboutapp");
         mAboutApp.setOnPreferenceClickListener(new OnPreferenceClickListener() {
