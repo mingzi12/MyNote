@@ -102,8 +102,20 @@ public class PreferenceInfo {
 
     public static void unLockApp(boolean unLock) {
         editor.putBoolean("isLock",unLock);
-        editor.putString("userPassword","");
-        editor.commit();
+        editor.putString("userPassword", "");
+        editor.apply();
+    }
+    /**
+     * item显示方式
+     * 0 代表 listview显示
+     * 1 代表gridview显示
+     * */
+    public int viewForm() {
+       return share.getInt("viewForm",-1);
     }
 
+    public void setViewForm(int form) {
+        editor.putInt("viewForm",form);
+        editor.apply();
+    }
 }

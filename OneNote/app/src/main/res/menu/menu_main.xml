@@ -14,6 +14,15 @@
         android:orderInCategory="100"
         android:title="    查找"
         app:showAsAction="never"/>
+    <item android:id="@+id/view_by_list"
+        android:orderInCategory="100"
+          android:icon="@drawable/ic_menu_list_light"
+        android:title="    列表"
+        android:showAsAction="never"/>
+    <item android:id="@+id/view_by_grid"
+        android:orderInCategory="100"
+          android:icon="@drawable/ic_menu_grid_light"
+        android:title="    缩略图"/>
 
     <item
         android:id="@+id/action_settings"

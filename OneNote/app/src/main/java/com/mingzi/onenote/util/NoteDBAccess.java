@@ -70,8 +70,20 @@ public class NoteDBAccess {
                 ConstantValue.NOTE_ID + "= ?", new String[]{note.getNoteId() + ""});
         db.close();
 	}
-	
-	/**
+
+    /**
+     * 删除Note
+     * @param noteId
+     */
+    public void deleteNoteById(int noteId) {
+        db = mDbOpenHelper.getWritableDatabase();
+        db.delete(ConstantValue.NOTE_TABLE_NAME,
+                ConstantValue.NOTE_ID + "= ?", new String[]{noteId + ""});
+        db.close();
+    }
+
+
+    /**
 	 * 更新Note
 	 * @param note
 	 */

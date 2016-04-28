@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
@@ -29,6 +30,7 @@ import com.mingzi.onenote.R;
 import com.mingzi.onenote.receiver.AlarmReceiver;
 import com.mingzi.onenote.vo.Note;
 
+import java.lang.reflect.Method;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -201,7 +203,8 @@ public class SetAlarmActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.setting_alarm_menu, menu);
-        SubMenu subMenu = menu.addSubMenu("提醒方式");
+        SubMenu subMenu = menu.addSubMenu("  提醒方式");
+        subMenu.setIcon(R.drawable.ic_menu_way_light);
         subMenu.addSubMenu(1,1,1,"震动");
         subMenu.addSubMenu(1,2,2,"铃声");
         subMenu.addSubMenu(1,3,3,"铃声和震动");
@@ -231,6 +234,25 @@ public class SetAlarmActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * 显示ActionBar中每个子项的图标
+     */
+    @Override
+    public boolean onMenuOpened(int featureId, Menu menu) {
+        if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {
+            if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
+                try {
+                    Method m = menu.getClass().getDeclaredMethod("setOptionalIconsVisible", Boolean.TYPE);
+                    m.setAccessible(true);
+                    m.invoke(menu, true);
+                } catch (Exception e) {
+                }
+            }
+        }
+        return super.onMenuOpened(featureId, menu);
+    }
+
 
     private void doPickRingtone() {
         Intent intent = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER);

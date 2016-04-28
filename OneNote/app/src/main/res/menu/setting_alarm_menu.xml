@@ -5,5 +5,6 @@
         <item
             android:id="@+id/setting_ringTone"
             android:orderInCategory="2"
-            android:title="设置铃声"/>
+            android:icon="@drawable/ringtone_light"
+            android:title="  设置铃声"/>
 </menu>

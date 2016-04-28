@@ -10,20 +10,17 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -42,18 +39,19 @@ import java.util.List;
 /**
  *
  */
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AdapterView.OnItemLongClickListener{
 
-    public static final String TAG = "EditActivity ----> ";
+    public static final String TAG = "MainActivity ";
 
     private ListView noteListView;
+    private GridView mGridView;
     private NoteBaseAdapter noteBaseAdapter;
     private NoteDBAccess access;
     private List<Note> mNoteList;
     private Note note = new Note();
     private PreferenceInfo mPreferenceInfo;
     private boolean isExit = false;
-
+    private int mViewForm;
     /**
      * Called when the activity is first created.
      */
@@ -66,10 +64,14 @@ public class MainActivity extends Activity {
         actionBar.setDisplayUseLogoEnabled(true);
         noteListView = (ListView) findViewById(R.id.notelist);
         noteListView.setOnItemClickListener(new OnItemSelectedListener());
+        noteListView.setOnItemLongClickListener(this);
+        mGridView = (GridView) findViewById(R.id.grid_view);
+        mGridView.setOnItemClickListener(new OnItemSelectedListener());
+        mGridView.setOnItemLongClickListener(this);
         mNoteList = new ArrayList<Note>();
         access = new NoteDBAccess(this);
         mPreferenceInfo = PreferenceInfo.getPreferenceInfo(this);
-
+        mViewForm = mPreferenceInfo.viewForm();
         this.registerForContextMenu(noteListView);
     }
 
@@ -129,6 +131,16 @@ public class MainActivity extends Activity {
                 intent.setClass(MainActivity.this, SearchActivity.class);
                 MainActivity.this.startActivity(intent);
                 break;
+            case R.id.view_by_list:
+                mPreferenceInfo.setViewForm(0);
+                mViewForm = 0;
+                flush();
+                break;
+            case R.id.view_by_grid:
+                mPreferenceInfo.setViewForm(1);
+                mViewForm = 1;
+                flush();
+                break;
             case R.id.action_settings:
                 intent = new Intent();
                 intent.setClass(MainActivity.this, OneNotePreferenceActivity.class);
@@ -160,72 +172,31 @@ public class MainActivity extends Activity {
         }
     }
 
-    /**
-     * 上下文菜单创建
-     *
-     * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
-     */
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v,
-                                    ContextMenuInfo menuInfo) {
-        // TODO Auto-generated method stub
-        super.onCreateContextMenu(menu, v, menuInfo);
-        menu.setHeaderIcon(R.drawable.item_setting_dark);
-        menu.setHeaderTitle("日志选项");
-        menu.add(0, 1, 1, "删除");
-        menu.add(0, 2, 2, "短信发送");
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, final long id) {
+        int id1 = mNoteList.get(position).getNoteId();
+        Log.d(TAG, "onItemLongClick: "+ id + " "+ id1);
+        AlertDialog.Builder builder = new Builder(MainActivity.this);
+        builder.setTitle("删除");
+        builder.setIcon(R.drawable.ic_delete);
+        builder.setMessage("您确定要把日志删除吗？");
+        builder.setPositiveButton("确定", new OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                NoteDBAccess access = new NoteDBAccess(MainActivity.this);
+                MediaDBAccess mediaDBAccess = new MediaDBAccess(MainActivity.this);
+                mediaDBAccess.deleteById((int)id);
+                access.deleteNoteById((int)id);
+
+                dialog.dismiss();
+                Toast.makeText(MainActivity.this, "已删除", Toast.LENGTH_LONG).show();
+                flush();
+            }
+        });
+        builder.setNegativeButton("取消", null);
+        builder.create().show();
+        return false;
     }
 
-    /**
-     * 上下文菜单事件
-     *
-     * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
-     */
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        int index = info.position;
-        final Note note = mNoteList.get(index);
-
-        switch (item.getItemId()) {
-            case 1: {
-                AlertDialog.Builder builder = new Builder(MainActivity.this);
-                builder.setTitle("删除");
-                builder.setIcon(R.drawable.delete_light);
-                builder.setMessage("您确定要把日志删除吗？");
-                builder.setPositiveButton("确定", new OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        NoteDBAccess access = new NoteDBAccess(MainActivity.this);
-                        MediaDBAccess mediaDBAccess = new MediaDBAccess(MainActivity.this);
-                        mediaDBAccess.deleteById(note.getNoteId());
-                        access.deleteNoteById(note);
-
-                        dialog.dismiss();
-                        Toast.makeText(MainActivity.this, "已删除", Toast.LENGTH_LONG).show();
-                        flush();
-                    }
-                });
-                builder.setNegativeButton("取消", null);
-                builder.create().show();
-
-                break;
-            }
-            case 2: {
-                Intent iIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:"));
-
-                if (!note.getNoteContent().equals(note.getNoteTitle())) {
-                    iIntent.putExtra("sms_body", note.getNoteTitle() + "\n" + note.getNoteContent());
-                } else {
-                    iIntent.putExtra("sms_body", note.getNoteContent());
-                }
-                MainActivity.this.startActivity(iIntent);
-
-                break;
-            }
-        }
-
-        return super.onContextItemSelected(item);
-    }
 
     /**
      * 界面刷新
@@ -236,8 +207,23 @@ public class MainActivity extends Activity {
 
         mNoteList = access.selectAllNote();
 
-        noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_list_item, mNoteList);
-        noteListView.setAdapter(noteBaseAdapter);
+        if (mViewForm==0) {
+            noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_list_item, mNoteList);
+            noteListView.setAdapter(noteBaseAdapter);
+            noteListView.setVisibility(View.VISIBLE);
+            mGridView.setVisibility(View.GONE);
+        } else if (mViewForm == 1) {
+            noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_grid_item, mNoteList);
+            mGridView.setAdapter(noteBaseAdapter);
+            mGridView.setVisibility(View.VISIBLE);
+            noteListView.setVisibility(View.GONE);
+        } else {
+            noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_list_item, mNoteList);
+            noteListView.setAdapter(noteBaseAdapter);
+            noteListView.setVisibility(View.VISIBLE);
+            mGridView.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
