@@ -42,7 +42,7 @@ public class PreferenceInfo {
 	/**
 	 * 主题颜色读写
 	 */
-	public static void getThemeListValue() {
+	public  void getThemeListValue() {
 		themeListValue = share.getString("themeList", "默认");
 		
 		if (themeListValue.equals("默认")) {
@@ -68,7 +68,7 @@ public class PreferenceInfo {
 		}
 	}
 	
-	public static void setThemeListValue(String value) {
+	public  void setThemeListValue(String value) {
 		editor.putString("themeList", value);
 		editor.commit();
 		
@@ -78,12 +78,12 @@ public class PreferenceInfo {
 	/**
 	 * 用户密码读写
 	 */
-	public static void getUserPassword() {
+	public  void getUserPassword() {
 		userPasswordValue = share.getString("userPassword", "");
 		ifLocked = share.getBoolean("isLock", false);
 	}
 	
-	public static void setUserPassword(String value) {
+	public  void setUserPassword(String value) {
 		editor.putString("userPassword", value);
 		editor.putBoolean("isLock", true);
 		editor.commit();
@@ -95,12 +95,11 @@ public class PreferenceInfo {
 	/**
 	 * 界面刷新
 	 */
-	public static void dataFlush() {
+	public  void dataFlush() {
 		getThemeListValue();
-		getUserPassword();
 	}
 
-    public static void unLockApp(boolean unLock) {
+    public  void unLockApp(boolean unLock) {
         editor.putBoolean("isLock",unLock);
         editor.putString("userPassword", "");
         editor.apply();

@@ -71,6 +71,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
         mNoteList = new ArrayList<Note>();
         access = new NoteDBAccess(this);
         mPreferenceInfo = PreferenceInfo.getPreferenceInfo(this);
+        mPreferenceInfo.dataFlush();
         mViewForm = mPreferenceInfo.viewForm();
         this.registerForContextMenu(noteListView);
     }
@@ -203,7 +204,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
      */
 
     private void flush() {
-        mPreferenceInfo.dataFlush();
 
         mNoteList = access.selectAllNote();
 
