@@ -80,7 +80,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
-
+        mNoteList = access.selectAllNote();
         flush();
 
     }
@@ -133,13 +133,18 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
                 MainActivity.this.startActivity(intent);
                 break;
             case R.id.view_by_list:
-                mPreferenceInfo.setViewForm(0);
-                mViewForm = 0;
-                flush();
-                break;
-            case R.id.view_by_grid:
-                mPreferenceInfo.setViewForm(1);
-                mViewForm = 1;
+                if (mViewForm == 0) {
+                    mPreferenceInfo.setViewForm(1);
+                    mViewForm = 1;
+                    item.setTitle("   缩略图");
+                    item.setIcon(R.drawable.ic_menu_grid_light);
+                } else if (mViewForm == 1) {
+                    mPreferenceInfo.setViewForm(0);
+                    mViewForm = 0;
+                    item.setTitle("   列表");
+                    item.setIcon(R.drawable.ic_menu_list_light);
+                }
+
                 flush();
                 break;
             case R.id.action_settings:
@@ -174,7 +179,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, final long id) {
+    public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
         int id1 = mNoteList.get(position).getNoteId();
         Log.d(TAG, "onItemLongClick: "+ id + " "+ id1);
         AlertDialog.Builder builder = new Builder(MainActivity.this);
@@ -186,8 +191,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
                 NoteDBAccess access = new NoteDBAccess(MainActivity.this);
                 MediaDBAccess mediaDBAccess = new MediaDBAccess(MainActivity.this);
                 mediaDBAccess.deleteById((int)id);
-                access.deleteNoteById((int)id);
-
+                access.deleteNoteById((int) id);
+                mNoteList.remove(position);
                 dialog.dismiss();
                 Toast.makeText(MainActivity.this, "已删除", Toast.LENGTH_LONG).show();
                 flush();
@@ -195,7 +200,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
         });
         builder.setNegativeButton("取消", null);
         builder.create().show();
-        return false;
+        return true;
     }
 
 
@@ -205,7 +210,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
 
     private void flush() {
 
-        mNoteList = access.selectAllNote();
+
 
         if (mViewForm==0) {
             noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_list_item, mNoteList);
