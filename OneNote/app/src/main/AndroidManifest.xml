@@ -113,10 +113,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LockActivity"
+        <activity
+            android:name=".activity.LockActivity"
             android:launchMode="singleInstance">
         </activity>
-
     </application>
 
 </manifest>

@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -28,18 +30,23 @@ import com.mingzi.onenote.R;
 import com.mingzi.onenote.adapter.NoteBaseAdapter;
 import com.mingzi.onenote.util.MediaDBAccess;
 import com.mingzi.onenote.util.NoteDBAccess;
+import com.mingzi.onenote.util.SortByCreateDateAsc;
+import com.mingzi.onenote.util.SortByCreateDateDesc;
+import com.mingzi.onenote.util.SortByUpadteDateDesc;
+import com.mingzi.onenote.util.SortByUpdateDateAsc;
 import com.mingzi.onenote.vo.Note;
 import com.mingzi.onenote.vo.PreferenceInfo;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
 /**
  *
  */
-public class MainActivity extends Activity implements AdapterView.OnItemLongClickListener{
+public class MainActivity extends Activity implements View.OnClickListener,AdapterView.OnItemLongClickListener{
 
     public static final String TAG = "MainActivity ";
 
@@ -52,6 +59,13 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
     private PreferenceInfo mPreferenceInfo;
     private boolean isExit = false;
     private int mViewForm;
+    private int mSortForm;
+    LinearLayout layout1 ;
+    LinearLayout layout2;
+    LinearLayout layout3 ;
+    LinearLayout layout4;
+    AlertDialog mDialog;
+    Builder mBuilder;
     /**
      * Called when the activity is first created.
      */
@@ -72,7 +86,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
         access = new NoteDBAccess(this);
         mPreferenceInfo = PreferenceInfo.getPreferenceInfo(this);
         mPreferenceInfo.dataFlush();
-        mViewForm = mPreferenceInfo.viewForm();
+        mViewForm = mPreferenceInfo.getViewForm();
+        mSortForm = mPreferenceInfo.getSortForm();
         this.registerForContextMenu(noteListView);
     }
 
@@ -80,9 +95,23 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();
+        Log.d(TAG, "onResume: "+ " run here");
         mNoteList = access.selectAllNote();
+        sortList();
         flush();
 
+    }
+
+    private void sortList() {
+        if (mSortForm == 0) {
+            Collections.sort(mNoteList,new SortByUpdateDateAsc());
+        } else if (mSortForm == 1) {
+            Collections.sort(mNoteList,new SortByUpadteDateDesc());
+        } else if (mSortForm == 2) {
+            Collections.sort(mNoteList,new SortByCreateDateAsc());
+        } else if (mSortForm == 3) {
+            Collections.sort(mNoteList,new SortByCreateDateDesc());
+        }
     }
 
     /**
@@ -136,16 +165,35 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
                 if (mViewForm == 0) {
                     mPreferenceInfo.setViewForm(1);
                     mViewForm = 1;
-                    item.setTitle("   缩略图");
-                    item.setIcon(R.drawable.ic_menu_grid_light);
+                    item.setTitle("   列表");
+                    item.setIcon(R.drawable.ic_menu_list_light);
                 } else if (mViewForm == 1) {
                     mPreferenceInfo.setViewForm(0);
                     mViewForm = 0;
-                    item.setTitle("   列表");
-                    item.setIcon(R.drawable.ic_menu_list_light);
+                    item.setTitle("   缩略图");
+                    item.setIcon(R.drawable.ic_menu_grid_light);
                 }
 
                 flush();
+                break;
+            case R.id.sort:
+                LayoutInflater inflater = getLayoutInflater();
+                LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.sort_choice_layout,null);
+                 layout1 = (LinearLayout) linearLayout.findViewById(R.id.sort_by_update_date_asc);
+                 layout2 = (LinearLayout) linearLayout.findViewById(R.id.sort_by_update_date_desc);
+                 layout3 = (LinearLayout) linearLayout.findViewById(R.id.sort_by_create_date_asc);
+                 layout4 = (LinearLayout) linearLayout.findViewById(R.id.sort_by_create_date_desc);
+                layout1.setOnClickListener(this);
+                layout2.setOnClickListener(this);
+                layout3.setOnClickListener(this);
+                layout4.setOnClickListener(this);
+                 mBuilder = new AlertDialog.Builder(this);
+                mBuilder.setTitle("排序")
+                        .setView(linearLayout);
+                mDialog = mBuilder.create();
+                mDialog.show();
+
+
                 break;
             case R.id.action_settings:
                 intent = new Intent();
@@ -203,14 +251,47 @@ public class MainActivity extends Activity implements AdapterView.OnItemLongClic
         return true;
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.sort_by_update_date_asc:
+                Collections.sort(mNoteList, new SortByUpdateDateAsc());
+                mDialog.dismiss();
+                flush();
+                mSortForm = 0;
+                mPreferenceInfo.setSortForm(0);
+                break;
+            case R.id.sort_by_update_date_desc:
+                Collections.sort(mNoteList, new SortByUpadteDateDesc());
+                mDialog.dismiss();
+                flush();
+                mSortForm = 1;
+                mPreferenceInfo.setSortForm(1);
+                break;
+            case R.id.sort_by_create_date_asc:
+                Collections.sort(mNoteList,new SortByCreateDateAsc());
+                mDialog.dismiss();
+                flush();
+                mSortForm = 2;
+                mPreferenceInfo.setSortForm(2);
+                break;
+            case R.id.sort_by_create_date_desc:
+                Collections.sort(mNoteList,new SortByCreateDateDesc());
+                mDialog.dismiss();
+                flush();
+                mSortForm = 3;
+                mPreferenceInfo.setSortForm(3);
+                break;
+            default:
+                break;
+        }
+    }
 
     /**
      * 界面刷新
      */
 
     private void flush() {
-
-
 
         if (mViewForm==0) {
             noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_list_item, mNoteList);

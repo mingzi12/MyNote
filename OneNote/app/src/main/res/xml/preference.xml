@@ -10,7 +10,6 @@
     		android:title="主题颜色"
     		
     		android:dialogTitle="主题颜色选择"
-    		android:dialogIcon="@drawable/theme_light"
     		android:entries="@array/theme_name"
     		android:entryValues="@array/theme_name"
     		

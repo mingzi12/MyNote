@@ -34,11 +34,12 @@
     </style>
 
 
-
     <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">#00CC00</item>
-        <item name="android:displayOptions">showTitle</item> //只显示title 不显示logo
-        <item name="android:titleTextStyle">@style/TextAppearance.Holo.Widget.ActionBar.Title.Own</item>
+        <item name="android:displayOptions">showTitle</item>
+        //只显示title 不显示logo
+        <item name="android:titleTextStyle">@style/TextAppearance.Holo.Widget.ActionBar.Title.Own
+        </item>
 
     </style>
 

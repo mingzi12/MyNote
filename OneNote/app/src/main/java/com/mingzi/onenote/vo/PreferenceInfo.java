@@ -109,12 +109,31 @@ public class PreferenceInfo {
      * 0 代表 listview显示
      * 1 代表gridview显示
      * */
-    public int viewForm() {
-       return share.getInt("viewForm",-1);
+    public int getViewForm() {
+       return share.getInt("getViewForm",-1);
     }
 
     public void setViewForm(int form) {
-        editor.putInt("viewForm",form);
+        editor.putInt("getViewForm",form);
         editor.apply();
+    }
+
+    /**
+     * 设置排序方式
+     * 0 代表按更新时间升序
+     * 1 代表按更新时间降序
+     * 2 代表按创建时间升序
+     * 3 代表按创建时间降序
+     * 4 代表按内容大小升序
+     * 5 代表按内容大小降序
+     * */
+
+    public void setSortForm(int sort) {
+        editor.putInt("setSortForm",sort);
+        editor.apply();
+    }
+
+    public int getSortForm() {
+        return share.getInt("setSortForm",-1);
     }
 }
