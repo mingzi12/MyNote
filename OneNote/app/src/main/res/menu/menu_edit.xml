@@ -12,6 +12,10 @@
         android:title="  录视频"
         android:icon="@drawable/ic_attach_flag_video_light"
         app:showAsAction="never"/>
+    <item android:id="@+id/record_audio_edit"
+          android:icon="@drawable/ic_option_attach_record_light"
+          android:title="   录音"
+          app:showAsAction="never"/>
     <item
         android:id="@+id/delete_edit"
         android:icon="@drawable/ic_menu_delete_light"

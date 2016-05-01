@@ -3,12 +3,13 @@ package com.mingzi.onenote.vo;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.mingzi.onenote.values.ConstantValue;
 
 public class PreferenceInfo {
-	
+	private static final String TAG = "PreferenceInfo";
 	public static String themeListValue;
 	public static int themeColorValue;
 	public static String userPasswordValue;
@@ -115,6 +116,7 @@ public class PreferenceInfo {
 
     public void setViewForm(int form) {
         editor.putInt("getViewForm",form);
+        Log.d(TAG, "setViewForm: "+form);
         editor.apply();
     }
 

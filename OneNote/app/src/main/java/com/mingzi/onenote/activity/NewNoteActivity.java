@@ -52,6 +52,7 @@ public class NewNoteActivity extends Activity implements View.OnClickListener ,V
     private static final String TAG = "NewNoteActivity";
     private static final int SELECT_FILE_REQUEST_CODE = 3;
     private static final int SETTING_ALARM_REQUEST_CODE = 6;
+    private static final int RECORD_AUDIO_REQUESt_CODE = 4;
     private ScrollView mScrollView;
     private LinearLayout mLinearLayout;
     private EditText mTitleEdit;
@@ -323,6 +324,17 @@ public class NewNoteActivity extends Activity implements View.OnClickListener ,V
                 selectFileIntent.putExtra("noteId", mCurrentNoteId);
                 startActivityForResult(selectFileIntent, SELECT_FILE_REQUEST_CODE);
                 break;
+            case R.id.record_audio_new:
+                if (mPathsList == null) {
+                    mPathsList = new ArrayList<>(3);
+                }
+                if (mBitmaps == null) {
+                    mBitmaps = new ArrayList<>(3);
+                }
+                Intent recordIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                recordIntent.setType("audio/*");
+                startActivityForResult(recordIntent,RECORD_AUDIO_REQUESt_CODE);
+                break;
 
             default:
                 break;
@@ -426,6 +438,26 @@ public class NewNoteActivity extends Activity implements View.OnClickListener ,V
             case SETTING_ALARM_REQUEST_CODE:
                 mResultCode = resultCode;
                 Log.d(TAG, "onActivityResult: "+mResultCode);
+                break;
+            case RECORD_AUDIO_REQUESt_CODE:
+                if (resultCode == RESULT_OK) {
+                    if (data != null && data.getData() != null) {//有数据返回直接使用返回的图片地址
+                        mCurrentPath = BitmapUtils.getFilePathByFileUri(this, data.getData());
+                    }
+                    if (mCurrentPath == null) {
+                        mCurrentPath = Uri.decode(data.getDataString());
+                        int len = mCurrentPath.length();
+                        mCurrentPath = mCurrentPath.substring(7, len);
+                    }
+                    NoteDBAccess mNoteDBAccess = new NoteDBAccess(NewNoteActivity.this);
+                    mMediaDBAccess = new MediaDBAccess(NewNoteActivity.this);
+                    mDate = new Date();
+                    if (mCurrentNoteId == -1) {
+                        mCurrentNoteId = mNoteDBAccess.insertNullNote(new Note(mDate));
+                    }
+                    mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(mDate));
+                    addView();
+                }
                 break;
             default:
                 break;

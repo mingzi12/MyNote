@@ -173,7 +173,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
                     item.setTitle("   缩略图");
                     item.setIcon(R.drawable.ic_menu_grid_light);
                 }
-
+                Log.d(TAG, "onOptionsItemSelected: "+mViewForm);
                 flush();
                 break;
             case R.id.sort:
@@ -306,6 +306,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
         } else {
             noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_list_item, mNoteList);
             noteListView.setAdapter(noteBaseAdapter);
+            mViewForm = 0;
             noteListView.setVisibility(View.VISIBLE);
             mGridView.setVisibility(View.GONE);
         }

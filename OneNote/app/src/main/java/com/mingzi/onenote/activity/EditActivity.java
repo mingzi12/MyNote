@@ -51,6 +51,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     private static final int CAPTURE_IMAGE_REQUEST_CODE = 1;
     private static final int CAPTURE_VIDEO_REQUEST_CODE = 2;
     private static final int SET_ALARM_REQUEST_CODE = 3;
+    private static final int RECORD_AUDIO_REQUESt_CODE = 4;
 
     /**
      * 选择文件的请求码
@@ -374,6 +375,11 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 Intent selectFileIntent = new Intent(this, SelectFileActivity.class);
                 startActivityForResult(selectFileIntent, SELECT_FILE_REQUEST_CODE);
                 break;
+            case R.id.record_audio_edit:
+                Intent recordIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                recordIntent.setType("audio/*");
+                startActivityForResult(recordIntent,RECORD_AUDIO_REQUESt_CODE);
+                break;
             default:
                 break;
         }
@@ -477,6 +483,20 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                     addView();
                 }
 
+                break;
+            case RECORD_AUDIO_REQUESt_CODE:
+                if (resultCode == RESULT_OK) {
+                    if (data != null && data.getData() != null) {//有数据返回直接使用返回的图片地址
+                        mCurrentPath = BitmapUtils.getFilePathByFileUri(this, data.getData());
+                    }
+                    if (mCurrentPath==null) {
+                        mCurrentPath = Uri.decode(data.getDataString());
+                        int len = mCurrentPath.length();
+                        mCurrentPath = mCurrentPath.substring(7,len);
+                    }
+                    Log.d(TAG, "onActivityResult: " + mCurrentPath);
+                    addView();
+                }
                 break;
             default:
                 break;
