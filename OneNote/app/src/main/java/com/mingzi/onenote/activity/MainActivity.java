@@ -82,7 +82,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
         mGridView = (GridView) findViewById(R.id.grid_view);
         mGridView.setOnItemClickListener(new OnItemSelectedListener());
         mGridView.setOnItemLongClickListener(this);
-        mNoteList = new ArrayList<Note>();
+        mNoteList = new ArrayList<>();
         access = new NoteDBAccess(this);
         mPreferenceInfo = PreferenceInfo.getPreferenceInfo(this);
         mPreferenceInfo.dataFlush();
@@ -93,9 +93,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
 
     @Override
     protected void onResume() {
-        // TODO Auto-generated method stub
         super.onResume();
-        Log.d(TAG, "onResume: "+ " run here");
         mNoteList = access.selectAllNote();
         sortList();
         flush();
@@ -126,6 +124,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
                     m.setAccessible(true);
                     m.invoke(menu, true);
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -139,7 +138,10 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-
+        MenuItem subMenu = menu.findItem(R.id.view_by_list);
+        if (mViewForm == 0) {
+            subMenu.setTitle("  缩略图").setIcon(R.drawable.ic_menu_grid_light);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -207,7 +209,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
     }
 
     /**
-     * 短按日志事件
+     * 点击便签事件
      */
 
     private class OnItemSelectedListener implements OnItemClickListener {
@@ -215,12 +217,11 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             note = mNoteList.get(position);
-            Log.d(TAG, "position: " + position + " id " + id);
             Intent intent = new Intent();
             intent.setClass(MainActivity.this, EditActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putParcelable("note", note);
-            intent.putExtra("noteBundle", bundle);
+            bundle.putParcelable(EditActivity.NOTE, note);
+            intent.putExtra(EditActivity.NOTE_BUNDLE, bundle);
 
             MainActivity.this.startActivity(intent);
         }

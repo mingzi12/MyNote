@@ -8,7 +8,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
 
 import java.io.FileInputStream;
@@ -28,19 +27,8 @@ public class BitmapUtils {
             e.printStackTrace();
         }
         return BitmapFactory.decodeStream(fis, null, opt);
-       // bitmap.recycle();
     }
 
-    public static Bitmap getVideoThumbnail(String videoPath, int width, int height, int kind) {
-        Bitmap bitmap = null;
-        // 获取视频的缩略图
-        bitmap = ThumbnailUtils.createVideoThumbnail(videoPath, kind);
-        System.out.println("w" + bitmap.getWidth());
-        System.out.println("h" + bitmap.getHeight());
-        bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height,
-                ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
-        return bitmap;
-    }
 
     public static Bitmap getBitmapByPath(String path){
         Bitmap bitmap ;

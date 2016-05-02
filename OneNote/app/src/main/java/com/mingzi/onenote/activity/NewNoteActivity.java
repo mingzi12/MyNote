@@ -600,7 +600,7 @@ public class NewNoteActivity extends Activity implements View.OnClickListener ,V
                         dialog.dismiss();
                     }
                 }).show();
-        return false;
+        return true;
     }
 
     @Override
@@ -612,4 +612,5 @@ public class NewNoteActivity extends Activity implements View.OnClickListener ,V
         }
         super.onDestroy();
     }
+
 }

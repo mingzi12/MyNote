@@ -48,36 +48,33 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
     public static final String TAG = "EditATY-> ";
 
-    private static final int CAPTURE_IMAGE_REQUEST_CODE = 1;
-    private static final int CAPTURE_VIDEO_REQUEST_CODE = 2;
-    private static final int SET_ALARM_REQUEST_CODE = 3;
-    private static final int RECORD_AUDIO_REQUESt_CODE = 4;
-
-    /**
-     * 选择文件的请求码
-     */
-    private final static int SELECT_FILE_REQUEST_CODE = 300;
+    public static final String NOTE = "note";
+    public static final String NOTE_BUNDLE = "bundle";
+    private static final int CAPTURE_IMAGE_REQUEST_CODE = 1; // 调用系统相机拍照请求码
+    private static final int CAPTURE_VIDEO_REQUEST_CODE = 2; // 调用系统相机拍摄视频请求码
+    private static final int RECORD_AUDIO_REQUEST_CODE = 4;  // 调用系统录音APP请求码
+    private final static int SELECT_FILE_REQUEST_CODE = 300; // 选择文件的请求码
 
     private ScrollView mScrollView;
     private LinearLayout mLinearLayout;
     private EditText mTitleEdit;
     private EditText mContentEdit;
-    private String mTitle;     // 保存初始Title的长度，用于判断Title是否被修改
-    private String mContent;   // 保存内容的初始长度，用于判断内容是否变化
+
+    private String mTitle;     // 保存初始便签的初始标题，用于判断Title是否被修改
+    private String mContent;   // 保存便签正文的初始内容，用于判断内容是否变化
     private Note mNote;
 
     private MediaDBAccess mMediaDBAccess;
-    private List<Media> mMediaList;
+    private List<Media> mMediaList;  //保存与当前便签相关的文件的实体类
 
     private List<Bitmap> mBitmaps;
-    private List<String> mPathsList;        // 存放和当前便签匹配的所有图片或者视频的路径
+    private List<String> mPathsList;    // 存放和当前便签匹配的所有文件的路径
     private int mCurrentNoteId = -1;    // 保存当前文字内容便签的ID
-    private String mCurrentPath = null; // 保存当前图片或者视频的路径
+    private String mCurrentPath = null; // 保存当前文件的路径
     private PreferenceInfo mPreferenceInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setTitle("   返回");
         setContentView(R.layout.activity_edit);
@@ -95,8 +92,8 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
 
 
         Intent intent = this.getIntent();
-        Bundle bundle = intent.getBundleExtra("noteBundle");
-        mNote = bundle.getParcelable("note");
+        Bundle bundle = intent.getBundleExtra(NOTE_BUNDLE);
+        mNote = bundle.getParcelable(NOTE);
         mCurrentNoteId = mNote.getNoteId();
         Log.d(TAG + "onCreate", mCurrentNoteId + "");
         mContent = mNote.getNoteContent();
@@ -115,7 +112,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     }
 
     /**
-     * 刷新界面，动态添加ImageView控件，显示图片或者视频的缩略图
+     * 刷新界面，动态添加ImageView控件，显示图片的缩略图
      */
     public void flush() {
 
@@ -127,8 +124,6 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         String path;
         for (int i = 0; i < len; i++) {
             path = mMediaList.get(i).getPath();
-            Log.d(TAG + "flush ", mMediaList.get(i).getDate().toString());  // 调试
-
             mPathsList.add(path);
             if (path.endsWith(".jpg") || path.endsWith(".jpeg") || path.endsWith(".png")) {
                 addThumbnail(path, i);
@@ -144,7 +139,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                     addFileView(path,j,R.layout.add_text_file_layout);
                     Log.d(TAG, "flush: "+path);
 
-                } else if (path.endsWith(".mp3")) {
+                } else if (path.endsWith(".mp3") || path.endsWith(".flac")) {
                     addFileView(path,j,R.layout.add_audio_file_layout);
                 }
 
@@ -153,7 +148,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     }
 
     /**
-     * 动态添加视频或者图片缩略图视图
+     * 动态添加图片缩略图
      * */
     private void addThumbnail(String mediaPath,int id) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -200,9 +195,9 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             Uri uri = Uri.fromFile(new File(mPathsList.get(viewId)));
             intent.setDataAndType(uri, "application/html");
             startActivity(intent);
-        } else if (mPathsList.get(viewId).endsWith(".mp3")) {
+        } else if (mPathsList.get(viewId).endsWith(".mp3") || mPathsList.get(viewId).endsWith(".flac")) {
             intent = new Intent(Intent.ACTION_VIEW);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             Uri uri = Uri.fromFile(new File(mPathsList.get(viewId)));
             intent.setDataAndType (uri, "audio/*");
             this.startActivity(intent);
@@ -240,7 +235,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                         dialog.dismiss();
                     }
                 }).show();
-        return false;
+        return true;
     }
 
     @Override
@@ -369,7 +364,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 lBundle.putParcelable(SetAlarmActivity.SETTING_ALARM, mNote);
                 Intent alarmIntent = new Intent(EditActivity.this, SetAlarmActivity.class);
                 alarmIntent.putExtra(SetAlarmActivity.SETTING_ALARM, lBundle);
-                startActivityForResult(alarmIntent, SET_ALARM_REQUEST_CODE);
+                startActivity(alarmIntent);
                 break;
             case R.id.extra_file_edit:
                 Intent selectFileIntent = new Intent(this, SelectFileActivity.class);
@@ -378,7 +373,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             case R.id.record_audio_edit:
                 Intent recordIntent = new Intent(Intent.ACTION_GET_CONTENT);
                 recordIntent.setType("audio/*");
-                startActivityForResult(recordIntent,RECORD_AUDIO_REQUESt_CODE);
+                startActivityForResult(recordIntent, RECORD_AUDIO_REQUEST_CODE);
                 break;
             default:
                 break;
@@ -484,7 +479,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
                 }
 
                 break;
-            case RECORD_AUDIO_REQUESt_CODE:
+            case RECORD_AUDIO_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
                     if (data != null && data.getData() != null) {//有数据返回直接使用返回的图片地址
                         mCurrentPath = BitmapUtils.getFilePathByFileUri(this, data.getData());
@@ -524,7 +519,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
             mPathsList.add(mCurrentPath);
 
             addFileView(mCurrentPath,mPathsList.size() - 1,R.layout.add_text_file_layout);
-        } else if (mCurrentPath.endsWith(".mp3")) {
+        } else if (mCurrentPath.endsWith(".mp3") || mCurrentPath.endsWith(".flac")) {
             mMediaDBAccess.insert(mCurrentPath, this.mCurrentNoteId, ConvertStringAndDate.datetoString(new Date()));
             mPathsList.add(mCurrentPath);
 
@@ -543,7 +538,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     private void addFileView(String path ,int id , int layoutId) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout mTextFileLayout = (LinearLayout) layoutInflater.inflate(layoutId, null);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,150);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,160);
         layoutParams.setMargins(20,10,20,10);
         TextView mTextView = (TextView) mTextFileLayout.findViewById(R.id.mTextView);
         mTextFileLayout.setId(id);
