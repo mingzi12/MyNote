@@ -111,7 +111,7 @@ public class PreferenceInfo {
      * 1 代表gridview显示
      * */
     public int getViewForm() {
-       return share.getInt("getViewForm",-1);
+       return share.getInt("getViewForm",0);
     }
 
     public void setViewForm(int form) {

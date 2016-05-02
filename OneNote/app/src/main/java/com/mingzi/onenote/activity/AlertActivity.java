@@ -42,10 +42,11 @@ public class AlertActivity extends Activity implements View.OnClickListener {
         window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
         window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         window.addFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_alert);
         mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakelock = mPowerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "SimpleTimer");
-        mWakelock.acquire();
+
         Bundle mBundle = getIntent().getBundleExtra("noteBundle");
         mNote = mBundle.getParcelable("note");
         mSharedPreferences = getSharedPreferences("oneNote", Context.MODE_PRIVATE);
@@ -98,14 +99,11 @@ public class AlertActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onResume() {
-
+        mWakelock.acquire();
         super.onResume();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
+
 
     private void startVibrate() {
         long[] vib =
@@ -115,12 +113,9 @@ public class AlertActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+
         Intent ringToneServiceIntent;
         if (v == mCancelBtn) {
-            mWakelock.release();
             if (mStyleStr != null) {
                 if (mStyleStr.equals("震动")) {
                     mVibrator.cancel();
@@ -141,7 +136,6 @@ public class AlertActivity extends Activity implements View.OnClickListener {
 
             finish();
         } else if (v == mCheckBtn) {
-            mWakelock.release();
             if (mStyleStr != null) {
                 if (mStyleStr.equals("震动")) {
                     mVibrator.cancel();
@@ -169,9 +163,23 @@ public class AlertActivity extends Activity implements View.OnClickListener {
     }
 
     @Override
+    protected void onPause() {
+        mWakelock.release();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        super.onPause();
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         return false;
     }
 
+    @Override
+    protected void onDestroy() {
 
+        super.onDestroy();
+    }
 }

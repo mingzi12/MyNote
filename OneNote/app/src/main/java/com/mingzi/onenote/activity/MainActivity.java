@@ -293,12 +293,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
 
     private void flush() {
 
-        if (mViewForm==0) {
-            noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_list_item, mNoteList);
-            noteListView.setAdapter(noteBaseAdapter);
-            noteListView.setVisibility(View.VISIBLE);
-            mGridView.setVisibility(View.GONE);
-        } else if (mViewForm == 1) {
+         if (mViewForm == 1) {
             noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_grid_item, mNoteList);
             mGridView.setAdapter(noteBaseAdapter);
             mGridView.setVisibility(View.VISIBLE);
@@ -306,7 +301,6 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
         } else {
             noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_list_item, mNoteList);
             noteListView.setAdapter(noteBaseAdapter);
-            mViewForm = 0;
             noteListView.setVisibility(View.VISIBLE);
             mGridView.setVisibility(View.GONE);
         }

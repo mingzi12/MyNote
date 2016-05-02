@@ -14,7 +14,7 @@
         app:showAsAction="never"/>
     <item android:id="@+id/record_audio_new"
           android:icon="@drawable/ic_option_attach_record_light"
-          android:title="   录音"
+          android:title="    录音"
           app:showAsAction="never"/>
     <item
         android:id="@+id/delete_new"

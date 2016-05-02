@@ -162,7 +162,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
         layoutParams.setMargins(20,15,20,15);
         mThumbnailLayout.setId(id);
         ImageView imageView = (ImageView) mThumbnailLayout.findViewById(R.id.mImageThumbnail);
-        Bitmap bitmap = BitmapUtils.readBitMap(mediaPath, 2);
+        Bitmap bitmap = BitmapUtils.readBitMap(mediaPath, 4);
         mBitmaps.add(bitmap);
         imageView.setImageBitmap(bitmap);
         mThumbnailLayout.setOnClickListener(this);
