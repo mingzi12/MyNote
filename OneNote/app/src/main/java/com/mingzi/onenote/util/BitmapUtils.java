@@ -15,7 +15,7 @@ import java.io.FileNotFoundException;
 
 public class BitmapUtils {
 
-    public static Bitmap readBitMap(String fileName,int n) {
+    public static Bitmap readBitMap(String fileName, int n) {
         BitmapFactory.Options opt = new BitmapFactory.Options();
         opt.inPreferredConfig = Bitmap.Config.RGB_565;
         opt.inSampleSize = n; // width，hight设为原来的十分一
@@ -30,13 +30,13 @@ public class BitmapUtils {
     }
 
 
-    public static Bitmap getBitmapByPath(String path){
-        Bitmap bitmap ;
+    public static Bitmap getBitmapByPath(String path) {
+        Bitmap bitmap;
         if (path != null) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.RGB_565;
             options.inSampleSize = 2;
-            bitmap = BitmapFactory.decodeFile(path,options);
+            bitmap = BitmapFactory.decodeFile(path, options);
             return bitmap;
         }
 
@@ -54,14 +54,14 @@ public class BitmapUtils {
         String filePath = null;
         Cursor cursor = context.getContentResolver().query(uri, null, null,
                 null, null);
-        if (cursor !=null) {
+        if (cursor != null) {
             if (cursor.moveToFirst()) {
                 filePath = cursor.getString(cursor.getColumnIndex("_data"));
-        }
+            }
             cursor.close();
             return Uri.decode(filePath);
         }
-       return null;
+        return null;
     }
 
 

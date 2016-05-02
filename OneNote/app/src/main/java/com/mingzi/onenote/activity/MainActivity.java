@@ -46,7 +46,7 @@ import java.util.List;
 /**
  *
  */
-public class MainActivity extends Activity implements View.OnClickListener,AdapterView.OnItemLongClickListener{
+public class MainActivity extends Activity implements View.OnClickListener, AdapterView.OnItemLongClickListener {
 
     public static final String TAG = "MainActivity ";
 
@@ -60,12 +60,13 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
     private boolean isExit = false;
     private int mViewForm;
     private int mSortForm;
-    LinearLayout layout1 ;
+    LinearLayout layout1;
     LinearLayout layout2;
-    LinearLayout layout3 ;
+    LinearLayout layout3;
     LinearLayout layout4;
     AlertDialog mDialog;
     Builder mBuilder;
+
     /**
      * Called when the activity is first created.
      */
@@ -102,13 +103,13 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
 
     private void sortList() {
         if (mSortForm == 0) {
-            Collections.sort(mNoteList,new SortByUpdateDateAsc());
+            Collections.sort(mNoteList, new SortByUpdateDateAsc());
         } else if (mSortForm == 1) {
-            Collections.sort(mNoteList,new SortByUpadteDateDesc());
+            Collections.sort(mNoteList, new SortByUpadteDateDesc());
         } else if (mSortForm == 2) {
-            Collections.sort(mNoteList,new SortByCreateDateAsc());
+            Collections.sort(mNoteList, new SortByCreateDateAsc());
         } else if (mSortForm == 3) {
-            Collections.sort(mNoteList,new SortByCreateDateDesc());
+            Collections.sort(mNoteList, new SortByCreateDateDesc());
         }
     }
 
@@ -175,21 +176,21 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
                     item.setTitle("   缩略图");
                     item.setIcon(R.drawable.ic_menu_grid_light);
                 }
-                Log.d(TAG, "onOptionsItemSelected: "+mViewForm);
+                Log.d(TAG, "onOptionsItemSelected: " + mViewForm);
                 flush();
                 break;
             case R.id.sort:
                 LayoutInflater inflater = getLayoutInflater();
-                LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.sort_choice_layout,null);
-                 layout1 = (LinearLayout) linearLayout.findViewById(R.id.sort_by_update_date_asc);
-                 layout2 = (LinearLayout) linearLayout.findViewById(R.id.sort_by_update_date_desc);
-                 layout3 = (LinearLayout) linearLayout.findViewById(R.id.sort_by_create_date_asc);
-                 layout4 = (LinearLayout) linearLayout.findViewById(R.id.sort_by_create_date_desc);
+                LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.sort_choice_layout, null);
+                layout1 = (LinearLayout) linearLayout.findViewById(R.id.sort_by_update_date_asc);
+                layout2 = (LinearLayout) linearLayout.findViewById(R.id.sort_by_update_date_desc);
+                layout3 = (LinearLayout) linearLayout.findViewById(R.id.sort_by_create_date_asc);
+                layout4 = (LinearLayout) linearLayout.findViewById(R.id.sort_by_create_date_desc);
                 layout1.setOnClickListener(this);
                 layout2.setOnClickListener(this);
                 layout3.setOnClickListener(this);
                 layout4.setOnClickListener(this);
-                 mBuilder = new AlertDialog.Builder(this);
+                mBuilder = new AlertDialog.Builder(this);
                 mBuilder.setTitle("排序")
                         .setView(linearLayout);
                 mDialog = mBuilder.create();
@@ -230,7 +231,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, final long id) {
         int id1 = mNoteList.get(position).getNoteId();
-        Log.d(TAG, "onItemLongClick: "+ id + " "+ id1);
+        Log.d(TAG, "onItemLongClick: " + id + " " + id1);
         AlertDialog.Builder builder = new Builder(MainActivity.this);
         builder.setTitle("    删除");
         builder.setIcon(R.drawable.ic_delete);
@@ -239,7 +240,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
             public void onClick(DialogInterface dialog, int which) {
                 NoteDBAccess access = new NoteDBAccess(MainActivity.this);
                 MediaDBAccess mediaDBAccess = new MediaDBAccess(MainActivity.this);
-                mediaDBAccess.deleteById((int)id);
+                mediaDBAccess.deleteById((int) id);
                 access.deleteNoteById((int) id);
                 mNoteList.remove(position);
                 dialog.dismiss();
@@ -270,14 +271,14 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
                 mPreferenceInfo.setSortForm(1);
                 break;
             case R.id.sort_by_create_date_asc:
-                Collections.sort(mNoteList,new SortByCreateDateAsc());
+                Collections.sort(mNoteList, new SortByCreateDateAsc());
                 mDialog.dismiss();
                 flush();
                 mSortForm = 2;
                 mPreferenceInfo.setSortForm(2);
                 break;
             case R.id.sort_by_create_date_desc:
-                Collections.sort(mNoteList,new SortByCreateDateDesc());
+                Collections.sort(mNoteList, new SortByCreateDateDesc());
                 mDialog.dismiss();
                 flush();
                 mSortForm = 3;
@@ -294,7 +295,7 @@ public class MainActivity extends Activity implements View.OnClickListener,Adapt
 
     private void flush() {
 
-         if (mViewForm == 1) {
+        if (mViewForm == 1) {
             noteBaseAdapter = new NoteBaseAdapter(this, R.layout.note_grid_item, mNoteList);
             mGridView.setAdapter(noteBaseAdapter);
             mGridView.setVisibility(View.VISIBLE);

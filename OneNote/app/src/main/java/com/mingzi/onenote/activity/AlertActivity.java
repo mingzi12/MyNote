@@ -104,7 +104,6 @@ public class AlertActivity extends Activity implements View.OnClickListener {
     }
 
 
-
     private void startVibrate() {
         long[] vib =
                 {0, 200, 3000, 500, 2000, 1000};
@@ -113,7 +112,11 @@ public class AlertActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-
+        mWakelock.release();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Intent ringToneServiceIntent;
         if (v == mCancelBtn) {
             if (mStyleStr != null) {
@@ -164,11 +167,7 @@ public class AlertActivity extends Activity implements View.OnClickListener {
 
     @Override
     protected void onPause() {
-        mWakelock.release();
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         super.onPause();
     }
 
