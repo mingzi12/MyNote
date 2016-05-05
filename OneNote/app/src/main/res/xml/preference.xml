@@ -13,7 +13,7 @@
     		android:entries="@array/theme_name"
     		android:entryValues="@array/theme_name"
     		
-    		android:defaultValue="天蓝"
+    		android:defaultValue="默认"
     	/>
     </PreferenceCategory>
     

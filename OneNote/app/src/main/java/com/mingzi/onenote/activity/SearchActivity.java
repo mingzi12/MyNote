@@ -28,7 +28,6 @@ public class SearchActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.activity_search);
 
@@ -59,8 +58,8 @@ public class SearchActivity extends Activity {
             intent.setClass(SearchActivity.this, EditActivity.class);
 
             Bundle bundle = new Bundle();
-            bundle.putParcelable("note", note);
-            intent.putExtra("noteBundle", bundle);
+            bundle.putParcelable(EditActivity.NOTE, note);
+            intent.putExtra(EditActivity.NOTE_BUNDLE, bundle);
 
             SearchActivity.this.startActivity(intent);
          SearchActivity.this.finish();

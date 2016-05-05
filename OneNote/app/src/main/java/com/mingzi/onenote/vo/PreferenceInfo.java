@@ -16,15 +16,15 @@ public class PreferenceInfo {
 	public static boolean ifLocked;
 
     private static PreferenceInfo mPreferenceInfo;
-	private static Context context;
-	private static SharedPreferences share;
-	private static Editor editor;
+	private  Context context;
+	private  SharedPreferences share;
+	private  Editor editor;
 	
 	private PreferenceInfo(Context context) {
 		super();
-		PreferenceInfo.context = context.getApplicationContext();
-		PreferenceInfo.share = context.getSharedPreferences("OneNote", Context.MODE_PRIVATE);
-		PreferenceInfo.editor = share.edit();
+		this.context = context.getApplicationContext();
+        this.share = context.getSharedPreferences("OneNote", Context.MODE_PRIVATE);
+        this.editor = share.edit();
 		
 		getThemeListValue();
 		getUserPassword();

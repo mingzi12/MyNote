@@ -577,8 +577,7 @@ public class EditActivity extends Activity implements ImageView.OnClickListener 
     @Override
     protected void onDestroy() {
 
-        if (mBitmaps != null) {
-            for (Bitmap bitmap : mBitmaps) {
+        if (mBitmaps != null) {for (Bitmap bitmap : mBitmaps) {
                 if (bitmap != null) {
                     bitmap.recycle();
                 }

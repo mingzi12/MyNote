@@ -141,7 +141,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem subMenu = menu.findItem(R.id.view_by_list);
         if (mViewForm == 0) {
-            subMenu.setTitle("  缩略图").setIcon(R.drawable.ic_menu_grid_light);
+            subMenu.setTitle("   缩略图").setIcon(R.drawable.ic_menu_grid_light);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -168,12 +168,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Adap
                 if (mViewForm == 0) {
                     mPreferenceInfo.setViewForm(1);
                     mViewForm = 1;
-                    item.setTitle("   列表");
+                    item.setTitle("    列表");
                     item.setIcon(R.drawable.ic_menu_list_light);
                 } else if (mViewForm == 1) {
                     mPreferenceInfo.setViewForm(0);
                     mViewForm = 0;
-                    item.setTitle("   缩略图");
+                    item.setTitle("    缩略图");
                     item.setIcon(R.drawable.ic_menu_grid_light);
                 }
                 Log.d(TAG, "onOptionsItemSelected: " + mViewForm);
