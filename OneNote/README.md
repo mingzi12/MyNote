@@ -1,1 +1,1 @@
-This is my graduation project.
+This is a Note project.
